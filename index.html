@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffb701">
+<meta name="apple-mobile-web-app-title" content="Jet-Office">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Jet-Office V1.25</title>
+<style>
+:root{--acc:#1f4e79;--accT:#fff;--bg:#eef1f5;--card:#fff;--ink:#1d2530;--mut:#6b7684;--line:#dde2e9;--ok:#23955a;--go:#d6492f;--dis:#c5cbd3;--we:#f5f6f8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:17px}
+body{display:flex;flex-direction:column;user-select:none;-webkit-user-select:none;overflow:hidden}
+input,select,textarea{user-select:text;-webkit-user-select:text;font:inherit;color:inherit}
+button{font:inherit;cursor:pointer;border:0;touch-action:manipulation;color:inherit}
+h1,h2,h3{margin:0 0 12px}
+h2{font-size:24px} h3{font-size:18px;margin-top:6px}
+.mut{color:var(--mut)} .small{font-size:14px} .sp{flex:1}
+/* Header */
+header{background:var(--acc);color:var(--accT);display:flex;align-items:center;gap:18px;padding:12px 22px;min-height:84px;flex:0 0 auto}
+header .logo{height:64px;max-width:300px;object-fit:contain}
+header .logo.jet{background:#fff;border-radius:12px;padding:5px 8px;box-shadow:0 1px 4px rgba(0,0,0,.18)} /* V1.24: JET-Logo auf weißem Feld */
+header .co{flex:1;min-width:0}
+header .co b{display:block;font-size:26px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .co span{opacity:.85;font-size:15px}
+header .clk{text-align:right;white-space:nowrap}
+header .clk b{font-size:36px;font-variant-numeric:tabular-nums;display:block;line-height:1.05}
+header .clk span{font-size:15px;opacity:.85}
+main{flex:1;overflow:auto;padding:18px 22px;-webkit-overflow-scrolling:touch}
+@supports(padding:max(0px)){
+ header{padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right))}
+ main{padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));padding-bottom:max(18px,env(safe-area-inset-bottom))}
+ #modal{padding-bottom:max(16px,env(safe-area-inset-bottom))}
+ #toast{bottom:max(26px,calc(env(safe-area-inset-bottom) + 12px))}
+}
+html.ios input,html.ios select,html.ios textarea{font-size:16px!important}
+html.ios .ioshide{display:none!important}
+html.ios body{-webkit-text-size-adjust:100%}
+html.ios .bb,html.ios .btn,html.ios button{-webkit-tap-highlight-color:transparent}
+/* Home */
+.home{height:100%;display:flex;flex-direction:column;gap:12px}
+.emps{flex:1;min-height:0;display:grid;gap:22px;grid-template-columns:repeat(var(--c,4),minmax(0,var(--tw,240px)));grid-template-rows:repeat(var(--r,2),minmax(0,var(--th,210px)));grid-auto-rows:minmax(0,var(--th,210px));justify-content:center;align-content:center;overflow:auto;padding:6px}
+.emp{container-type:size;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;padding:8px;transition:transform .08s,box-shadow .08s;border:4px solid rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.10),0 10px 24px rgba(20,30,45,.22);background-image:linear-gradient(160deg,rgba(255,255,255,.18),rgba(0,0,0,.10));min-height:0}
+.emp.light{background:#fff!important;background-image:none;border:4px solid var(--ec);color:var(--ink)!important}
+.emp.light .av{border-color:var(--ec)}
+.emp.light .st{background:var(--ec);color:#fff}
+.emp{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;background-image:linear-gradient(160deg,rgba(255,255,255,.30),rgba(255,255,255,0) 42%,rgba(0,0,0,.16))}
+@media (hover:hover){.emp:hover{transform:translateY(-3px) scale(1.035);box-shadow:0 0 0 1px rgba(0,0,0,.08),0 18px 36px rgba(20,30,45,.32),0 0 26px color-mix(in srgb,var(--ec) 60%,transparent);filter:brightness(1.05)}}
+.emp:active{transform:scale(.96);box-shadow:0 0 0 1px rgba(0,0,0,.1),0 4px 10px rgba(20,30,45,.2)}
+.emp .av{width:min(42cqh,52cqw);height:min(42cqh,52cqw);font-size:min(18cqh,22cqw)}
+.av{width:96px;height:96px;flex:0 0 auto;border-radius:50%;background:rgba(255,255,255,.28) center/cover no-repeat;display:inline-flex;align-items:center;justify-content:center;font-size:42px;font-weight:700;border:3px solid rgba(255,255,255,.75)}
+.av.sm{width:56px;height:56px;font-size:24px;border-width:2px}
+.av.xs{width:40px;height:40px;font-size:18px;border-width:2px}
+.emp .nm{font-size:clamp(15px,min(14cqh,16cqw),32px);font-weight:800;line-height:1.1;text-align:center}
+.emp .st{font-size:clamp(11px,6.5cqh,14px);background:rgba(0,0,0,.2);padding:3px 10px;border-radius:20px;white-space:nowrap}
+main.bgimg{background-size:cover;background-position:center}
+main.bgimg .foot span{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+main.bgimg .empty{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.foot{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:14px}
+.foot button{background:#fff;border-radius:12px;padding:10px 16px;font-size:15px;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.empty{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-size:22px;color:var(--mut);line-height:1.6}
+/* Buttons & forms */
+.btn{padding:12px 18px;border-radius:12px;background:#e3e8ef;color:var(--ink);font-weight:600;font-size:16px;display:inline-flex;align-items:center;gap:6px;min-height:46px}
+.btn.p{background:var(--acc);color:var(--accT)}
+.btn.d{background:#fbe1dc;color:#a8321e}
+.btn:disabled{opacity:.45}
+.card{background:#fff;border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.fld{display:block;margin:0 0 14px;font-size:14px;color:var(--mut);font-weight:600}
+.fld input,.fld select,.row2 input{display:block;width:100%;margin-top:5px;height:48px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;font-size:17px;font-weight:400;color:var(--ink)}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--acc)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.chk{display:flex;align-items:center;gap:12px;margin:6px 0 14px;font-size:16px;min-height:40px}
+.chk input{width:26px;height:26px;accent-color:var(--acc)}
+.acts{display:flex;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.warn{background:#fff3cd;color:#7a5a00;padding:10px 14px;border-radius:10px;font-size:15px}
+.sw{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+.sw button{width:42px;height:42px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.sw button.on{box-shadow:0 0 0 3px var(--ink)}
+.sw input[type=color]{width:54px;height:42px;border:1px solid var(--line);border-radius:10px;padding:2px;background:#fff}
+.imgrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.seg{display:inline-flex;background:#e3e8ef;border-radius:12px;padding:4px;gap:4px}
+.seg button{padding:9px 18px;border-radius:9px;font-weight:600;background:none;min-height:40px}
+.seg button.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+/* Employee screen */
+.ehead{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.ehead .en{flex:1;min-width:180px}
+.ehead .en b{display:block;font-size:26px}
+.ehead .en span{color:var(--mut)}
+.bigb{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+.bb{height:170px;border-radius:24px;color:#fff;font-size:46px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 6px 16px rgba(0,0,0,.16);transition:transform .08s}
+.bb:active:not(:disabled){transform:scale(.97)}
+.bb small{font-size:16px;font-weight:500;opacity:.9}
+.bb.in{background:var(--ok)} .bb.out{background:var(--go)}
+.bb:disabled{background:var(--dis);box-shadow:none;color:#f3f4f6}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.kpis div{background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.kpis span{display:block;color:var(--mut);font-size:14px}
+.kpis b{font-size:26px;font-variant-numeric:tabular-nums}
+.lbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.lbar .nav{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
+.lbar .nav b{min-width:210px;text-align:center;font-size:17px}
+/* Table */
+.lp.slim{width:fit-content;max-width:100%;margin:0 auto}
+.lp.slim .lbar .nav{flex:0 1 auto}
+.tw{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+table.tz{width:100%;border-collapse:collapse;font-size:15px}
+.tz th{background:var(--acc);color:var(--accT);text-align:left;padding:7px 8px;font-weight:600;white-space:nowrap}
+.tz td{padding:3px 8px;height:38px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:middle}
+.tz .n{padding-right:14px}
+.tz .nt{padding-left:16px}
+.tz .n{text-align:right;white-space:nowrap}
+.tz td:first-child{white-space:nowrap}
+.adm{font-size:15px;max-width:1180px;margin:0 auto}
+.adm .atop{margin-bottom:8px}.adm .atop h1{font-size:19px;font-weight:650}
+.adm .tabs{gap:4px;margin-bottom:12px}
+.adm .tabs button{padding:6px 13px;font-size:14px;border-radius:8px;font-weight:550}
+.adm .card{padding:12px 16px;border-radius:12px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.adm h3{font-size:15px;font-weight:650;margin:2px 0 8px;color:#2b3542}
+.adm .card h3+h3,.adm .card *+h3{margin-top:14px}
+.adm .fld{font-size:12.5px;font-weight:500;margin:0 0 9px;max-width:560px}
+.adm .row2 .fld{max-width:none}
+.adm .fld input,.adm .fld select,.adm .row2 input{height:34px;font-size:14.5px;border-width:1px;border-radius:7px;margin-top:3px;padding:0 9px}
+.adm .row2{gap:10px;max-width:760px}
+.adm .chk{font-size:14px;min-height:26px;margin:2px 0 7px;gap:9px}
+.adm .chk input{width:17px;height:17px}
+.adm .btn{min-height:34px;padding:6px 12px;font-size:14px;border-radius:8px;font-weight:550}
+.adm .acts{margin-top:10px;gap:8px}
+.adm .warn{font-size:13px;padding:7px 11px;border-radius:8px}
+.adm .mut{font-size:13.5px}.adm .small{font-size:12.5px}
+.adm p{margin:6px 0}
+.adm .sw{gap:6px}.adm .sw button{width:28px;height:28px;border-width:2px}
+.adm .sw input[type=color]{width:40px;height:28px;border-radius:7px}
+.adm .bigacts{gap:8px}.adm .bigacts .btn{padding:9px 10px;font-size:14.5px}
+.adm .mrow{padding:6px 0;gap:10px}
+.adm .snap{padding:6px 0}.adm .snap .btn{padding:5px 10px;font-size:13px;min-height:30px}
+.tz tr.b2 td{background:#eaf0f7}
+.tz .wd{display:inline-block;width:2.35em}
+.tz th.n,.tz td.n{text-align:center}
+.tz .nb{display:inline-block;width:132px;text-align:right;white-space:nowrap}
+.tz .nh{display:inline-block;width:54%;text-align:right}.tz .nm{display:inline-block;width:46%;text-align:right}
+.tz th.c,.tz tbody tr:not(.ws) td:nth-child(2),.tz tbody tr:not(.ws) td:nth-child(3){text-align:center}
+.tz tr.ws td.n,.tz tfoot td.n{text-align:center!important}
+.tz tr.cf td,.tz tr.cf.b2 td,.tz tr.cf.we td{background:#fde0d9!important}
+.tz tr.cf td:first-child{box-shadow:inset 4px 0 0 var(--go)}
+.srcm{font-size:11px;color:var(--mut);margin-left:5px;cursor:help}
+.mtab{width:100%;border-collapse:collapse;font-size:14px}
+.mtab th{text-align:left;font-weight:600;color:var(--mut);font-size:12.5px;padding:6px 8px;border-bottom:1px solid var(--line)}
+.mtab td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.mtab .n{text-align:right;white-space:nowrap}
+.mtab .ok{color:var(--ok);font-weight:600}.mtab .bad{color:var(--go);font-weight:700;cursor:pointer;text-decoration:underline}
+.mnav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mnav b{font-size:16px;min-width:140px;text-align:center}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:600}
+.box.wide{max-width:900px}
+.badge.cl{background:#e3e8ef;color:#2b3542}.badge.op{background:#e3f4ea;color:var(--ok)}
+.tz tr.we td{background:#f3eefb;color:#5d5670}
+.tz tr.we.b2 td{background:#e9e1f6}
+.tz tr.we td:first-child{color:#6a4c9c;font-weight:600}
+.tz tr.df td{border-top:1px solid #b9c4d2}
+.tz tr.nl td{border-bottom:0}
+.sdot{font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(20,28,38,.85);color:#fff!important;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);position:relative}
+.sdot.ok::first-letter{color:#4ade80}.sdot.warn{background:#b26a00}.sdot.err{background:var(--go)}
+[data-tip]{position:relative}
+@media (hover:hover){[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:0;bottom:calc(100% + 10px);width:290px;white-space:normal;z-index:50;
+ background:#fff;color:#1d2733;font-weight:400;font-size:13px;line-height:1.4;padding:10px 12px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);text-align:left}}
+.verb{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;background:rgba(20,28,38,.85);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);user-select:none;position:relative}
+.verb:hover,.verb.open{background:#024794}
+.cpc{--s:118px;position:absolute;left:0;bottom:calc(100% + 14px);width:290px;padding:20px 16px 16px;border-radius:20px;z-index:60;cursor:default;
+ background:radial-gradient(ellipse at 50% 30%,#1f5bb0,#0b2a57 60%,#06183a);color:#fff;text-align:center;font-weight:400;
+ box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.12);
+ opacity:0;transform:translateY(14px) scale(.92);transform-origin:20% 100%;pointer-events:none;transition:opacity .35s ease,transform .45s cubic-bezier(.2,1.4,.4,1)}
+@media (hover:hover){.verb:hover .cpc{opacity:1;transform:none}}
+.verb.open .cpc{opacity:1;transform:none}
+.cpc::after{content:"";position:absolute;left:34px;bottom:-8px;width:16px;height:16px;background:#071c42;transform:rotate(45deg)}
+.cw-stage{height:calc(var(--s)*1.55);perspective:700px;display:flex;align-items:center;justify-content:center;position:relative}
+.cw-glow{position:absolute;bottom:4px;left:50%;width:calc(var(--s)*1.1);height:20px;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(255,183,1,.6),rgba(255,183,1,0) 70%);filter:blur(5px);animation:cwpulse 3.2s ease-in-out infinite}
+@keyframes cwpulse{50%{opacity:.55;transform:translateX(-50%) scaleX(.85)}}
+.cw-tilt{transform-style:preserve-3d;animation:cwtilt 7s ease-in-out infinite}
+@keyframes cwtilt{0%,100%{transform:rotateX(-20deg)}50%{transform:rotateX(-32deg)}}
+.cw-cube{width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;animation:cwspin 10s linear infinite}
+@keyframes cwspin{from{transform:rotateY(0)}to{transform:rotateY(-360deg)}}
+.cpc .cw-cube,.cpc .cw-tilt,.cpc .cw-glow,.cpc .cw-a{animation-play-state:paused}
+.verb.open .cpc *,.verb:hover .cpc *{animation-play-state:running!important}
+.cw-f{position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.cw-f::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 45%,rgba(0,0,0,.18));pointer-events:none}
+.cw-f svg{width:100%;height:100%;display:block}
+.cw-fr{transform:translateZ(calc(var(--s)/2));background:#ffb701 url("data:image/jpeg;base64,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") center/100% no-repeat}
+.cw-ri{transform:rotateY(90deg) translateZ(calc(var(--s)/2));background:#fff}
+.cw-ba{transform:rotateY(180deg) translateZ(calc(var(--s)/2));background:#ffb701}
+.cw-le{transform:rotateY(-90deg) translateZ(calc(var(--s)/2));background:#024794}
+.cw-to{transform:rotateX(90deg) translateZ(calc(var(--s)/2));background:linear-gradient(135deg,#ffd257,#ffb701)}
+.cw-bo{transform:rotateX(-90deg) translateZ(calc(var(--s)/2));background:#06183a}
+.cw-hm{transform-origin:50px 50px;animation:cwrot 4s linear infinite}.cw-hh{transform-origin:50px 50px;animation:cwrot 48s linear infinite}
+@keyframes cwrot{to{transform:rotate(360deg)}}
+.cw-j{stroke-dasharray:120;stroke-dashoffset:120;animation:cwdraw 3.2s ease-in-out infinite}
+@keyframes cwdraw{0%{stroke-dashoffset:120}45%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:-120}}
+.cw-ttl{font-size:22px;font-weight:800;letter-spacing:.5px;margin-top:6px}.cw-ttl b{color:#ffb701}
+.cw-v{font-size:12px;opacity:.75;margin-top:2px}
+.cw-c{margin-top:12px;font-size:15px;font-weight:600;background:linear-gradient(90deg,#fff 0%,#fff 40%,#ffb701 50%,#fff 60%,#fff 100%);background-size:250% 100%;
+ -webkit-background-clip:text;background-clip:text;color:transparent;animation:cwshine 3s linear infinite}
+@keyframes cwshine{from{background-position:100% 0}to{background-position:-150% 0}}
+@media (prefers-reduced-motion:reduce){.cpc *{animation:none!important}}
+.sdot.ok{color:var(--ok)} .sdot.warn{color:#b26a00} .sdot.err{color:#fff;background:var(--go)}
+.bkw{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;background:#ffe08a;color:#4a3500;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.snap{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.snap:last-child{border-bottom:0}
+.snap .btn{padding:8px 12px;font-size:14px}
+.bigacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:10px}
+.bigacts .btn{padding:16px 14px;font-size:17px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tz tr.td td,.tz tr.td.we td,.tz tr.td.b2 td{background:#fff6d6}
+.tz tr.ct td{border-top:0}
+.tz tr.ws td{background:#e2e9f2;font-weight:700;border-bottom:3px solid var(--acc)}
+.tz tfoot td{background:var(--acc);color:var(--accT);font-weight:800;font-size:17px;border:0;height:44px}
+.tz tr.ws td{height:34px}
+.tz .nt{color:var(--mut);font-size:14px}
+.tz th.nt{color:var(--accT);font-size:inherit}
+input[type=file]{display:none!important}
+.tz .open{color:var(--go);font-weight:700}
+.tz .nw{white-space:nowrap;text-align:right}
+.ed{background:#eef2f7;color:var(--edc,var(--acc));font-size:17px;width:38px;height:32px;border-radius:8px;margin-left:4px}
+/* Admin */
+.atop{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.atop h1{margin:0;font-size:24px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{padding:11px 20px;border-radius:12px;background:#fff;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.tabs button.on{background:var(--acc);color:var(--accT)}
+.mrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow .mn{flex:1}
+.mrow .mn b{display:block}
+.tag{display:inline-block;font-size:12px;background:#e3e8ef;border-radius:6px;padding:2px 7px;margin-right:4px;color:var(--mut)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chips button{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:30px;background:#fff;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.chips button.on{outline:3px solid var(--acc)}
+.logoprev{background:var(--acc);border-radius:10px;padding:10px;display:inline-block;min-width:160px;text-align:center;color:var(--mut)}
+.logoprev img{max-height:80px;max-width:260px}
+/* Modal, PIN */
+#modal{position:fixed;inset:0;background:rgba(15,22,32,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+#modal.on{display:flex}
+.box{background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:94vh;overflow:auto;padding:22px 24px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.box.pin{max-width:420px;text-align:center}
+.pin h2{margin:10px 0 2px}
+.dots{display:flex;justify-content:center;gap:14px;height:28px;margin:16px 0 20px}
+.dots i{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--acc);display:block}
+.dots i.f{background:var(--acc)}
+.dots.shake{animation:sh .35s}
+@keyframes sh{20%,60%{transform:translateX(-12px)}40%,80%{transform:translateX(12px)}}
+.pad{display:grid;grid-template-columns:repeat(3,92px);gap:14px;justify-content:center;margin-bottom:16px}
+.pad button{height:92px;border-radius:50%;font-size:34px;font-weight:600;background:#f0f3f7}
+.pad button:active{background:#d9e1ec}
+.pad button.fn{font-size:24px}
+.pad button.ok{background:var(--acc);color:var(--accT)}
+.pin .av{border-color:var(--line)}
+.obtns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.obtns .btn{justify-content:center;min-height:58px;font-size:17px}
+/* Overlay & toast */
+#ov{position:fixed;inset:0;z-index:80;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;gap:8px}
+#ov.on{display:flex} #ov.in{background:var(--ok)} #ov.out{background:var(--go)}
+#ov .ovi{font-size:110px;line-height:1}
+#ov .ovt{font-size:56px;font-weight:800}
+#ov .ovs{font-size:30px}
+#ov .ovx{font-size:22px;opacity:.95}
+#ov .ovh{font-size:16px;opacity:.8;margin-top:20px}
+#ov .btn{background:rgba(255,255,255,.22);color:#fff;margin-top:14px;font-size:18px}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(120px);background:#1d2530;color:#fff;padding:13px 22px;border-radius:12px;z-index:90;transition:transform .25s;font-weight:600;max-width:90vw}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast.err{background:#a8321e}
+#print{display:none}
+@media (max-width:760px){
+ .bb{height:130px;font-size:34px}
+ .kpis b{font-size:20px}
+ .tz{font-size:14px} .tz td,.tz th{padding:6px 6px}
+ .tz .nt{display:none}
+ header .clk b{font-size:26px} header .co b{font-size:20px}
+ .pad{grid-template-columns:repeat(3,80px)} .pad button{height:80px}
+}
+@media (max-width:560px){
+ header{gap:10px;padding:8px 12px;min-height:60px}
+ main{padding:12px max(12px,env(safe-area-inset-left)) max(14px,env(safe-area-inset-bottom))}
+ header .logo{height:38px;max-width:120px}
+ header .co b{font-size:16px} header .co span{display:none}
+ header .clk b{font-size:20px} header .clk span{font-size:11px}
+ .foot{flex-wrap:wrap;gap:6px;font-size:12px}
+ .foot button{padding:8px 11px;font-size:13.5px}
+ .sdot,.bkw{font-size:11.5px;padding:4px 8px}
+ .tabs button{padding:6px 10px}
+ .lbar{flex-wrap:wrap;gap:6px}
+ .tz .yr{display:none}
+ .tz .nb{width:92px}
+ table.tz{font-size:12.5px} .tz col{width:auto!important}
+ .tz td,.tz th{padding:4px 5px;height:32px}
+ .tz thead th:nth-child(4),.tz tbody tr:not(.ws) td:nth-child(4){display:none}
+ .tz tfoot td{font-size:14px}
+ .tz .ed{padding:0;width:30px;height:30px;min-height:0;font-size:14px}
+ .tw{overflow-x:auto}
+ .lbar .nav{flex-wrap:wrap;gap:4px} .lbar .nav b{font-size:14px}
+ .lbar .nav .btn{min-height:36px;padding:6px 10px}
+}
+@media print{
+ @page{size:A4 portrait;margin:12mm}
+ html,body{height:auto;overflow:visible;background:#fff;display:block;font-size:10pt}
+ body>*:not(#print){display:none!important}
+ #print{display:block}
+ .pg{page-break-after:always;break-after:page}
+ .pg:last-child{page-break-after:auto;break-after:auto}
+ .ph{display:flex;align-items:center;gap:14px;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px}
+ .ph img{max-height:48px;max-width:160px}
+ .ph .pc{flex:1}
+ .ph .pr{text-align:right}
+ table.tz{font-size:9pt}
+ .tz th{background:#ddd!important;color:#000!important;padding:4px 6px}
+ .tz td{padding:2px 6px;height:auto;border-bottom:1px solid #ccc}
+ .tz th.nt{color:#000!important;font-size:9pt}
+ .tz tr.ws td,.tz tfoot td{height:auto}
+ table.tz,table.tz.slim{width:100%!important;min-width:0;table-layout:fixed}
+ table.tz.slim col:nth-child(1){width:24%!important} table.tz.slim col:nth-child(2),table.tz.slim col:nth-child(3){width:15%!important} table.tz.slim col:nth-child(4),table.tz.slim col:nth-child(5){width:23%!important}
+ table.tz:not(.slim) col:nth-child(1){width:19%!important} table.tz:not(.slim) col:nth-child(2),table.tz:not(.slim) col:nth-child(3){width:12%!important} table.tz:not(.slim) col:nth-child(4),table.tz:not(.slim) col:nth-child(5){width:18%!important} table.tz:not(.slim) col:nth-child(6){width:21%!important}
+ .tz .nb{width:36mm}
+ table.tz:not(.slim) .nb{width:30mm}
+ table.tz.slim td,table.tz.slim th{padding-left:10px;padding-right:12px}
+ .tz tr.b2 td{background:#eeeeee!important}
+ .tz tr.we td{background:#e2e2e2!important;color:#222}
+ .tz tr.we td:first-child{font-weight:700;color:#000}
+ .tz tr.df td{border-top:1px solid #999}
+ .tz tr.td.b1 td{background:none!important}
+ .tz tr.td.b2 td{background:#eeeeee!important}
+ .tz tr.ws td{background:#e6e6e6!important;border-bottom:2px solid #000}
+ .tz tfoot td{background:#ccc!important;color:#000!important;font-size:11pt}
+ .tz .nt{display:table-cell;color:#333;font-size:8.5pt}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .sig{display:flex;gap:40px;margin-top:28px}
+ .sig div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:8.5pt}
+ .pf{margin-top:12px;font-size:8pt;color:#666}
+}
+</style>
+</head>
+<body>
+<header id="hdr"></header>
+<main id="main"></main>
+<div id="modal"></div>
+<div id="ov"></div>
+<div id="toast"></div>
+<div id="print"></div>
+<script>
+'use strict';
+/* =========================================================
+   Jet-Office – Zeiterfassung für das Büro-Terminal (Office-Version von Jet-Zeit,
+   ohne Import/Export, Monatsmeldung, eigenes Gerät und Komplettpaket)
+   Version 1.25 · Vollversion Jet-Zeit und Office-Version Jet-Office aus einer Quelle · Version 1.24 · neues JET-Logo, sprechende Dateinamen (Druck/PDF, Meldung), Hinweise bei Import/Export, Android-Ausgaben über Teilen · Version 1.23 · ohne Startmitarbeiter und ohne Übernahmedaten (PC und Web identisch) · Version 1.22 · Monatsmeldung mit Gesamtstunden, Daten importieren/exportieren · Copyright-Würfel, Std./Min ausgerichtet · bis 12 Mitarbeiter · Abschluss pro Mitarbeiter · Datenordner verständlicher · Admin-Gerät geschützt · Personalnummer als Schlüssel · Einzelmodus eingeschränkt · PIN pro Mitarbeiter · PDF-Ausgabe · iPhone/iPad · Monatsmeldung & Monatsabschluss · Terminal- und Einzelmodus (eigenes Gerät) · installierbare Web-App (Android/PC) · Daten bei jeder Eingabe gespeichert:
+   localStorage (sofort) + IndexedDB (Zweitkopie + Tagessicherungen)
+   + optional Datei jetzeit-daten.json in einem Datenordner (PC/Android, File System Access API)
+   ========================================================= */
+const VERSION='1.25';
+/* V1.25: OFFICE=true erzeugt „Jet-Office“ (nur Büro-Terminal). Beim Erzeugen der Office-Version wird dieser Schalter gesetzt
+   und alle Bereiche zwischen den Marken FULL … /FULL werden aus der Datei entfernt (Import/Export, Monatsmeldung, eigenes Gerät, Komplettpaket). */
+const OFFICE=true;
+const APP=OFFICE?'Jet-Office':'Jet-Zeit';
+const JET_LOGO='data:image/png;base64,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';
+const JET_LOGO_OLD_PRE='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhcAAACMCAYAAADP54vhAACEvElEQVR42uy9eZhcV3Xu/Vt7n1PVLUu2JSwZCzC2CRBaQAgy2B'; /* V1.24: altes Logo erkennen und ersetzen */
+const LS='jetzeit_db_v1';
+const MAX_EMP=12;
+const DEF_S={company:'JET Tankstelle Mäder',subtitle:'Neue Landstraße 84 · 6841 Mäder',boss:'Gökhan Ünlü',logo:JET_LOGO,accent:'#ffb701',accentText:'#024794',round:5,pinLen:4,requirePin:true,adminPin:'0000',idleSec:60,afterBookSec:5,empEdit:true,hourFmt:'stdmin',tileCols:0,tileRows:0,tileW:240,tileH:210,tileStyle:'color',bgImage:'',bgDim:25,pauseOn:false,pauseAfter:6,pauseMin:30,bakRemind:7,lastBackup:'',notesOn:false};
+const COLORS=['#024794','#ffb701','#1f77b4','#2e9e5b','#e07b00','#8e44ad','#c0392b','#16a085','#d4a017','#34495e','#e84393','#6d4c41'];
+const WD=['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'];
+const WDL=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MON=['Jänner','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const main=$('#main');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addDays=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;};
+const mondayOf=d=>addDays(d,-((d.getDay()+6)%7));
+const fmtDate=d=>WD[d.getDay()]+' '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+const fmtDateT=d=>'<span class="wd">'+WD[d.getDay()]+'</span>'+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.<span class="yr">'+d.getFullYear()+'</span>';
+const hmParts=v=>{const m=/^(?:(\d+ Std\.))?(?: ?(\d+ Min))?$/.exec(String(v||''));return m&&(m[1]||m[2])?[m[1]||'',m[2]||'']:null;};
+const nbx=v=>{if(!v)return'';const p=hmParts(v);return p?'<span class="nb"><span class="nh">'+p[0]+'</span><span class="nm">'+p[1]+'</span></span>':'<span class="nb">'+v+'</span>';};
+const dmy=d=>pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+const dm=d=>pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.';
+function hm(m,plus){if(m==null)return'';const x=((m%1440)+1440)%1440;return pad(Math.floor(x/60))+':'+pad(x%60)+(plus&&m>=1440?' ⁺¹':'');}
+const hmx=m=>m==null?'':hm(m)+(m>=1440?' (+1)':'');
+function toMin(s){if(!s)return null;const p=s.split(':').map(Number);if(p.length<2||isNaN(p[0])||isNaN(p[1]))return null;return p[0]*60+p[1];}
+function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y0)/864e5+1)/7);}
+function fmtH(min){min=Math.round(min||0);const f=DB.settings.hourFmt;if(f==='hm')return Math.floor(min/60)+':'+pad(min%60);if(f==='dec')return (min/60).toFixed(2).replace('.',',');
+ const h=Math.floor(min/60),m=min%60;if(!h)return m+' Min';return h+' Std.'+(m?' '+m+' Min':'');}
+const unitTxt=()=>({hm:'Std:Min',dec:'Std'})[DB.settings.hourFmt]||'';
+const dec=min=>(Math.round(min||0)/60).toFixed(2).replace('.',',');
+function lum(hex){const h=(hex||'#000').replace('#','');const r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);return (0.299*r+0.587*g+0.114*b)/255;}
+const txtOn=c=>lum(c)>0.62?'#1d2530':'#ffffff';
+const fullName=e=>(e.first+' '+(e.last||'')).trim();
+const notesOn=()=>!!DB.settings.notesOn; /* ab V1.6 global für alle Mitarbeiter */
+const opt=(o,cur)=>`<option value="${esc(o[0])}" ${String(o[0])===String(cur)?'selected':''}>${esc(o[1])}</option>`;
+/* Kürzel: 1. Buchstabe Vorname + 2 Buchstaben Nachname, klein (Max Mustermann → mmu) */
+const kuerzel=e=>{const t=s=>String(s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'s').replace(/[^a-z0-9]/g,'');
+ const f=t(e.first),l=t(e.last);return(l?f.slice(0,1)+l.slice(0,2):f.slice(0,3))||'ma';};
+const nrPart=e=>String(e.nr||'').trim().replace(/[^\w-]/g,'')||'ohneNr';
+const empFile=(e,what,d)=>kuerzel(e)+'_'+nrPart(e)+(what?'_'+what:'')+'_'+ymd(d||new Date())+'.json';
+const safeName=s=>s.replace(/[^\wäöüÄÖÜß\- ]+/g,'').replace(/\s+/g,'_');
+
+/* ---------- Data ---------- */
+/* Gerätekennung: bleibt auf diesem Gerät, wandert nicht mit Sicherungen (für Herkunft der Buchungen, V1.11 Monatsmeldung) */
+const DEV=(()=>{let d=null;try{d=JSON.parse(localStorage.getItem('jetzeit_dev')||'null');}catch(e){}if(!d||!d.id){d={id:uid(),name:''};try{localStorage.setItem('jetzeit_dev',JSON.stringify(d));}catch(e){}}return d;})();
+function saveDev(){try{localStorage.setItem('jetzeit_dev',JSON.stringify(DEV));}catch(e){}}
+const isPersonal=()=>!OFFICE&&DB.mode==='personal';
+let memOnly=false,lsOk=true,idbOk=null,fresh=false,persisted=false,saveT=null,lastSaved=null;
+function seed(){return{ver:1,settings:{...DEF_S},emps:[],data:{}};} /* ab V1.23: startet ohne Mitarbeiter (PC und Web) */
+function norm(d){d.settings={...DEF_S,...(d.settings||{})};d.emps=Array.isArray(d.emps)?d.emps:[];d.data=d.data||{};d.meta=d.meta||{rev:0,savedAt:''};return d;}
+function load(){let d=null;try{const s=localStorage.getItem(LS);if(s)d=JSON.parse(s);}catch(e){lsOk=false;}
+ if(!d||typeof d!=='object'){d=seed();fresh=true;}
+ return norm(d);}
+let DB=load();
+/* --- IndexedDB: zweite Kopie (Schlüssel 'db'), Tagessicherungen 'auto-JJJJ-MM-TT', Sicherheitskopien 'safe-…', Verzeichnis 'snaps' --- */
+const IDB_NAME='jetzeit',IDB_ST='kv';let idbP=null;
+function idb(){if(idbP)return idbP;idbP=new Promise((res,rej)=>{try{const r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(IDB_ST);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});return idbP;}
+function idbDo(mode,fn){return idb().then(db=>new Promise((res,rej)=>{const tx=db.transaction(IDB_ST,mode),r=fn(tx.objectStore(IDB_ST));tx.oncomplete=()=>res(r?r.result:undefined);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error);}));}
+const idbGet=k=>idbDo('readonly',st=>st.get(k));
+const idbPut=(k,v)=>idbDo('readwrite',st=>st.put(v,k));
+const idbDel=k=>idbDo('readwrite',st=>st.delete(k));
+function countBk(d){let n=0,min='',max='';Object.values(d.data||{}).forEach(o=>Object.entries(o).forEach(([k,a])=>{n+=a.length;if(!min||k<min)min=k;if(!max||k>max)max=k;}));return{n,min,max,emps:(d.emps||[]).length};}
+async function putSnap(key,label){const c=countBk(DB);await idbPut(key,DB);const m=(await idbGet('snaps'))||{};m[key]={label,time:new Date().toISOString(),emps:c.emps,n:c.n};await idbPut('snaps',m);}
+function save(){DB.meta=DB.meta||{rev:0};DB.meta.rev=(DB.meta.rev||0)+1;DB.meta.savedAt=new Date().toISOString();
+ try{localStorage.setItem(LS,JSON.stringify(DB));lsOk=true;}catch(e){lsOk=false;}
+ clearTimeout(saveT);saveT=setTimeout(flushIdb,250);schedFile();updDot();}
+function flushIdb(){clearTimeout(saveT);saveT=null;if(!window.indexedDB){idbOk=false;updDot();return Promise.resolve();}
+ const d=new Date();return idbPut('db',DB).then(()=>putSnap('auto-'+ymd(d),'Automatisch – Stand '+fmtDate(d))).then(()=>{idbOk=true;lastSaved=new Date();updDot();}).catch(e=>{idbOk=false;updDot();console.warn('IndexedDB',e);});}
+async function safetyCopy(label){try{await flushIdb();await putSnap('safe-'+Date.now(),label);}catch(e){console.warn(e);}}
+async function pruneSnaps(){try{const m=(await idbGet('snaps'))||{};const ks=Object.keys(m).sort().reverse();
+ const del=[...ks.filter(k=>k.startsWith('auto-')).slice(14),...ks.filter(k=>k.startsWith('safe-')).slice(10)];
+ for(const k of del){await idbDel(k);delete m[k];}if(del.length)await idbPut('snaps',m);}catch(e){}}
+/* Beim Start: beide Kopien vergleichen und die neuere verwenden */
+async function bootStore(){try{if(navigator.storage&&navigator.storage.persist){persisted=await navigator.storage.persisted();if(!persisted)persisted=await navigator.storage.persist();}}catch(e){}
+ if(window.indexedDB){try{const d=await idbGet('db');
+   if(d&&d.emps&&d.data){const r1=(d.meta&&d.meta.rev)||0,r0=(DB.meta&&DB.meta.rev)||0;
+    if(fresh||r1>r0){const wasFresh=fresh;DB=norm(d);try{localStorage.setItem(LS,JSON.stringify(DB));lsOk=true;}catch(e){lsOk=false;}migrate();if(scr==='home')render();if(wasFresh)toast('Daten aus dem Zweitspeicher wiederhergestellt');}}
+   await flushIdb();await pruneSnaps();}catch(e){idbOk=false;console.warn('IndexedDB',e);}}
+ else idbOk=false;
+ fresh=false;updDot();await bootFile();}
+addEventListener('pagehide',()=>{if(saveT)flushIdb();if(fsT)flushFile();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){if(saveT)flushIdb();if(fsT)flushFile();}});
+/* ---------- V1.7: Speicherung in eine echte Datei (File System Access API, PC + Android-Chrome) ---------- */
+const FS_OK=typeof window.showDirectoryPicker==='function';
+const DATA_FILE='jetzeit-daten.json',BAK_DIR='Sicherungen',FILE_KEEP=30;
+let fsErr='',dirLabel='',dirH=null,fileSt='none',fsBusy=false,fsAgain=false,fsT=null,lastFile=null,fsPruned=false; /* fileSt: none|ok|prompt|err */
+async function fsPerm(h,ask){const o={mode:'readwrite'};try{let p=await h.queryPermission(o);if(p!=='granted'&&ask)p=await h.requestPermission(o);return p;}catch(e){return'granted';}}
+async function fsWriteText(dir,name,text){const fh=await dir.getFileHandle(name,{create:true});const w=await fh.createWritable();await w.write(text);await w.close();}
+async function fsReadJson(dir,name){try{const fh=await dir.getFileHandle(name);return JSON.parse(await (await fh.getFile()).text());}catch(e){return null;}}
+const fileWrap=()=>JSON.stringify({app:'Jet-Zeit',version:VERSION,created:new Date().toISOString(),counts:countBk(DB),db:DB},null,1);
+function schedFile(){if(!dirH||fileSt!=='ok')return;clearTimeout(fsT);fsT=setTimeout(flushFile,400);}
+async function flushFile(){clearTimeout(fsT);fsT=null;if(!dirH||fileSt!=='ok')return;if(fsBusy){fsAgain=true;return;}fsBusy=true;
+ try{const txt=fileWrap();await fsWriteText(dirH,DATA_FILE,txt);
+  const bd=await dirH.getDirectoryHandle(BAK_DIR,{create:true});await fsWriteText(bd,'jetzeit_'+ymd(new Date())+'.json',txt);
+  lastFile=new Date();if(!fsPruned){fsPruned=true;fsPrune(bd);}}
+ catch(e){console.warn('Datei',e);fsErr=(e&&(e.name+': '+e.message))||String(e);fileSt=e&&(e.name==='NotAllowedError'||e.name==='SecurityError')?'prompt':'err';if(scr==='home'&&!modalOpen())renderHome();}
+ fsBusy=false;updDot();if(fsAgain){fsAgain=false;flushFile();}}
+async function fsPrune(bd){try{const n=[];for await(const [name,h] of bd.entries())if(h.kind==='file'&&/^jetzeit_\d{4}-\d\d-\d\d\.json$/.test(name))n.push(name);
+ n.sort().reverse();for(const x of n.slice(FILE_KEEP))await bd.removeEntry(x);}catch(e){}}
+/* Neuere Daten in der Datei (z. B. nach gelöschtem Browserspeicher) übernehmen */
+async function syncFromFile(){const j=await fsReadJson(dirH,DATA_FILE),d=j&&(j.db||j);if(!d||!Array.isArray(d.emps)||!d.data)return false;
+ const r1=(d.meta&&d.meta.rev)||0,r0=(DB.meta&&DB.meta.rev)||0;if(r1<=r0)return false;
+ await safetyCopy('Sicherheitskopie vor Übernahme aus dem Datenordner');DB=norm(d);try{localStorage.setItem(LS,JSON.stringify(DB));lsOk=true;}catch(e){lsOk=false;}
+ migrate();render();toast('Neuere Daten aus dem Datenordner übernommen');return true;}
+async function bootFile(){if(!window.indexedDB)return;try{const h=await idbGet('dirHandle');if(!h)return;dirH=h;try{dirLabel=(await idbGet('dirLabel'))||'';}catch(e){}
+  if(await fsPerm(h,false)!=='granted'){fileSt='prompt';updDot();if(scr==='home'&&!modalOpen())renderHome();return;}
+  fileSt='ok';await syncFromFile();await flushFile();}catch(e){console.warn('Datenordner',e);if(dirH)fileSt='err';}
+ updDot();if(scr==='home'&&!modalOpen())renderHome();}
+async function fsGrant(){if(!dirH)return;fsErr='';const p=await fsPerm(dirH,true);
+ if(p==='granted'){fileSt='ok';try{await syncFromFile();}catch(e){}await flushFile();toast(fileSt==='ok'?'Datenordner freigegeben – Daten werden in die Datei geschrieben':'Datenordner nicht erreichbar',fileSt!=='ok');}
+ else toast('Freigabe nicht erteilt – Daten bleiben vorerst nur im Browser',true);updDot();render();}
+async function fsChoose(){let h;try{h=await window.showDirectoryPicker({id:'jetzeit',mode:'readwrite'});}catch(e){if(!e||e.name!=='AbortError')toast('Ordner konnte nicht gewählt werden: '+((e&&e.message)||e),true);return;}
+ if(/^sicherungen$/i.test(h.name)){toast('Bitte nicht den Unterordner „Sicherungen“ wählen, sondern den Ordner darüber (z. B. Daten) – dort liegt jetzeit-daten.json.',true);return;}
+ if(/^[\\/]$|^[A-Za-z]:\\?$/.test(h.name)){toast('Bitte nicht ein ganzes Laufwerk wählen, sondern einen Unterordner darin (z. B. Jet-Zeit)',true);return;}
+ if(await fsPerm(h,true)!=='granted'){toast('Keine Schreibberechtigung für diesen Ordner',true);return;}
+ const j=await fsReadJson(h,DATA_FILE),d=j&&(j.db||j);
+ const use=async adopt=>{dirH=h;fileSt='ok';fsPruned=false;try{await idbPut('dirHandle',h);}catch(e){}
+  if(adopt){await safetyCopy('Sicherheitskopie vor Übernahme aus dem Datenordner');const rev=Math.max((DB.meta&&DB.meta.rev)||0,(d.meta&&d.meta.rev)||0);DB=norm(d);DB.meta.rev=rev;save();}
+  await flushFile();render();toast(fileSt==='ok'?'Datenordner „'+h.name+'“ verbunden':'Datei konnte nicht geschrieben werden',fileSt!=='ok');};
+ if(d&&Array.isArray(d.emps)&&d.data){const c=countBk(d),cur=countBk(DB);
+  const b=openModal(`<h2>📁 Daten im Ordner gefunden</h2><p>Im Ordner „${esc(h.name)}“ liegen bereits Jet-Zeit-Daten vom <b>${fmtTs(j.created||(d.meta&&d.meta.savedAt))}</b>:<br>${c.emps} Mitarbeiter (${esc(d.emps.map(e=>e.first).join(', ')||'–')}), ${c.n} Buchungen.</p><p class="mut">Auf diesem Gerät: ${cur.emps} Mitarbeiter, ${cur.n} Buchungen. Der jeweils nicht verwendete Stand wird als Sicherheitskopie aufgehoben.</p><div class="acts"><button class="btn" id="fdK">Daten dieses Geräts verwenden</button><span class="sp"></span><button class="btn p" id="fdA">Daten aus dem Ordner übernehmen</button></div>`);
+  b.querySelector('#fdK').onclick=async()=>{closeModal();try{const bd=await h.getDirectoryHandle(BAK_DIR,{create:true});await fsWriteText(bd,'jetzeit_ersetzt_'+ymd(new Date())+'_'+pad(new Date().getHours())+pad(new Date().getMinutes())+'.json',JSON.stringify(j,null,1));}catch(e){}await use(false);};
+  b.querySelector('#fdA').onclick=async()=>{closeModal();await use(true);};}
+ else await use(false);}
+function fsDisconnect(){confirmDlg('Datenordner trennen? Die Dateien im Ordner bleiben erhalten, es wird aber nicht mehr hineingeschrieben. Die Daten bleiben weiterhin im Browser gespeichert.','Trennen',async()=>{dirH=null;fileSt='none';lastFile=null;dirLabel='';try{await idbDel('dirHandle');await idbDel('dirLabel');}catch(e){}updDot();render();toast('Datenordner getrennt');});}
+const SAVE_OK=typeof window.showSaveFilePicker==='function'&&!/Android/i.test(navigator.userAgent);
+async function saveAs(blob,name,kind){if(!SAVE_OK){download(blob,name);return true;}
+ const ext=name.slice(name.lastIndexOf('.'));
+ try{const h=await window.showSaveFilePicker({id:'jetzeit-'+kind,suggestedName:name,startIn:'downloads',types:[{description:ext==='.html'?'Jet-Office Komplettpaket':APP+' Sicherung',accept:{[blob.type||'application/octet-stream']:[ext]}}]});
+  const w=await h.createWritable();await w.write(blob);await w.close();toast('Gespeichert: '+h.name);return true;}
+ catch(e){if(e&&e.name==='AbortError')return false;download(blob,name);return true;}}
+const saveTip=()=>SAVE_OK?'Öffnet das Fenster „Speichern unter“: Ordner und Dateinamen selbst wählen (z. B. USB-Stick oder P:\\Jet-Zeit\\Sicherungen). Beim nächsten Mal wird der zuletzt verwendete Ordner vorgeschlagen.'
+ :'Die Datei wird im Download-Ordner des Browsers gespeichert (meist „Downloads“, am iPad: App „Dateien“ → Downloads). Hat Chrome/Edge „Vor dem Download fragen, wo eine Datei gespeichert werden soll“ eingeschaltet, kann der Ordner gewählt werden.';
+function fsWhy(){const ua=navigator.userAgent;let top=true;try{top=window.self===window.top;}catch(e){top=false;}
+ let why;
+ if(location.protocol==='file:'&&/Chrome|Edg/.test(ua)&&!/Android/i.test(ua))why='Jet-Office wurde von einem <b>Netzlaufwerk oder Netzwerkpfad</b> geöffnet (z. B. P:). Von dort stellen Chrome und Edge die Ordner-Funktion nicht bereit.<br><b>Lösung:</b> index.html auf den PC kopieren (z. B. <b>C:\\Jet-Zeit\\index.html</b>) und von dort öffnen. Der Datenordner selbst darf auf dem Netzlaufwerk liegen (z. B. P:\\Jet-Zeit\\Daten). Achtung: Die lokale Kopie hat einen eigenen Speicher – vorher hier „Sicherung speichern“ und die Sicherung danach dort einspielen.';
+ else if(!window.isSecureContext)why='Jet-Office läuft über eine unsichere Adresse (http://… ohne localhost). Die Speicherung in einen Ordner braucht <b>https://</b> oder <b>http://localhost</b> – am PC z. B. über <b>Jet-Zeit-Start.cmd</b> starten.';
+ else if(!top)why='Jet-Office läuft eingebettet in einer anderen Seite oder Vorschau. Bitte die Datei direkt in Chrome/Edge öffnen (bzw. über <b>Jet-Zeit-Start.cmd</b>).';
+ else if(/Firefox|FxiOS/.test(ua))why='Firefox unterstützt die Speicherung in einen Ordner nicht – bitte Chrome oder Edge verwenden.';
+ else if(/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||(/Safari/.test(ua)&&!/Chrome|CriOS|Edg/.test(ua)))why='iPad/Safari unterstützt die Speicherung in einen Ordner nicht. Die Daten bleiben doppelt im Browser gespeichert – bitte regelmäßig eine Sicherung erstellen.';
+ else if(navigator.brave)why='Im Brave-Browser ist die Ordner-Funktion abgeschaltet – bitte Chrome oder Edge verwenden.';
+ else why='Dieser Browser stellt die Ordner-Funktion hier nicht bereit (mögliche Gründe: Richtlinie der Firmen-IT, sehr alte Version, besonderer Browser-Modus). Bitte die Diagnose-Zeile unten an Claude weitergeben.';
+ const br=(ua.match(/Edg\/[\d.]+/)||ua.match(/Chrome\/[\d.]+/)||ua.match(/Firefox\/[\d.]+/)||ua.match(/Version\/[\d.]+.*Safari/)||[''])[0];
+ return why+`<br><span class="small">Diagnose: Adresse <b>${esc(location.protocol+'//'+location.host+location.pathname)}</b> · Browser ${esc(br||'?')} · sicher: ${window.isSecureContext?'ja':'nein'} · eingebettet: ${top?'nein':'ja'} · showDirectoryPicker: ${'showDirectoryPicker' in window?'ja':'nein'}</span>`;}
+const fileStTxt=()=>fileSt==='ok'?'<b style="color:var(--ok)">✅ aktiv</b>'+(lastFile?' – zuletzt geschrieben '+hm(lastFile.getHours()*60+lastFile.getMinutes())+' Uhr':''):fileSt==='prompt'?'<b style="color:#b26a00">⚠ Freigabe nötig</b>':'<b style="color:var(--go)">❌ nicht erreichbar</b> – der gewählte Ordner „'+esc(dirH?dirH.name:'')+'“ ist nicht verfügbar (Laufwerk getrennt, Ordner umbenannt/gelöscht?). Bitte mit „Anderen Ordner wählen“ neu auswählen.'+(fsErr?'<br><span class="small mut">Technisch: '+esc(fsErr)+'</span>':'');
+/* ---------- V1.12: iPhone / iPad ---------- */
+const IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const STANDALONE=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const FS_API=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);
+if(IOS)document.documentElement.classList.add('ios');
+/* iOS graut .json-Dateien in der Dateiauswahl teils aus → Dateityp-Filter auf iPhone/iPad entfernen */
+if(IOS){const strip=r=>r.querySelectorAll&&r.querySelectorAll('input[type=file][accept]').forEach(i=>i.removeAttribute('accept'));
+ new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1){if(n.matches&&n.matches('input[type=file][accept]'))n.removeAttribute('accept');strip(n);}}))).observe(document.documentElement,{childList:true,subtree:true});}
+function iosInstallHelp(){const safari=!/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent),ipad=navigator.platform==='MacIntel'||/iPad/.test(navigator.userAgent);
+ const b=openModal(`<h2>📲 Jet-Office als App installieren</h2>
+ ${safari?'':'<p class="warn">Bitte diese Seite in <b>Safari</b> öffnen (Adresse kopieren und in Safari einfügen) – nur dort klappt das zuverlässig.</p>'}
+ <ol style="line-height:1.7;padding-left:22px;margin:8px 0">
+ <li>Auf das <b>Teilen-Symbol</b> tippen (Quadrat mit Pfeil nach oben, ${ipad?'oben rechts':'unten in der Mitte'}).</li>
+ <li>Nach unten blättern und <b>„Zum Home-Bildschirm“</b> wählen.</li>
+ <li>Oben rechts <b>„Hinzufügen“</b> tippen.</li>
+ <li>Safari schließen und Jet-Office künftig <b>nur noch über das neue Symbol</b> starten.</li></ol>
+ <p class="mut small">Wichtig: Nur als App vom Home-Bildschirm bleiben die Daten dauerhaft gespeichert. Im normalen Safari-Fenster kann iOS die Daten nach einigen Tagen ohne Benutzung löschen.</p>
+ <div class="acts"><span class="sp"></span><button class="btn p" id="ihOk">OK</button></div>`);
+ b.querySelector('#ihOk').onclick=closeModal;}
+/* ---------- V1.9: installierbare Web-App ---------- */
+var instEv=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEv=e;if(scr==='home'&&!modalOpen())renderHome();});
+addEventListener('appinstalled',()=>{instEv=null;toast('Jet-Office wurde als App installiert');if(scr==='home'&&!modalOpen())renderHome();});
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
+function doInstall(){if(!instEv){if(IOS)iosInstallHelp();return;}instEv.prompt();instEv.userChoice.finally(()=>{instEv=null;if(scr==='home')renderHome();});}
+/* ---------- V1.10: Pfad des Datenordners (Browser liefert nur den Ordnernamen) ---------- */
+const labelFits=()=>{const p=String(dirLabel||'').replace(/[\\/›>\s]+$/,'').split(/[\\/›>]/).pop().trim().toLowerCase();return !dirLabel||!dirH||p===dirH.name.toLowerCase();};
+const dirShow=()=>dirLabel||(dirH?dirH.name:'');
+function askDirLabel(fresh){if(!dirH)return;const android=/Android/i.test(navigator.userAgent);
+ const pre=dirLabel&&!fresh?dirLabel:(android?'Tablet › Dokumente › '+dirH.name:'');
+ const b=openModal(`<h2>📁 Wo liegt dieser Ordner?</h2><p class="mut">Der Browser verrät aus Datenschutzgründen nur den Ordnernamen <b>„${esc(dirH.name)}“</b>. Tragen Sie den vollständigen Pfad zur Anzeige ein (z. B. K:\\Claude\\Jet-Zeit). Der Pfad muss auf <b>„${esc(dirH.name)}“</b> enden – er ist nur eine Anzeige, den Ordner selbst haben Sie bereits gewählt.</p>
+ <label class="fld">Speicherort<input id="dlIn" value="${esc(pre)}" placeholder="${android?'z. B. Tablet › Dokumente › Jet-Zeit':'z. B. P:\\Jet-Zeit\\'+esc(dirH.name)}"></label>
+ <div class="acts"><button class="btn" id="dlNo">Überspringen</button><span class="sp"></span><button class="btn p" id="dlOk">Speichern</button></div>`);
+ const inp=b.querySelector('#dlIn');setTimeout(()=>inp.focus(),50);
+ b.querySelector('#dlNo').onclick=closeModal;
+ b.querySelector('#dlOk').onclick=async()=>{dirLabel=inp.value.trim();try{await idbPut('dirLabel',dirLabel);}catch(e){}closeModal();render();};}
+/* ---------- V1.11: Monatsmeldung & Monatsabschluss ---------- */
+const monKey=(y,m)=>y+'-'+pad(m+1);
+const monLabel=k=>{const [y,m]=k.split('-').map(Number);return MON[m-1]+' '+y;};
+function defMonth(){const d=new Date();if(d.getDate()<=10)return shiftMonth(monKey(d.getFullYear(),d.getMonth()),-1);return monKey(d.getFullYear(),d.getMonth());}
+function shiftMonth(k,n){const [y,m]=k.split('-').map(Number);const d=new Date(y,m-1+n,1);return monKey(d.getFullYear(),d.getMonth());}
+function dayConflicts(sh){const bad=new Set();for(let a=0;a<sh.length;a++)for(let b=a+1;b<sh.length;b++){const x=sh[a],y=sh[b];if(x.o==null||y.o==null)continue;if(x.i<y.o&&y.i<x.o){bad.add(a);bad.add(b);}}return bad;}
+let abMonth=null,abSel=null;
+const isClosed=(mk,id)=>!!((DB.closed||{})[mk]||((DB.closedEmp||{})[mk]||{})[id]);
+const closedAt=(mk,id)=>((DB.closed||{})[mk]||{}).at||((DB.closedEmp||{})[mk]||{})[id]||'';
+const selIds=()=>abSel?DB.emps.filter(e=>abSel.has(e.id)).map(e=>e.id):DB.emps.map(e=>e.id);
+function monthStats(e,mk){const o=DB.data[e.id]||{},src=new Set();let tot=0,cf=0,open=0;
+ for(const [k,a] of Object.entries(o)){if(!k.startsWith(mk))continue;tot+=dayCalc(a).net;cf+=dayConflicts(a).size;a.forEach(s=>{src.add(s.src&&s.src!==DEV.id?s.src:'_');if(s.o==null)open++;});}
+ return{tot,cf,open,src:[...src]};}
+function aAbschl(){const mk=abMonth||(abMonth=defMonth()),sel=new Set(selIds());
+ const ncl=DB.emps.filter(e=>isClosed(mk,e.id)).length,cl=DB.emps.length&&ncl===DB.emps.length,part=ncl&&!cl;
+ const selCl=DB.emps.filter(e=>sel.has(e.id)&&isClosed(mk,e.id)).length,selOp=sel.size-selCl;
+ const rows=DB.emps.map(e=>{const st=monthStats(e,mk);  return`<tr><td><input type="checkbox" data-sel="${e.id}" ${sel.has(e.id)?'checked':''} style="width:18px;height:18px"></td><td>${esc(e.nr||'–')}</td><td><span style="display:inline-flex;align-items:center;gap:8px">${avatar(e,'xs')}<span>${esc(fullName(e))}${e.active?'':' <span class="small mut">(inaktiv)</span>'}</span></span></td>${''}<td class="n"><b>${fmtH(st.tot)}</b></td><td>${st.cf?`<span class="bad" data-cf="${e.id}">⚠ ${st.cf} Überschn.</span>`:''}${st.open?` <span class="small" style="color:#b26a00">${st.open} offen</span>`:''}</td><td>${isClosed(mk,e.id)?'<span class="badge cl">🔒 '+fmtTs(closedAt(mk,e.id)).replace(' Uhr','')+'</span>':'<span class="badge op">offen</span>'}</td></tr>`;}).join('');
+ const tot=DB.emps.reduce((s,e)=>s+monthStats(e,mk).tot,0);
+ return`<div class="card"><div class="mnav"><button class="btn" id="abP">‹</button><b>${monLabel(mk)}</b><button class="btn" id="abN">›</button><span class="badge ${cl?'cl':'op'}">${cl?'🔒 alle abgeschlossen':part?'🔒 '+ncl+' von '+DB.emps.length+' abgeschlossen':'offen'}</span></div>
+ <div class="acts">${''}<button class="btn" id="abOut" ${sel.size?'':'disabled'}>🖨 Drucken / Export (${sel.size} ausgewählt)</button><span class="sp"></span>${selCl?`<button class="btn" id="abOpen">🔓 Wieder öffnen (${selCl})</button>`:''}<button class="btn d" id="abLock" ${selOp?'':'disabled'}>🔒 Abschließen (${selOp} ausgewählt)</button></div>
+ <p class="small mut">${OFFICE?'Ablauf: Zeitlisten prüfen (Überschneidungen sind rot markiert), dann drucken bzw. exportieren und den Monat abschließen. Abschließen und Drucken/Export gelten für die <b>angehakten</b> Mitarbeiter (Vorgabe: alle).':''}</p></div>
+ <div class="card"><h3>Mitarbeiter ${monLabel(mk)}</h3><table class="mtab"><thead><tr><th><input type="checkbox" id="abAll" ${sel.size===DB.emps.length&&DB.emps.length?'checked':''} title="alle / keine" style="width:18px;height:18px"></th><th>Pers.-Nr.</th><th>Mitarbeiter</th>${''}<th class="n">Stunden</th><th>Hinweise</th><th>Abschluss</th></tr></thead><tbody>${rows||'<tr><td colspan="${OFFICE?6:8}" class="mut">Noch keine Mitarbeiter.</td></tr>'}</tbody><tfoot><tr><td></td><td colspan="${OFFICE?2:4}"><b>Summe ausgewählte Mitarbeiter</b></td><td class="n"><b>${fmtH(DB.emps.filter(e=>sel.has(e.id)).reduce((s,e)=>s+monthStats(e,mk).tot,0))}</b></td><td colspan="2"></td></tr></tfoot></table></div>
+ ${''}`;}
+function bAbschl(){const mk=abMonth;
+ $('#abP').onclick=()=>{abMonth=shiftMonth(mk,-1);abSel=null;render();};$('#abN').onclick=()=>{abMonth=shiftMonth(mk,1);abSel=null;render();};
+ main.querySelectorAll('[data-sel]').forEach(c=>c.onchange=()=>{abSel=new Set(selIds());c.checked?abSel.add(c.dataset.sel):abSel.delete(c.dataset.sel);render();});
+ $('#abAll').onchange=ev=>{abSel=new Set(ev.target.checked?DB.emps.map(e=>e.id):[]);render();};
+ $('#abOut').onclick=()=>{const [y,m]=mk.split('-').map(Number);view={mode:'month',a:new Date(y,m-1,1)};const ids=selIds();OUT_ONLY=ids;outputDialog(DB.emps.find(e=>ids.includes(e.id))||DB.emps[0],true);const a=$('#oAll');if(a){a.checked=true;const l=a.closest('label');if(l)l.lastChild.textContent=' Ausgewählte Mitarbeiter ('+ids.length+')';}};
+ const ao=$('#abOpen');if(ao)ao.onclick=()=>{const ids=selIds().filter(id=>isClosed(mk,id));confirmDlg(ids.length+' Mitarbeiter für '+monLabel(mk)+' wieder öffnen? Danach sind Korrekturen'+(OFFICE?'':' und Einlesen')+' wieder möglich.','Wieder öffnen',()=>{
+   if(DB.closed&&DB.closed[mk]){const at=DB.closed[mk].at;delete DB.closed[mk];DB.closedEmp=DB.closedEmp||{};DB.closedEmp[mk]={};DB.emps.forEach(e=>DB.closedEmp[mk][e.id]=at);}
+   ids.forEach(id=>{if(DB.closedEmp&&DB.closedEmp[mk])delete DB.closedEmp[mk][id];});save();render();});};
+ $('#abLock').onclick=()=>{const ids=selIds().filter(id=>!isClosed(mk,id));if(!ids.length)return;
+  const cf=DB.emps.filter(e=>ids.includes(e.id)).reduce((s,e)=>s+monthStats(e,mk).cf,0);
+  confirmDlg(`${monLabel(mk)} für <b>${ids.length} Mitarbeiter</b> abschließen?${cf?`<br><span style="color:var(--go)">⚠ Es gibt noch ${cf} Buchungen mit Überschneidungen.</span>`:''}<br><span class="mut">Danach sind für diesen Monat keine Korrekturen${OFFICE?'':' und kein Einlesen'} mehr möglich (wieder öffnen jederzeit möglich).</span>`,'Abschließen',()=>{DB.closedEmp=DB.closedEmp||{};DB.closedEmp[mk]=DB.closedEmp[mk]||{};const at=new Date().toISOString();ids.forEach(id=>DB.closedEmp[mk][id]=at);save();render();toast(monLabel(mk)+': '+ids.length+' Mitarbeiter abgeschlossen');});};
+ main.querySelectorAll('[data-cf]').forEach(x=>x.onclick=()=>{const [y,m]=mk.split('-').map(Number);adminEmpId=x.dataset.cf;adminTab='zeit';view={mode:'month',a:new Date(y,m-1,1)};render();});}
+/* ---------- V1.21: Copyright-Würfel ---------- */
+function cubeCard(){return`<div class="cpc" role="dialog" aria-label="Über Jet-Zeit"><div class="cw-stage"><div class="cw-glow"></div><div class="cw-tilt"><div class="cw-cube">
+ <div class="cw-f cw-fr"></div>
+ <div class="cw-f cw-ri"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="#fff" stroke="#024794" stroke-width="6"/><g stroke="#024794" stroke-width="3" stroke-linecap="round"><line x1="50" y1="16" x2="50" y2="23"/><line x1="84" y1="50" x2="77" y2="50"/><line x1="50" y1="84" x2="50" y2="77"/><line x1="16" y1="50" x2="23" y2="50"/></g><line class="cw-hh cw-a" x1="50" y1="50" x2="50" y2="31" stroke="#024794" stroke-width="5" stroke-linecap="round"/><line class="cw-hm cw-a" x1="50" y1="50" x2="50" y2="22" stroke="#ffb701" stroke-width="3.5" stroke-linecap="round"/><circle cx="50" cy="50" r="4.5" fill="#024794"/></svg></div>
+ <div class="cw-f cw-ba"><svg viewBox="0 0 100 100"><path d="M62 18V58Q62 80 42 80Q27 80 25 65" fill="none" stroke="rgba(2,71,148,.18)" stroke-width="13" stroke-linecap="round"/><path class="cw-j cw-a" d="M62 18V58Q62 80 42 80Q27 80 25 65" fill="none" stroke="#024794" stroke-width="13" stroke-linecap="round"/></svg></div>
+ <div class="cw-f cw-le"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="#ffb701" stroke-width="5"/><text x="50" y="62" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-weight="800" font-size="34" fill="#fff">JF</text></svg></div>
+ <div class="cw-f cw-to"></div><div class="cw-f cw-bo"></div></div></div></div>
+ <div class="cw-ttl"><b>Jet</b>-${OFFICE?'Office':'Zeit'}</div><div class="cw-v">Zeiterfassung · Version ${VERSION}</div><div class="cw-c cw-a">© 2026 by JF</div></div>`;}
+/* ---------- V1.21: Sichern mit einem Tipp (Startseite) ---------- */
+const bakTip=()=>MOBILE?'Antippen: Sicherungsdatei erstellen und über das Teilen-Menü ablegen – „In Dateien sichern“ (iCloud, auf dem Gerät, USB-Stick), Mail oder AirDrop.'+(isPersonal()?'':' Erfordert die Admin-PIN.'):'Klicken: Sicherungsdatei erstellen und einen Speicherort wählen (z. B. USB-Stick oder Netzlaufwerk). Erfordert die Admin-PIN.';
+function bakNow(){const go=async()=>{const f=backupFile();let ok=false;if(canShareFiles())ok=await shareFile(f.blob,f.name);else ok=await saveAs(f.blob,f.name,'bak');if(ok)markBackup();if(scr==='home')renderHome();};
+ if(isPersonal()){go();return;}
+ pinDialog({title:'Sicherung erstellen',sub:'Admin-PIN eingeben',len:0,check:p=>p===String(S().adminPin),ok:()=>{closeModal();go();}});}
+/* NAS/Laufwerk wieder erreichbar? Jede Minute still nachschreiben */
+setInterval(()=>{if(dirH&&fileSt==='err'){fileSt='ok';flushFile();}},60000);
+addEventListener('online',()=>{if(dirH&&fileSt==='err'){fileSt='ok';flushFile();}});
+/* Info-Knöpfe ⓘ */
+const INFO={
+ bak:'<b>Sicherungsdatei</b> (.json) = alle Daten dieses Geräts, ohne Programm.<br><br><b>Wofür:</b> regelmäßige Sicherung außerhalb des Geräts und Wiederherstellen nach einem Fehler oder auf einem neuen Gerät.<br><b>Wohin:</b> USB-Stick, Netzlaufwerk/NAS, iCloud/„In Dateien sichern“ oder per Mail an sich selbst – am besten an einen Ort außerhalb dieses Geräts.<br><b>Zurückholen:</b> „Sicherung einspielen“ → Datei wählen → Vorschau prüfen → bestätigen (der aktuelle Stand wird vorher automatisch gesichert).<br><br><b>Vertraulich:</b> Enthält PINs und Arbeitszeiten.',
+ folder:'<b>Datenordner</b> = Ordner, in den Jet-Office bei jeder Eingabe automatisch die Datei <b>jetzeit-daten.json</b> schreibt; dazu im Unterordner <b>Sicherungen</b> eine Datei pro Tag.<br><br><b>Richtig wählen:</b> den Ordner, in dem jetzeit-daten.json liegen soll, z. B. <b>P:\\Jet-Zeit\\Daten</b> (Netzwerk/NAS) oder <b>Dokumente\\Jet-Zeit\\Daten</b> (Einzel-PC) – gegebenenfalls im Auswahlfenster mit „Neuer Ordner“ anlegen.<br><b>Nicht wählen:</b> den Unterordner „Sicherungen“, Hauptordner wie Downloads/Dokumente/Desktop oder ein ganzes Laufwerk (sperrt der Browser).<br><b>Laufwerk weg?</b> Jet-Office speichert weiter im Browser und schreibt automatisch nach, sobald der Ordner wieder erreichbar ist.'};
+const ib=k=>`<button class="btn ib" data-info="${k}" title="Erklärung" style="min-height:30px;padding:2px 10px;font-size:14px">ⓘ</button>`;
+function bindInfo(){main.querySelectorAll('[data-info]').forEach(b=>b.onclick=()=>{const m=openModal(`<h2>ⓘ Erklärung</h2><p style="line-height:1.55">${INFO[b.dataset.info]}</p><div class="acts"><span class="sp"></span><button class="btn p" id="ibOk">OK</button></div>`);m.querySelector('#ibOk').onclick=closeModal;});}
+/* Speicherstatus (Punkt auf der Startseite) */
+function storeState(){memOnly=!lsOk&&idbOk===false&&fileSt!=='ok';if(memOnly)return'err';if(dirH&&fileSt!=='ok')return'warn';if(idbOk===null)return'ok';return lsOk&&idbOk?'ok':'warn';}
+function updDot(){const el=document.getElementById('sdot');if(!el)return;const s=storeState();el.className='sdot '+s;el.dataset.tip=s==='ok'?(dirH&&fileSt==='ok'?'Jede Eingabe wird sofort im Browser und zusätzlich in die Datei im Datenordner gespeichert. Antippen für Details.':'Jede Eingabe wird sofort doppelt im Browser dieses Geräts gespeichert. Eine Kopie außerhalb des Geräts gibt es nur über eine Sicherung (Administration → Sichern & Daten).'):s==='err'?'Achtung: Es konnte nichts gespeichert werden! Antippen für Details.':'Es wird nur eingeschränkt gespeichert (z. B. Datenordner nicht erreichbar). Antippen für Details.';el.textContent=s==='ok'?(dirH&&fileSt==='ok'?'● gespeichert (Datei + Browser)':'● gespeichert (Browser)'):s==='err'?'● NICHT gespeichert!':(dirH&&fileSt==='prompt'?'● Datenordner: Freigabe nötig':dirH&&fileSt==='err'?'● Datenordner nicht erreichbar':'● eingeschränkt gespeichert');}
+function storageInfo(){const s=storeState(),ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const b=openModal(`<h2>Speicherstatus</h2>
+ <p>Jede Eingabe wird sofort gespeichert:</p>
+ <p>${dirH?(fileSt==='ok'?'✅':fileSt==='prompt'?'⚠':'❌')+' Datei <b>jetzeit-daten.json</b> im Datenordner „'+esc(dirShow())+'“'+(fileSt==='prompt'?' – Freigabe nötig':fileSt==='err'?' – nicht erreichbar':'')+(lastFile?' <span class="mut small">(zuletzt '+hm(lastFile.getHours()*60+lastFile.getMinutes())+' Uhr)</span>':'')+'<br>':FS_OK?'ℹ Kein Datenordner gewählt (Administration → Sichern & Daten)<br>':''}${lsOk?'✅':'❌'} Hauptspeicher (localStorage)<br>${idbOk?'✅':idbOk===null?'⏳':'❌'} Zweitkopie + Tagessicherungen (IndexedDB)<br>${persisted?'✅ Speicher vom Browser als dauerhaft markiert':'ℹ Speicher nicht als dauerhaft markiert'}${lastSaved?'<br><span class="mut small">Zuletzt gespeichert: '+hm(lastSaved.getHours()*60+lastSaved.getMinutes())+' Uhr</span>':''}</p>
+ ${ios&&!standalone?'<p class="warn">iPad: Bitte Jet-Office über <b>Teilen → Zum Home-Bildschirm</b> starten. Sonst kann Safari die Daten nach einigen Tagen ohne Benutzung löschen.</p>':''}
+ <p class="mut small">Die Daten bleiben nur auf diesem Gerät. Unter ⚙ Administration → „Sichern & Daten“ regelmäßig eine Sicherung erstellen (Mail, AirDrop, USB-Stick, Netzlaufwerk).</p>
+ <div class="acts"><span class="sp"></span><button class="btn p" id="siOk">OK</button></div>`);
+ b.querySelector('#siOk').onclick=closeModal;}
+const S=()=>DB.settings;
+const getShifts=(e,key)=>((DB.data[e.id]||{})[key])||[];
+function setShifts(e,key,arr){if(!DB.data[e.id])DB.data[e.id]={};arr=arr.slice().sort((a,b)=>a.i-b.i);if(arr.length)DB.data[e.id][key]=arr;else delete DB.data[e.id][key];}
+function openShift(e){const t=new Date();for(const key of [ymd(t),ymd(addDays(t,-1))]){const a=getShifts(e,key);for(let k=a.length-1;k>=0;k--)if(a[k].o==null)return{date:key,idx:k};}return null;}
+function dayCalc(sh){let gross=0,gaps=0,open=false,prevO=null;
+ for(const s of sh){if(s.o==null){open=true;continue;}gross+=s.o-s.i;if(prevO!=null&&s.i>prevO)gaps+=s.i-prevO;prevO=s.o;}
+ const st=S();let pause=0;
+ /* V1.19: Pause nur, wenn eine DURCHGEHENDE Arbeitszeit (Kommen bis Gehen ohne Unterbrechung) die Grenze überschreitet – je Block einmal */
+ if(st.pauseOn){let bs=null,be=null;const blocks=[];for(const s of sh){if(s.o==null)continue;if(be!=null&&s.i<=be){be=Math.max(be,s.o);}else{if(bs!=null)blocks.push(be-bs);bs=s.i;be=s.o;}}if(bs!=null)blocks.push(be-bs);
+  for(const b of blocks)if(b>st.pauseAfter*60)pause+=Math.min(st.pauseMin,b);}
+ return{gross,pause,net:gross-pause,open};}
+function buildPeriod(e,from,to,label){const weeks=[];let cur=null;const total={net:0,pause:0,days:0};
+ for(let d=new Date(from);d<=to;d=addDays(d,1)){
+  if(!cur||d.getDay()===1){cur={kw:isoWeek(d),days:[],net:0};weeks.push(cur);}
+  const key=ymd(d),sh=getShifts(e,key),c=dayCalc(sh);
+  cur.days.push({date:new Date(d),key,shifts:sh,...c});cur.net+=c.net;total.net+=c.net;total.pause+=c.pause;if(c.gross>0)total.days++;}
+ weeks.forEach(w=>{w.from=w.days[0].date;w.to=w.days[w.days.length-1].date;});
+ return{from,to,label,weeks,total};}
+const monthPeriod=(e,y,m)=>buildPeriod(e,new Date(y,m,1),new Date(y,m+1,0),MON[m]+' '+y);
+const weekPeriod=(e,d)=>{const mo=mondayOf(d);return buildPeriod(e,mo,addDays(mo,6),'KW '+isoWeek(mo)+'/'+addDays(mo,3).getFullYear());};
+function noteText(d,s,k){const p=[];if(s.n)p.push(s.n);if(s.e)p.push('✎ korrigiert');if(k===d.shifts.length-1&&d.pause>0)p.push('Pause −'+d.pause+' Min');return p.join(' · ');}
+function status(e){const os=openShift(e),tk=ymd(new Date()),t=getShifts(e,tk);
+ if(os){const s=getShifts(e,os.date)[os.idx];return{canIn:false,canOut:true,since:s.i,text:'Anwesend seit '+hm(s.i)+(os.date!==tk?' (gestern)':'')};}
+ if(!e.multi&&t.some(s=>s.o!=null))return{canIn:false,canOut:false,text:'Heute bereits gebucht: '+t.map(s=>hm(s.i)+'–'+hm(s.o,true)).join(', ')};
+ return{canIn:true,canOut:false,text:t.length?'Abwesend · heute bisher '+fmtH(dayCalc(t).net)+' '+unitTxt():'Heute noch nicht eingestempelt'};}
+
+/* ---------- Datenübernahme & Migration (einmalig, wird in DB.imports vermerkt) ---------- */
+/* November 2026 aus JET-Stunden_2026.xlsm (Minuten ab Mitternacht) */
+const IMPORTS=[]; /* ab V1.23: keine Übernahmedaten */
+function migrate(){const st=DB.settings;DB.imports=DB.imports||{};
+ if(!DB.imports.branding){if(st.company==='Meine Firma'&&!st.logo)Object.assign(st,{company:DEF_S.company,subtitle:DEF_S.subtitle,boss:DEF_S.boss,logo:JET_LOGO,accent:DEF_S.accent,accentText:DEF_S.accentText});DB.imports.branding=new Date().toISOString();}
+ for(const o of Object.values(DB.data))for(const [k,a] of Object.entries(o)){const b=a.filter(s=>s.o==null||s.o>s.i);if(b.length!==a.length){if(b.length)o[k]=b;else delete o[k];}}
+ if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)){if(!DB.imports.iosBak1){DB.imports.iosBak1=1;if(+DB.settings.bakRemind===7)DB.settings.bakRemind=1;}}
+ if(!DB.imports.logo24){if(!st.logo||String(st.logo).startsWith(JET_LOGO_OLD_PRE))st.logo=JET_LOGO;DB.imports.logo24=new Date().toISOString();}
+ if(!DB.imports.fmt12){st.hourFmt='stdmin';DB.imports.fmt12=new Date().toISOString();}
+ for(const im of IMPORTS){if(DB.imports[im.id]||DB.imports.done)continue;
+  let e=DB.emps.find(x=>fullName(x).toLowerCase()===im.emp.toLowerCase());
+  if(!e){if(DB.emps.length>=MAX_EMP)continue;const [f,...l]=im.emp.split(' ');e={id:uid(),first:f,last:l.join(' '),nr:'',color:'#024794',photo:'',icon:'',pin:'1234',multi:true,active:true};DB.emps.push(e);}
+  for(const [k,list] of Object.entries(im.days)){const a=getShifts(e,k).slice();
+   for(const [i,o] of list){const clash=a.some(s=>s.o!=null?(i<s.o&&o>s.i):(s.i>=i&&s.i<o));if(!clash)a.push({i,o,n:'',x:'Excel'});}
+   setShifts(e,k,a);}
+  DB.imports[im.id]=new Date().toISOString();}
+ save();}
+migrate();
+
+/* ---------- UI basics ---------- */
+let scr='home',curEmp=null,adminTab='firma',adminEmpId=null,view={mode:'week',a:new Date()},ovT=null,lastAct=Date.now();
+function toast(msg,err){const t=$('#toast');t.textContent=msg;t.className='on'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='',err?3500:1800);}
+function openModal(html,cls){const m=$('#modal');m.innerHTML=`<div class="box ${cls||''}">${html}</div>`;m.classList.add('on');window._pinKey=null;return m.firstElementChild;}
+function closeModal(){const m=$('#modal');m.classList.remove('on');m.innerHTML='';window._pinKey=null;}
+const modalOpen=()=>$('#modal').classList.contains('on');
+function confirmDlg(text,okLbl,cb,danger){const b=openModal(`<h2>Bitte bestätigen</h2><p>${text}</p><div class="acts"><span class="sp"></span><button class="btn" id="cfN">Abbrechen</button><button class="btn ${danger?'d':'p'}" id="cfY">${esc(okLbl)}</button></div>`);
+ b.querySelector('#cfN').onclick=closeModal;b.querySelector('#cfY').onclick=()=>{closeModal();cb();};}
+function avatar(e,cls){const c=cls||'';if(e.photo)return`<span class="av ${c}" style="background-image:url(${e.photo})"></span>`;
+ const t=e.icon?esc(e.icon):esc(((e.first||'?')[0]+((e.last||'')[0]||'')).toUpperCase());return`<span class="av ${c}" style="background-color:${e.color};color:${txtOn(e.color)}">${t}</span>`;}
+function applyTheme(){const st=S();document.documentElement.style.setProperty('--acc',st.accent);document.documentElement.style.setProperty('--accT',st.accentText||txtOn(st.accent));document.documentElement.style.setProperty('--edc',lum(st.accent)>0.62?(st.accentText||'#1d2530'):st.accent);const m=document.querySelector('meta[name=theme-color]');if(m)m.content=st.accent;}
+function renderHeader(){const st=S();$('#hdr').innerHTML=(st.logo?`<img class="logo${st.logo===JET_LOGO?' jet':''}" src="${st.logo}" alt="Logo">`:'')+`<div class="co"><b>${esc(st.company)}</b><span>${esc(st.subtitle)}</span></div><div class="clk"><b id="clkT"></b><span id="clkD"></span></div>`;tick();}
+function tick(){const d=new Date(),t=$('#clkT'),dd=$('#clkD');if(t)t.textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());if(dd)dd.textContent=WDL[d.getDay()]+', '+d.getDate()+'. '+MON[d.getMonth()]+' '+d.getFullYear();}
+function applyBg(){const st=S();if(scr==='home'&&st.bgImage){const d=Math.min(80,Math.max(0,+st.bgDim||0))/100;main.style.backgroundImage=`linear-gradient(rgba(0,0,0,${d}),rgba(0,0,0,${d})),url(${st.bgImage})`;main.classList.add('bgimg');}else{main.style.backgroundImage='';main.classList.remove('bgimg');}}
+function render(){applyTheme();renderHeader();applyBg();if(scr==='home')renderHome();else if(scr==='emp')renderEmp();else renderAdmin();}
+function goHome(){clearTimeout(ovT);$('#ov').className='';closeModal();curEmp=null;scr='home';render();}
+
+/* ---------- Home ---------- */
+function setCols(n){const g=$('#grid');if(!g)return;const st=S(),land=innerWidth>=innerHeight;let c=+st.tileCols||0,r=+st.tileRows||0;
+ if(!c){c=n<=1?1:land?(n<=4?n:n<=8?Math.ceil(n/2):4):(n<=2?1:n<=8?2:3);if(r)c=Math.max(1,Math.ceil(n/r));}
+ c=Math.min(c,Math.max(n,1));r=Math.max(r||0,Math.ceil(n/c));
+ g.style.setProperty('--c',c);g.style.setProperty('--r',r);g.style.setProperty('--tw',(+st.tileW||240)+'px');g.style.setProperty('--th',(+st.tileH||210)+'px');}
+function renderHome(){const list=DB.emps.filter(e=>e.active);let h='<div class="home">';
+ if(!list.length)h+=`<div class="empty">Noch keine Mitarbeiter angelegt.<br>Bitte unten über ⚙ Administration anlegen.${''}</div>`;
+ else h+='<div class="emps" id="grid">'+list.map(e=>{const st=status(e);const lt=S().tileStyle==='light';return`<button class="emp${lt?' light':''}" data-id="${e.id}" style="--ec:${e.color};background-color:${e.color};color:${txtOn(e.color)}">${avatar(e)}<span class="nm">${esc(e.first)}</span>${st.canOut?`<span class="st">● anwesend seit ${hm(st.since)}</span>`:''}</button>`;}).join('')+'</div>';
+ h+=`<div class="foot"><span class="verb" id="verb" title="">${APP} V${VERSION}${cubeCard()}</span><span class="sdot" id="sdot"></span>${bakDue()?`<span class="bkw" id="bkw" data-tip="${esc(bakTip())}">📤 ${esc(bakDue())} – jetzt sichern</span>`:''}${dirH&&fileSt==='prompt'?'<span class="bkw" id="fsGrH">📁 Datenordner freigeben</span>':''}<span class="sp"></span>${instEv||(IOS&&!STANDALONE()&&/^https?:$/.test(location.protocol))?'<button id="inst">📲 App installieren</button>':''}${FS_API&&!STANDALONE()?'<button id="fs">⛶ Vollbild</button>':''}<button id="adm">${isPersonal()?'⚙ Einstellungen':'⚙ Administration'}</button></div></div>`;
+ main.innerHTML=h;setCols(list.length);applyBg();
+ main.querySelectorAll('.emp').forEach(b=>b.onclick=()=>selectEmp(b.dataset.id));
+ $('#adm').onclick=openAdmin;const fsb=$('#fs');if(fsb)fsb.onclick=toggleFS;$('#sdot').onclick=storageInfo;updDot();const bw=$('#bkw');if(bw)bw.onclick=bakNow;const vb=$('#verb');if(vb)vb.onclick=ev=>{ev.stopPropagation();vb.classList.add('open');clearTimeout(vb._t);vb._t=setTimeout(()=>vb.classList.remove('open'),3000);};const fg=$('#fsGrH');if(fg)fg.onclick=fsGrant;const ib=$('#inst');if(ib)ib.onclick=doInstall;}
+function bakDue(){const st=S(),d=+st.bakRemind||0;if(!d||!countBk(DB).n)return'';if(!st.lastBackup)return'Noch keine Sicherung erstellt';
+ const age=Math.floor((Date.now()-new Date(st.lastBackup).getTime())/864e5);return age>=d?'Letzte Sicherung vor '+age+(age===1?' Tag':' Tagen'):'';}
+function toggleFS(){const d=document;try{if(!d.fullscreenElement&&!d.webkitFullscreenElement){const el=d.documentElement;(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}else{(d.exitFullscreen||d.webkitExitFullscreen).call(d);}}catch(e){toast('Vollbild wird hier nicht unterstützt',true);}}
+
+/* ---------- PIN ---------- */
+function pinDialog(o){let v='';const b=openModal(`${o.av||''}<h2>${esc(o.title)}</h2><p class="mut">${esc(o.sub||'Bitte PIN eingeben')}</p><div class="dots" id="dots"></div><div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join('')}<button data-k="c" class="fn">⌫</button><button data-k="0">0</button><button data-k="ok" class="fn ok">OK</button></div><button class="btn" id="pcan">Abbrechen</button>`,'pin');
+ const dots=()=>{const el=$('#dots');if(!el)return;el.innerHTML=o.len?Array.from({length:o.len},(_,i)=>`<i class="${i<v.length?'f':''}"></i>`).join(''):(v.replace(/./g,'<i class="f"></i>')||'<i></i>');};
+ const submit=()=>{if(o.check(v)){closeModal();o.ok(v);}else{const d=$('#dots');d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');v='';setTimeout(dots,380);}};
+ const key=k=>{if(k==='c')v=v.slice(0,-1);else if(k==='ok'){if(v)submit();return;}else if(v.length<8)v+=k;dots();if(o.len&&v.length===o.len)setTimeout(submit,120);};
+ b.querySelectorAll('.pad button').forEach(x=>x.onclick=()=>key(x.dataset.k));
+ b.querySelector('#pcan').onclick=closeModal;window._pinKey=key;dots();}
+document.addEventListener('keydown',ev=>{if(!window._pinKey)return;if(/^\d$/.test(ev.key))window._pinKey(ev.key);else if(ev.key==='Backspace')window._pinKey('c');else if(ev.key==='Enter')window._pinKey('ok');else if(ev.key==='Escape')closeModal();});
+/* PIN nötig? Terminal: globale PIN-Abfrage UND beim Mitarbeiter eingeschaltet · eigenes Gerät: Einstellung „PIN am eigenen Gerät“ */
+const needPin=e=>isPersonal()?!!e.pinOwn:(!!S().requirePin&&e.pinReq!==false);
+function selectEmp(id){const e=DB.emps.find(x=>x.id===id);if(!e)return;
+ if(!needPin(e)){openEmp(e);return;}
+ pinDialog({title:fullName(e),av:avatar(e),len:S().pinLen,check:p=>p===String(e.pin),ok:()=>openEmp(e)});}
+function openEmp(e){curEmp=e;scr='emp';view={mode:'week',a:new Date()};render();}
+
+/* ---------- Employee screen ---------- */
+function renderEmp(){const e=curEmp,st=status(e),now=new Date();
+ const today=dayCalc(getShifts(e,ymd(now))).net,wk=weekPeriod(e,now).total.net,mo=monthPeriod(e,now.getFullYear(),now.getMonth()).total.net;
+ main.innerHTML=`<div class="ehead"><button class="btn" id="back">← Fertig</button>${avatar(e,'sm')}<div class="en"><b>${esc(fullName(e))}</b><span>${esc(st.text)}</span></div><button class="btn" id="uset">⚙ Meine Einstellungen</button>${''}</div>
+ <div class="bigb"><button class="bb in" id="bIn" ${st.canIn?'':'disabled'}>Kommen<small>${st.canIn?'jetzt einstempeln':'nicht möglich'}</small></button><button class="bb out" id="bOut" ${st.canOut?'':'disabled'}>Gehen<small>${st.canOut?'jetzt ausstempeln':'nicht möglich'}</small></button></div>
+ <div class="kpis"><div><span>Heute</span><b>${fmtH(today)}</b> ${unitTxt()}</div><div><span>Diese Woche (KW ${isoWeek(now)})</span><b>${fmtH(wk)}</b> ${unitTxt()}</div><div><span>${MON[now.getMonth()]} ${now.getFullYear()}</span><b>${fmtH(mo)}</b> ${unitTxt()}</div></div>
+ ${listPanel(e,false)}`;
+ $('#back').onclick=goHome;$('#uset').onclick=()=>empForm(e,false); $('#bIn').onclick=()=>book('in');$('#bOut').onclick=()=>book('out');
+ bindList(e,false);}
+function viewPeriod(e){return view.mode==='week'?weekPeriod(e,view.a):monthPeriod(e,view.a.getFullYear(),view.a.getMonth());}
+function listPanel(e,admin){const P=viewPeriod(e),canEd=admin||S().empEdit;SHOWSRC=!!admin;
+ const title=view.mode==='week'?`KW ${isoWeek(P.from)} · ${dm(P.from)}–${dmy(P.to)}`:P.label;
+ const slim=!notesOn(e);return`<div class="lp${slim?' slim':''}"><div class="lbar"><div class="seg"><button data-m="week" class="${view.mode==='week'?'on':''}">Woche</button><button data-m="month" class="${view.mode==='month'?'on':''}">Monat</button></div><div class="nav"><button class="btn" data-nav="-1">‹</button><b>${title}</b><button class="btn" data-nav="1">›</button><button class="btn" data-nav="0">Heute</button></div><button class="btn p" id="outp">🖨 Drucken / Export</button></div><div class="tw">${tableHTML(P,canEd,notesOn(e))}</div></div>`;}
+function bindList(e,admin){
+ main.querySelectorAll('.seg [data-m]').forEach(b=>b.onclick=()=>{view.mode=b.dataset.m;render();});
+ main.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const n=+b.dataset.nav;if(!n)view.a=new Date();else if(view.mode==='week')view.a=addDays(view.a,7*n);else view.a=new Date(view.a.getFullYear(),view.a.getMonth()+n,1);render();});
+ $('#outp').onclick=()=>outputDialog(e,admin);
+ main.querySelectorAll('.ed').forEach(b=>b.onclick=()=>editEntry(e,b.dataset.ek,+b.dataset.ei,admin));}
+let SHOWSRC=false;
+function tableHTML(P,edit,showN){const tk=ymd(new Date()),ec=edit?1:0;showN=showN!==false;const showSrc=SHOWSRC&&!OFFICE;SHOWSRC=false;
+ let h=`<table class="tz${showN?'':' slim'}"><colgroup><col style="width:132px"><col style="width:72px"><col style="width:72px"><col style="width:128px"><col style="width:136px">${showN?'<col>':''}${ec?'<col style="width:92px">':''}</colgroup><thead><tr><th>Datum</th><th class="c">Kommen</th><th class="c">Gehen</th><th class="n">Dauer</th><th class="n">Tag</th>${showN?'<th class="nt">Bemerkung</th>':''}${ec?'<th></th>':''}</tr></thead><tbody>`;
+ const rest=(showN?1:0)+ec,restTd=c=>rest?`<td class="nt" colspan="${rest}">${c||''}</td>`:'';
+ let di=0;
+ for(const w of P.weeks){
+  for(const d of w.days){const cls=(d.date.getDay()%6===0?'we ':'')+(d.key===tk?'td ':'')+(di++%2?'b2 ':'b1 ')+'df ';
+   if(!d.shifts.length){h+=`<tr class="${cls}"><td>${fmtDateT(d.date)}</td><td></td><td></td><td></td><td></td>${showN?'<td class="nt"></td>':''}${ec?`<td class="nw"><button class="ed" data-ek="${d.key}" data-ei="-1" title="Eintrag hinzufügen">＋</button></td>`:''}</tr>`;continue;}
+   const cfs=dayConflicts(d.shifts);d.shifts.forEach((s,k)=>{const last=k===d.shifts.length-1;
+    h+=`<tr class="${k?cls.replace('df ',''):cls}${k?'ct ':''}${last?'':'nl '}${cfs.has(k)?'cf':''}"${cfs.has(k)?' title="Überschneidung mit einer anderen Buchung an diesem Tag"':''}><td>${k?'':fmtDateT(d.date)}</td><td>${hm(s.i)}${''}</td><td>${s.o==null?'<span class="open">offen</span>':hm(s.o,true)}</td><td class="n">${nbx(s.o==null?'':fmtH(s.o-s.i))}</td><td class="n"><b>${nbx(last?fmtH(d.net):'')}</b></td>${showN?`<td class="nt">${esc(noteText(d,s,k))}</td>`:''}${ec?`<td class="nw"><button class="ed" data-ek="${d.key}" data-ei="${k}" title="Korrigieren">✎</button>${last?`<button class="ed" data-ek="${d.key}" data-ei="-1" title="Weitere Buchung">＋</button>`:''}</td>`:''}</tr>`;});}
+  h+=`<tr class="ws"><td colspan="4">Woche KW ${w.kw} · ${dm(w.from)}–${dm(w.to)}</td><td class="n">${nbx(fmtH(w.net))}</td>${restTd()}</tr>`;}
+ h+=`</tbody><tfoot><tr><td colspan="4">Gesamt ${esc(P.label||'')}</td><td class="n">${nbx(fmtH(P.total.net))}</td>${restTd(unitTxt())}</tr></tfoot></table>`;return h;}
+
+/* ---------- Booking ---------- */
+function book(type){const e=curEmp,st=status(e),now=new Date(),key=ymd(now);
+ const raw=pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+ const step=Math.max(1,+S().round||1);let m=Math.round((now.getHours()*60+now.getMinutes()+now.getSeconds()/60)/step)*step;
+ let dayKey=key;
+ if(type==='in'){if(!st.canIn)return;if(m>=1440)m=1440-step;const a=getShifts(e,key).slice();a.push({i:m,o:null,n:'',ri:raw,k:uid(),src:DEV.id});setShifts(e,key,a);}
+ else{const os=openShift(e);if(!os)return;dayKey=os.date;const a=getShifts(e,os.date).slice();const s={...a[os.idx]};let o=os.date===key?m:m+1440;if(o<s.i)o=s.i;
+  if(o<=s.i){a.splice(os.idx,1);setShifts(e,os.date,a);save();overlay('void',o,dayKey);return;}
+  s.o=o;s.ro=raw;a[os.idx]=s;setShifts(e,os.date,a);m=o;}
+ save();overlay(type,m,dayKey);}
+function overlay(type,m,dayKey){const e=curEmp,h=new Date().getHours(),ov=$('#ov');
+ const greet=type==='in'?(h<10?'Guten Morgen':h<17?'Hallo':'Guten Abend')+', '+e.first+'!':'Schönen Feierabend, '+e.first+'!';
+ const x=type==='out'?`<div class="ovx">Arbeitszeit an diesem Tag: ${fmtH(dayCalc(getShifts(e,dayKey)).net)} ${unitTxt()}</div>${notesOn(e)?'<button class="btn" id="ovNote">✎ Tätigkeit / Bemerkung eintragen</button>':''}`:'';
+ if(type==='void'){ov.className='on out';ov.innerHTML=`<div class="ovi">↺</div><div class="ovt">Keine Buchung</div><div class="ovs">Kommen und Gehen ergeben 0 Minuten –<br>die Buchung wurde verworfen.</div><div class="ovh">Antippen, um in der Ansicht zu bleiben</div>`;
+  const sec=+S().afterBookSec;clearTimeout(ovT);ovT=setTimeout(()=>{ov.className='';if(sec>0)goHome();else render();},(sec>0?sec:3)*1000);ov.onclick=()=>{clearTimeout(ovT);ov.className='';render();};return;}
+ ov.className='on '+type;ov.innerHTML=`<div class="ovi">✓</div><div class="ovt">${type==='in'?'Kommen':'Gehen'} ${hm(m)}</div><div class="ovs">${esc(greet)}</div>${x}<div class="ovh">Antippen, um in der Ansicht zu bleiben</div>`;
+ const sec=+S().afterBookSec;clearTimeout(ovT);
+ ovT=setTimeout(()=>{ov.className='';if(sec>0)goHome();else render();},(sec>0?sec:3)*1000);
+ ov.onclick=ev=>{clearTimeout(ovT);ov.className='';render();if(ev.target.id==='ovNote'){const a=getShifts(e,dayKey);editEntry(e,dayKey,a.length-1,false,true);}};}
+
+/* ---------- Edit entry ---------- */
+function editEntry(e,key,idx,admin,noteOnly){if(isClosed(key.slice(0,7),e.id)){toast(monLabel(key.slice(0,7))+' ist abgeschlossen – zum Ändern unter Administration → Monatsabschluss wieder öffnen',true);return;}
+ const arr=getShifts(e,key).slice(),s=idx>=0?arr[idx]:{i:null,o:null,n:''};
+ const b=openModal(`<h2>${noteOnly?'Tätigkeit / Bemerkung':idx>=0?'Eintrag korrigieren':'Eintrag hinzufügen'}</h2><p class="mut">${esc(fullName(e))} · ${fmtDate(pd(key))}</p>
+ <div class="row2" ${noteOnly?'style="display:none"':''}><label class="fld">Kommen<input type="time" id="fi" value="${s.i!=null?hm(s.i):''}"></label><label class="fld">Gehen<input type="time" id="fo" value="${s.o!=null?hm(s.o):''}"></label></div>
+ <label class="fld" ${notesOn(e)||noteOnly?'':'style="display:none"'}>Bemerkung / Tätigkeit<input type="text" id="fn" maxlength="200" value="${esc(s.n||'')}" placeholder="z. B. Rasen mähen, Bühne aufbauen …"></label>
+ ${!noteOnly&&(s.ri||s.ro)?`<p class="mut small">Original-Stempelung: Kommen ${s.ri||'–'} · Gehen ${s.ro||'–'}</p>`:''}
+ ${noteOnly?'':'<p class="mut small">Gehen leer = Buchung noch offen. Gehen vor Kommen = über Mitternacht.</p>'}
+ <div class="acts">${idx>=0&&!noteOnly?'<button class="btn d" id="fdel">Löschen</button>':''}<span class="sp"></span><button class="btn" id="fcan">Abbrechen</button><button class="btn p" id="fsav">Speichern</button></div>`);
+ b.querySelector('#fcan').onclick=closeModal;
+ b.querySelector('#fsav').onclick=()=>{const ti=toMin($('#fi').value),to=toMin($('#fo').value),note=$('#fn').value.trim();
+  if(ti==null){toast('Bitte eine Kommen-Zeit eingeben',true);return;}
+  let o=to;if(o!=null&&o<ti)o+=1440;
+  if(o!=null&&o===ti){toast('Kommen und Gehen sind gleich (0 Min) – bitte Zeit korrigieren oder Eintrag löschen',true);return;}
+  const changed=ti!==s.i||o!==(s.o??null);
+  const ns={...s,i:ti,o,n:note};if(!ns.k)ns.k=uid();if(!ns.src)ns.src=DEV.id;if(changed){ns.e=true;ns.eb=admin?'Admin':'Mitarbeiter';ns.et=new Date().toISOString();}
+  if(idx>=0)arr[idx]=ns;else arr.push(ns);setShifts(e,key,arr);save();closeModal();render();toast('Gespeichert');};
+ const del=b.querySelector('#fdel');if(del)del.onclick=()=>{if(!del.dataset.c){del.dataset.c=1;del.textContent='Wirklich löschen?';return;}arr.splice(idx,1);setShifts(e,key,arr);save();closeModal();render();toast('Eintrag gelöscht');};
+ if(noteOnly)setTimeout(()=>$('#fn')&&$('#fn').focus(),100);}
+
+/* ---------- Employee form (Admin + Benutzer-Setup) ---------- */
+function swatches(id,val){return`<div class="sw">${COLORS.map(c=>`<button type="button" data-c="${c}" style="background:${c}" class="${c.toLowerCase()===String(val).toLowerCase()?'on':''}"></button>`).join('')}<input type="color" id="${id}" value="${esc(val)}"></div>`;}
+function bindSwatches(root,id,cb){const inp=root.querySelector('#'+id);root.querySelectorAll('.sw [data-c]').forEach(b=>b.onclick=()=>{inp.value=b.dataset.c;root.querySelectorAll('.sw [data-c]').forEach(x=>x.classList.toggle('on',x===b));cb&&cb(inp.value);});inp.oninput=()=>{root.querySelectorAll('.sw [data-c]').forEach(x=>x.classList.remove('on'));cb&&cb(inp.value);};}
+function loadImg(file,max,type,square){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{let sx=0,sy=0,sw=im.width,sh=im.height;if(square){const m=Math.min(sw,sh);sx=(sw-m)/2;sy=(sh-m)/2;sw=sh=m;}const sc=Math.min(1,max/Math.max(sw,sh));const w=Math.round(sw*sc),h=Math.round(sh*sc);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,sx,sy,sw,sh,0,0,w,h);res(c.toDataURL(type,0.85));};im.onerror=rej;im.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});}
+function empForm(e,admin){const isNew=!e;const st=S();
+ const f=e?{...e}:{id:uid(),first:'',last:'',nr:'',color:COLORS[DB.emps.length%COLORS.length],photo:'',icon:'',pin:'',multi:false,active:true,notes:true};
+ const b=openModal(`<h2>${isNew?'Neuer Mitarbeiter':admin?'Mitarbeiter bearbeiten':'Meine Einstellungen'}</h2>
+ ${admin?`<div class="row2"><label class="fld">Vorname (Button-Titel) *<input id="mf" value="${esc(f.first)}"></label><label class="fld">Nachname<input id="ml" value="${esc(f.last)}"></label></div>
+ <div class="row2"><label class="fld">Personalnummer *<input id="mnr" value="${esc(f.nr||'')}"></label><label class="fld">PIN (${st.pinLen} Ziffern)<input id="mpin" inputmode="numeric" maxlength="${st.pinLen}" value="${esc(f.pin||'')}"></label></div>
+ <label class="chk"><input type="checkbox" id="mpr" ${f.pinReq!==false?'checked':''}> Anmeldung mit PIN am Terminal${st.requirePin?'':' <span class="small mut">(PIN-Abfrage ist unter Parameter allgemein aus)</span>'}</label>${''}`:
+ `<p class="mut">${esc(fullName(f))}</p><h3>PIN ändern</h3><div class="row2"><input id="np1" type="password" inputmode="numeric" maxlength="${st.pinLen}" placeholder="neue PIN (${st.pinLen} Ziffern)"><input id="np2" type="password" inputmode="numeric" maxlength="${st.pinLen}" placeholder="neue PIN wiederholen"></div><p class="mut small">Leer lassen, wenn die PIN gleich bleiben soll.</p>`}
+ <div class="fld">Button-Farbe${swatches('mcol',f.color)}</div>
+ <div class="fld">Bild oder Icon<div class="imgrow"><span id="mav">${avatar(f,'sm')}</span><label class="btn">📷 Bild wählen<input type="file" accept="image/*" id="mimg" hidden></label><button class="btn" id="mimgx" type="button">Bild entfernen</button><input id="mico" maxlength="2" placeholder="Emoji" value="${esc(f.icon||'')}" style="width:90px;height:46px;border:1.5px solid var(--line);border-radius:10px;text-align:center;font-size:22px"></div></div>
+ ${admin?`<label class="chk"><input type="checkbox" id="mmul" ${f.multi?'checked':''}> Mehrere Kommen/Gehen-Buchungen pro Tag erlauben (Mehrfachschicht)</label>
+ <label class="chk"><input type="checkbox" id="mact" ${f.active?'checked':''}> Aktiv (Button auf der Startseite anzeigen)</label>`:''}
+ <div class="acts">${admin&&!isNew?'<button class="btn d" id="mdel">Löschen</button>':''}<span class="sp"></span><button class="btn" id="mcan">Abbrechen</button><button class="btn p" id="msav">Speichern</button></div>`);
+ const upd=()=>{b.querySelector('#mav').innerHTML=avatar(f,'sm');};
+ bindSwatches(b,'mcol',c=>{f.color=c;upd();});
+ b.querySelector('#mimg').onchange=async ev=>{const file=ev.target.files[0];if(!file)return;try{f.photo=await loadImg(file,256,'image/jpeg',true);upd();}catch(x){toast('Bild konnte nicht geladen werden',true);}};
+ b.querySelector('#mimgx').onclick=()=>{f.photo='';upd();};
+ b.querySelector('#mico').oninput=ev=>{f.icon=ev.target.value.trim();upd();};
+ b.querySelector('#mcan').onclick=closeModal;
+ const del=b.querySelector('#mdel');if(del)del.onclick=()=>confirmDlg(`Mitarbeiter <b>${esc(fullName(f))}</b> und <b>alle seine Zeitbuchungen</b> endgültig löschen?`,'Endgültig löschen',()=>{DB.emps=DB.emps.filter(x=>x.id!==f.id);delete DB.data[f.id];save();render();toast('Mitarbeiter gelöscht');},true);
+ b.querySelector('#msav').onclick=()=>{
+  if(admin){f.first=$('#mf').value.trim();f.last=$('#ml').value.trim();f.nr=$('#mnr').value.trim();f.pin=$('#mpin').value.trim();f.pinReq=$('#mpr').checked;f.multi=$('#mmul').checked;f.active=$('#mact').checked;
+   if(!f.first){toast('Bitte einen Vornamen eingeben',true);return;}
+   if(!f.nr){toast(OFFICE?'Bitte eine Personalnummer eingeben':'Bitte eine Personalnummer eingeben – sie ordnet Meldungen eindeutig zu',true);return;}
+   const pinUsed=(st.requirePin&&f.pinReq)||(!OFFICE&&f.pinOwn);
+   if((pinUsed||f.pin)&&!new RegExp('^\\d{'+st.pinLen+'}$').test(f.pin)){toast(pinUsed?'PIN muss aus '+st.pinLen+' Ziffern bestehen':'PIN: '+st.pinLen+' Ziffern oder leer lassen',true);return;}
+   if(isNew&&DB.emps.length>=MAX_EMP){toast('Maximal '+MAX_EMP+' Mitarbeiter',true);return;}
+   if(f.nr&&DB.emps.some(x=>x.id!==f.id&&String(x.nr||'').trim()===f.nr)){toast('Die Personalnummer '+f.nr+' ist schon vergeben',true);return;}}
+  else{const p1=$('#np1').value.trim(),p2=$('#np2').value.trim();if(p1||p2){if(p1!==p2){toast('Die PINs stimmen nicht überein',true);return;}if(!new RegExp('^\\d{'+st.pinLen+'}$').test(p1)){toast('PIN muss aus '+st.pinLen+' Ziffern bestehen',true);return;}f.pin=p1;}}
+  f.color=$('#mcol').value;
+  const i=DB.emps.findIndex(x=>x.id===f.id);if(i>=0)DB.emps[i]=f;else DB.emps.push(f);
+  if(curEmp&&curEmp.id===f.id)curEmp=f;save();closeModal();render();toast('Gespeichert');};}
+
+/* ---------- Output: print / export ---------- */
+var OUT_ONLY=null,OUT_SHARE=false; /* V1.24: Android-Ausgaben über Teilen */
+function outputDialog(e,admin){prepPdfLogo();const ONLY=OUT_ONLY;OUT_ONLY=null;let kind=view.mode==='week'?'week':'month';const a=view.a;
+ const years=[];const y0=new Date().getFullYear();for(let y=y0-3;y<=y0+1;y++)years.push(y);
+ const b=openModal(`<h2>Drucken / Export</h2><p class="mut">${admin?'':esc(fullName(e))}</p>
+ <div class="seg" id="ok"><button data-k="week">Woche</button><button data-k="month">Monat</button><button data-k="year">Jahr</button></div>
+ <div style="margin-top:14px">
+  <label class="fld" id="oW">Woche mit diesem Tag<input type="date" id="oDate" value="${ymd(a)}"></label>
+  <div class="row2" id="oM"><label class="fld">Monat<select id="oMon">${MON.map((n,i)=>opt([i,n],a.getMonth())).join('')}</select></label><label class="fld">Jahr<select id="oYear">${years.map(y=>opt([y,y],a.getFullYear())).join('')}</select></label></div>
+ </div>
+ ${admin?`<label class="chk"><input type="checkbox" id="oAll"> Alle Mitarbeiter (sonst nur ${esc(fullName(e))})</label>`:''}
+ ${''}
+ ${IOS?'<p class="small mut" style="margin:8px 0 0">ⓘ Jede Ausgabe öffnet das Teilen-Menü (Drucken, Mail, WhatsApp, In Dateien sichern).</p>':''}
+ ${MOBILE&&!IOS&&canShareFiles()?'<label class="chk"><input type="checkbox" id="oShare" checked> Excel/CSV/Text über das Teilen-Menü (Mail, WhatsApp …) – sonst in „Downloads“</label>':''}
+ <div class="obtns"><button class="btn p" data-f="print">🖨 Drucken</button><button class="btn" data-f="pdf">📄 PDF</button><button class="btn" data-f="xlsx">📊 Excel (.xlsx)</button><button class="btn" data-f="csv">📄 CSV (.csv)</button><button class="btn" data-f="txt">📝 Text (.txt)</button></div>
+ <div class="acts"><span class="sp"></span><button class="btn" id="ocan">Schließen</button></div>`);
+ const sync=()=>{b.querySelectorAll('#ok button').forEach(x=>x.classList.toggle('on',x.dataset.k===kind));b.querySelector('#oW').style.display=kind==='week'?'':'none';b.querySelector('#oM').style.display=kind==='week'?'none':'';b.querySelector('#oMon').parentNode.style.visibility=kind==='year'?'hidden':'';};
+ b.querySelectorAll('#ok button').forEach(x=>x.onclick=()=>{kind=x.dataset.k;sync();});sync();
+ b.querySelector('#ocan').onclick=closeModal;
+ b.querySelectorAll('[data-f]').forEach(x=>x.onclick=()=>{
+  const emps=admin&&$('#oAll').checked?(ONLY?DB.emps.filter(x=>ONLY.includes(x.id)):DB.emps.slice()):[e];
+  const ref={kind,date:$('#oDate').value?pd($('#oDate').value):new Date(),y:+$('#oYear').value,m:+$('#oMon').value};
+  const secs=sections(emps,ref);const f=x.dataset.f;const osh=b.querySelector('#oShare');OUT_SHARE=!!(osh&&osh.checked);
+  if(f==='pdf'){pdfOut(secs,ref,false);}else if(f==='print'&&IOS){pdfOut(secs,ref,true);}else if(f==='print'){closeModal();printSections(secs,ref);}else if(f==='xlsx')exportXlsx(secs,ref);else if(f==='csv')exportCsv(secs,ref);else exportTxt(secs,ref);});}
+/* sections: [{emp, periods:[P], kind}] */
+function sections(emps,ref){return emps.map(e=>{let periods;
+ if(ref.kind==='week')periods=[weekPeriod(e,ref.date)];
+ else if(ref.kind==='month')periods=[monthPeriod(e,ref.y,ref.m)];
+ else periods=MON.map((_,m)=>monthPeriod(e,ref.y,m));return{emp:e,periods};});}
+function refLabel(ref){if(ref.kind==='week'){const mo=mondayOf(ref.date);return'KW '+isoWeek(mo)+' ('+dmy(mo)+' – '+dmy(addDays(mo,6))+')';}if(ref.kind==='month')return MON[ref.m]+' '+ref.y;return'Jahr '+ref.y;}
+function refFile(ref){if(ref.kind==='week'){const mo=mondayOf(ref.date);return addDays(mo,3).getFullYear()+'_KW'+pad(isoWeek(mo));}if(ref.kind==='month')return ref.y+'-'+pad(ref.m+1);return String(ref.y);}
+function fileBase(secs,ref){return APP+'_'+(secs.length===1?safeName(fullName(secs[0].emp)):'Alle')+'_'+refFile(ref);}
+function download(blob,name,noShare){const sh=OUT_SHARE;OUT_SHARE=false;if(!noShare&&(IOS||sh)&&canShareFiles()){shareFile(blob,name);return;}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);toast('Datei erstellt: '+name);}
+const hasData=P=>P.total.days>0||P.weeks.some(w=>w.days.some(d=>d.shifts.length));
+
+/* ---------- V1.13: PDF-Ausgabe (eigener PDF-Erzeuger, A4, Helvetica) ---------- */
+const PDFW={H:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,556,222,556,333,1000,556,556,333,1000,667,333,1000,556,611,556,556,222,222,333,333,350,556,1000,333,1000,500,333,944,556,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500],B:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,556,278,556,500,1000,556,556,333,1000,667,333,1000,556,611,556,556,278,278,500,500,350,556,1000,333,1000,556,333,944,556,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556]};
+const PDF_MAP={'€':128,'‚':130,'„':132,'…':133,'‰':137,'‹':139,'‘':145,'’':146,'“':147,'”':148,'•':149,'–':150,'—':151,'›':155};
+function pdfTxt(s){return String(s??'').replace(/ ⁺¹/g,' (+1)').replace(/⁺¹/g,'(+1)').replace(/✎/g,'*').replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu,'');}
+function pdfBytes(s){let o='';for(const ch of pdfTxt(s)){const c=ch.codePointAt(0);if(PDF_MAP[ch])o+=String.fromCharCode(PDF_MAP[ch]);else if(c<256)o+=ch;else o+='?';}return o;}
+function pdfW(s,bold,size){const b=pdfBytes(s),t=bold?PDFW.B:PDFW.H;let w=0;for(let i=0;i<b.length;i++)w+=t[b.charCodeAt(i)]||556;return w*size/1000;}
+function pdfEsc(b){let o='';for(let i=0;i<b.length;i++){const c=b.charCodeAt(i);if(c===40||c===41||c===92)o+='\\'+b[i];else if(c<32||c>126)o+='\\'+c.toString(8).padStart(3,'0');else o+=b[i];}return o;}
+function pdfFit(s,bold,size,max){s=pdfTxt(s);if(pdfW(s,bold,size)<=max)return s;while(s.length&&pdfW(s+'…',bold,size)>max)s=s.slice(0,-1);return s+'…';}
+const hexRgb=h=>{h=String(h||'#000').replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');const n=parseInt(h,16)||0;return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255].map(v=>v.toFixed(3)).join(' ');};
+let PDF_LOGO=null;
+function prepPdfLogo(){const src=S().logo;if(!src){PDF_LOGO=null;return;}if(PDF_LOGO&&PDF_LOGO.src===src)return;
+ const im=new Image();im.onload=()=>{try{const sc=Math.min(1,600/im.naturalWidth),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*sc));c.height=Math.max(1,Math.round(im.naturalHeight*sc));
+  const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
+  PDF_LOGO={src,w:c.width,h:c.height,data:atob(c.toDataURL('image/jpeg',.92).split(',')[1])};}catch(e){PDF_LOGO=null;}};im.src=src;}
+class PdfDoc{constructor(){this.W=595.28;this.H=841.89;this.pages=[];this.add();}
+ add(){this.c=[];this.pages.push(this.c);}
+ text(x,y,s,size,bold,align,gray){const b=pdfBytes(s);let xx=x;if(align==='r')xx=x-pdfW(s,bold,size);else if(align==='c')xx=x-pdfW(s,bold,size)/2;
+  this.c.push(`BT ${gray!=null?gray+' g ':'0 g '}/${bold?'F2':'F1'} ${size} Tf ${xx.toFixed(2)} ${y.toFixed(2)} Td (${pdfEsc(b)}) Tj ET`);}
+ rect(x,y,w,h,fill){this.c.push(`${fill} rg ${x.toFixed(2)} ${y.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f`);}
+ line(x1,y1,x2,y2,g,wd){this.c.push(`${g} G ${wd} w ${x1.toFixed(2)} ${y1.toFixed(2)} m ${x2.toFixed(2)} ${y2.toFixed(2)} l S`);}
+ img(x,y,w,h){this.c.push(`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im1 Do Q`);}
+ build(){const objs=[],L=PDF_LOGO,np=this.pages.length;let kids=[];const first=L?6:5;
+  objs[1]='<< /Type /Catalog /Pages 2 0 R >>';
+  objs[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+  objs[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+  if(L)objs[5]=`<< /Type /XObject /Subtype /Image /Width ${L.w} /Height ${L.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${L.data.length} >>\nstream\n${L.data}\nendstream`;
+  this.pages.forEach((c,i)=>{const po=first+i*2,co=po+1,s=c.join('\n');kids.push(po+' 0 R');
+   objs[po]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${this.W} ${this.H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>${L?' /XObject << /Im1 5 0 R >>':''} >> /Contents ${co} 0 R >>`;
+   objs[co]=`<< /Length ${s.length} >>\nstream\n${s}\nendstream`;});
+  objs[2]=`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${np} >>`;
+  let out='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';const off=[];
+  for(let i=1;i<objs.length;i++){off[i]=out.length;out+=i+' 0 obj\n'+objs[i]+'\nendobj\n';}
+  const xr=out.length;out+=`xref\n0 ${objs.length}\n0000000000 65535 f \n`+off.slice(1).map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('');
+  out+=`trailer\n<< /Size ${objs.length} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`;
+  const u=new Uint8Array(out.length);for(let i=0;i<out.length;i++)u[i]=out.charCodeAt(i)&255;return new Blob([u],{type:'application/pdf'});}}
+/* Inhalt: gleiches Layout wie der Ausdruck */
+function makePdf(secs,ref){const d=new PdfDoc(),st=S(),M=40,R=d.W-M,TW=R-M,RH=15,BOT=58;let y;
+ const head=(e,title,range)=>{y=d.H-M;let x=M;
+  if(PDF_LOGO){const ra=PDF_LOGO.w/PDF_LOGO.h;let h=34,w=h*ra;if(w>130){w=130;h=w/ra;}d.img(M,y-h,w,h);x=M+w+12;}
+  d.text(x,y-11,st.company,12,true);d.text(x,y-23,st.subtitle||'',8.5,false,null,.25);if(st.boss)d.text(x,y-34,'Geschäftsführer: '+st.boss,8.5,false,null,.25);
+  d.text(R,y-11,title,11.5,true,'r');d.text(R,y-23,fullName(e)+(e.nr?' · Pers.-Nr. '+e.nr:''),9,false,'r');d.text(R,y-34,range,9,false,'r',.25);
+  y-=44;d.line(M,y,R,y,.55,.8);y-=12;};
+ const cols=showN=>{const f=showN?[.19,.12,.12,.18,.18,.21]:[.24,.15,.15,.23,.23];const c=[{t:'Datum'},{t:'Kommen',c:1},{t:'Gehen',c:1},{t:'Dauer',r:1},{t:'Tag',r:1}];if(showN)c.push({t:'Bemerkung'});c.forEach((x,i)=>x.w=TW*f[i]);return c;};
+ const NB=74;
+ const thead=C=>{d.rect(M,y-RH+3,TW,RH,'0.88 0.88 0.88');let x=M;C.forEach(c=>{d.text(c.r||c.c?x+c.w/2:x+4,y-8.5,c.t,8.5,true,c.r||c.c?'c':null);x+=c.w;});y-=RH;};
+ const row=(C,vals,o)=>{o=o||{};if(o.fill)d.rect(M,y-RH+3,TW,RH,o.fill);let x=M;
+  C.forEach((c,i)=>{const v=vals[i],cw=o.span&&i===0?C.slice(0,4).reduce((a,z)=>a+z.w,0):c.w;if(!(o.span&&i>0&&i<4)&&v!=null&&v!==''){const b=o.bold||(i===4&&o.sumBold)||(i===0&&o.dateBold),sz=o.size||8.5,m=i===0&&!o.span&&/^(\S+\.) (\d\d\.\d\d\.\d{4})$/.exec(v);
+   if(m){d.text(x+4,y-8.5,m[1],sz,b,null,o.gray);d.text(x+26,y-8.5,m[2],sz,b,null,o.gray);}
+   else if(c.r){const hp=hmParts(v),xr=x+c.w/2+NB/2;if(hp){if(hp[1])d.text(xr,y-8.5,hp[1],sz,b,'r',o.gray);if(hp[0])d.text(xr-34,y-8.5,hp[0],sz,b,'r',o.gray);}else d.text(xr,y-8.5,pdfFit(v,b,sz,c.w-8),sz,b,'r',o.gray);}else if(c.c)d.text(x+c.w/2,y-8.5,v,sz,b,'c',o.gray);else d.text(x+4,y-8.5,pdfFit(v,b,sz,cw-8),sz,b,null,o.gray);}x+=c.w;});
+  if(o.lineTop)d.line(M,y+3,R,y+3,.65,.5);y-=RH;};
+ const foot=()=>{if(y<BOT+64){d.add();y=d.H-M-10;}y-=30;const half=(TW-30)/2;
+  d.line(M,y,M+half,y,0,.6);d.line(M+half+30,y,R,y,0,.6);
+  d.text(M,y-10,'Datum, Unterschrift Mitarbeiter/in',7.5,false,null,.3);d.text(M+half+30,y-10,'Datum, Unterschrift Arbeitgeber'+(st.boss?' ('+st.boss+')':''),7.5,false,null,.3);};
+ const table=(e,P,title,range)=>{const showN=notesOn(e),C=cols(showN);
+  const need=()=>{if(y-RH<BOT){d.add();head(e,title,range+' (Fortsetzung)');thead(C);}};
+  head(e,title,range);thead(C);let di=0;
+  for(const w of P.weeks){
+   for(const dd of w.days){const we=dd.date.getDay()%6===0,fill=we?'0.86 0.86 0.86':(di++%2?'0.94 0.94 0.94':null),cf=dayConflicts(dd.shifts);
+    const ds=WD[dd.date.getDay()]+' '+dmy(dd.date);
+    if(!dd.shifts.length){need();row(C,[ds,'','','','',''],{fill,dateBold:we,lineTop:true});continue;}
+    dd.shifts.forEach((s,k)=>{need();const last=k===dd.shifts.length-1;
+     row(C,[k?'':ds,hm(s.i),s.o==null?'offen':hm(s.o,true),s.o==null?'':fmtH(s.o-s.i),last?fmtH(dd.net):'',showN?noteText(dd,s,k):''],{fill:cf.has(k)?'0.99 0.85 0.82':fill,sumBold:true,dateBold:we,lineTop:k===0});});}
+   need();row(C,['Woche KW '+w.kw+' · '+dm(w.from)+'–'+dm(w.to),'','','',fmtH(w.net)],{fill:'0.80 0.80 0.80',bold:true,lineTop:true,span:1});}
+  need();row(C,['Gesamt '+(P.label||''),'','','',fmtH(P.total.net),showN?unitTxt():''],{fill:'0.70 0.70 0.70',bold:true,size:9.5,span:1});
+  foot();};
+ for(const s of secs){const e=s.emp;if(d.c.length)d.add();
+  if(ref.kind==='year'){head(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y);const C=[{t:'Monat',w:TW-150},{t:'Arbeitszeit',w:150,r:1}];thead(C);let tot=0;
+   s.periods.forEach((P,i)=>{tot+=P.total.net;row(C,[P.label,fmtH(P.total.net)],{fill:i%2?'0.94 0.94 0.94':null,lineTop:true});});
+   row(C,['Gesamt '+ref.y,fmtH(tot)],{fill:'0.70 0.70 0.70',bold:true,size:9.5});foot();
+   s.periods.filter(hasData).forEach(P=>{d.add();table(e,P,'Arbeitszeitnachweis',P.label);});}
+  else table(e,s.periods[0],'Arbeitszeitnachweis',refLabel(ref));}
+ const n=d.pages.length,now=new Date(),info='Erstellt am '+dmy(now)+' '+hm(now.getHours()*60+now.getMinutes())+' mit '+APP+' V'+VERSION+' · Zeiten gerundet auf '+st.round+' Min';
+ d.pages.forEach((c,i)=>{d.c=c;d.line(M,30,R,30,.75,.4);d.text(M,20,info,7,false,null,.4);d.text(R,20,'Seite '+(i+1)+' von '+n,7,false,'r',.4);});
+ return d.build();}
+async function pdfOut(secs,ref,forPrint){const blob=makePdf(secs,ref),name=fileBase(secs,ref)+'.pdf';
+ if(canShareFiles()&&(IOS||/Android/i.test(navigator.userAgent))){if(forPrint)toast('Im Teilen-Menü „Drucken“ wählen');await shareFile(blob,name,name);}
+ else await saveAs(blob,name,'pdf');}
+
+/* Print */
+function printHead(e,title,range){const st=S();return`<div class="ph">${st.logo?`<img src="${st.logo}" alt="">`:''}<div class="pc"><b style="font-size:13pt">${esc(st.company)}</b><br>${esc(st.subtitle)}${st.boss?'<br>Geschäftsführer: '+esc(st.boss):''}</div><div class="pr"><b style="font-size:12pt">${esc(title)}</b><br>${esc(fullName(e))}${e.nr?' · Pers.-Nr. '+esc(e.nr):''}<br>${esc(range)}</div></div>`;}
+const printFoot=()=>`<div class="sig"><div>Datum, Unterschrift Mitarbeiter/in</div><div>Datum, Unterschrift Arbeitgeber${S().boss?' ('+esc(S().boss)+')':''}</div></div><div class="pf">Erstellt am ${dmy(new Date())} ${hm(new Date().getHours()*60+new Date().getMinutes())} mit ${APP} V${VERSION} · Zeiten gerundet auf ${S().round} Min${unitTxt()?' · Angaben in '+unitTxt():''}</div>`;
+function printSections(secs,ref){let h='';
+ for(const s of secs){const e=s.emp;
+  if(ref.kind==='year'){let rows='',tot=0,days=0;s.periods.forEach(P=>{tot+=P.total.net;days+=P.total.days;rows+=`<tr><td>${esc(P.label)}</td><td class="n">${fmtH(P.total.net)}</td></tr>`;});
+   h+=`<div class="pg">${printHead(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y)}<table class="tz"><thead><tr><th>Monat</th><th class="n">Arbeitszeit</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Gesamt ${ref.y}</td><td class="n">${fmtH(tot)}</td></tr></tfoot></table>${printFoot()}</div>`;
+   s.periods.filter(hasData).forEach(P=>{h+=`<div class="pg">${printHead(e,'Arbeitszeitnachweis',P.label)}${tableHTML(P,false,notesOn(e))}${printFoot()}</div>`;});}
+  else{const P=s.periods[0];h+=`<div class="pg">${printHead(e,'Arbeitszeitnachweis',refLabel(ref))}${tableHTML(P,false,notesOn(e))}${printFoot()}</div>`;}}
+ $('#print').innerHTML=h;const t0=document.title;document.title=fileBase(secs,ref); /* V1.24: Dateiname beim Drucken als PDF */
+ setTimeout(()=>{window.print();if(!MOBILE)document.title=t0;else setTimeout(()=>document.title=t0,60000);},80);}
+/* Der Druckinhalt bleibt im (am Bildschirm unsichtbaren) Bereich #print stehen – Chrome/Android meldet 'afterprint' schon beim Öffnen der Vorschau, ein Leeren dort ergab leere Seiten. Er wird beim nächsten Druck ersetzt. */
+
+/* CSV (flach, eine Zeile pro Buchung) */
+function exportCsv(secs,ref){const q=v=>{v=String(v??'');return/[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+ const L=[['Mitarbeiter','Pers.-Nr.','Datum','Wochentag','KW','Kommen','Gehen','Dauer (Std)','Pause (Min)','Tagessumme (Std dezimal)','Tagessumme','Bemerkung','Korrigiert','Original Kommen','Original Gehen'].join(';')];
+ for(const s of secs){let tot=0;for(const P of s.periods)for(const w of P.weeks)for(const d of w.days){tot+=d.net;d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;
+  L.push([fullName(s.emp),s.emp.nr||'',dmy(d.date),WD[d.date.getDay()],isoWeek(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':dec(sh.o-sh.i),last?d.pause:'',last?dec(d.net):'',last?fmtH(d.net):'',sh.n||'',sh.e?'ja':'',sh.ri||'',sh.ro||''].map(q).join(';'));});}
+  L.push([fullName(s.emp),s.emp.nr||'','Summe '+refLabel(ref),'','','','','','','',dec(tot),fmtH(tot),'','',''].map(q).join(';'));}
+ download(new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8'}),fileBase(secs,ref)+'.csv');}
+
+/* Text */
+function exportTxt(secs,ref){const st=S(),W=92,line=c=>c.repeat(W);const out=[];
+ const al=v=>{const p=hmParts(v);return p?(p[0].padStart(8)+' '+p[1].padStart(6)):String(v||'')};
+ const row=(a,b,c,d,e,f)=>a.padEnd(16)+b.padEnd(8)+c.padEnd(10)+al(d).padStart(16)+al(e).padStart(17)+'  '+f;
+ for(const s of secs){
+  for(const P of s.periods){if(ref.kind==='year'&&!hasData(P))continue;
+   out.push(line('='),st.company,(st.subtitle||'')+(st.boss?' · Geschäftsführer: '+st.boss:''),'Arbeitszeitnachweis – '+fullName(s.emp)+(s.emp.nr?' (Pers.-Nr. '+s.emp.nr+')':''),'Zeitraum: '+(ref.kind==='year'?P.label:refLabel(ref)),line('-'),row('Datum','Kommen','Gehen','Dauer','Tag','Bemerkung'),line('-'));
+   for(const w of P.weeks){for(const d of w.days){if(!d.shifts.length){out.push(row(fmtDate(d.date),'','','','',''));continue;}
+     d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;out.push(row(k?'':fmtDate(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':fmtH(sh.o-sh.i),last?fmtH(d.net):'',notesOn(s.emp)?noteText(d,sh,k).replace('✎ ',''):''));});}
+    out.push(('  Woche KW '+w.kw+' ('+dm(w.from)+'–'+dm(w.to)+')').padEnd(50)+al(fmtH(w.net)).padStart(17),line('-'));}
+   out.push(('GESAMT '+P.label).padEnd(50)+al(fmtH(P.total.net)).padStart(17)+'  '+unitTxt(),'');}
+  if(ref.kind==='year'){let t=0;s.periods.forEach(P=>t+=P.total.net);out.push(line('='),('JAHRESSUMME '+ref.y+' – '+fullName(s.emp)).padEnd(50)+al(fmtH(t)).padStart(17)+'  '+unitTxt(),'');}}
+ out.push('Erstellt am '+dmy(new Date())+' mit '+APP+' V'+VERSION);
+ download(new Blob(['﻿'+out.join('\r\n')],{type:'text/plain;charset=utf-8'}),fileBase(secs,ref)+'.txt');}
+
+/* XLSX (eigener Generator, ohne Bibliothek) – Layout wie Vorlage: Datum | Beginn | Ende | Beginn | Ende | Stunden | Bemerkungen */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0;}
+function zipStore(files,mime){const enc=new TextEncoder(),parts=[],cen=[];let off=0;const d=new Date();
+ const dt=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),dd=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+ for(const f of files){const nm=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+  const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,dt,true);h.setUint16(12,dd,true);h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);h.setUint16(28,0,true);
+  parts.push(h.buffer,nm,data);
+  const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);c.setUint16(12,dt,true);c.setUint16(14,dd,true);c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+  cen.push(c.buffer,nm);off+=30+nm.length+data.length;}
+ let csz=0;cen.forEach(p=>csz+=p.byteLength);
+ const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,csz,true);e.setUint32(16,off,true);
+ return new Blob([...parts,...cen,e.buffer],{type:mime});}
+const xe=s=>String(s??'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const colL=i=>i<26?String.fromCharCode(65+i):String.fromCharCode(64+Math.floor(i/26))+String.fromCharCode(65+i%26);
+/* Styles: 0 normal, 1 fett, 2 Zahl 0.00, 3 Kopf/Summe fett+Fläche, 4 Summe Zahl 0.00, 5 Zeit [h]:mm, 6 Summe [h]:mm, 7 Titel groß, 8 Wochenende grau */
+function xlsxBlob(sheets){const files=[];const used=new Set();
+ sheets.forEach((sh,i)=>{let nm=sh.name.replace(/[\[\]:*?\/\\]/g,'').slice(0,31)||('Blatt'+(i+1));let b=nm,k=2;while(used.has(nm.toLowerCase())){nm=b.slice(0,28)+' '+k++;}used.add(nm.toLowerCase());sh.name=nm;
+  let x='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"'+(i===0?' tabSelected="1"':'')+'/></sheetViews><cols>'+sh.cols.map((w,j)=>`<col min="${j+1}" max="${j+1}" width="${w}" customWidth="1"/>`).join('')+'</cols><sheetData>';
+  sh.rows.forEach((r,ri)=>{x+=`<row r="${ri+1}">`;r.forEach((c,ci)=>{if(c==null)return;const ref=colL(ci)+(ri+1);const s=c.s?` s="${c.s}"`:'';
+   if(typeof c.v==='number')x+=`<c r="${ref}"${s}><v>${c.v}</v></c>`;else if(c.v===''||c.v==null)x+=`<c r="${ref}"${s}/>`;else x+=`<c r="${ref}"${s} t="inlineStr"><is><t xml:space="preserve">${xe(c.v)}</t></is></c>`;});x+='</row>';});
+  x+='</sheetData><pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="portrait" fitToHeight="0"/></worksheet>';
+  files.push({name:`xl/worksheets/sheet${i+1}.xml`,data:x});});
+ const n=sheets.length;
+ files.push({name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')+'</Types>'});
+ files.push({name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'});
+ files.push({name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>'+sheets.map((s,i)=>`<sheet name="${xe(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')+'</sheets></workbook>'});
+ files.push({name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')+`<Relationship Id="rId${n+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`});
+ files.push({name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="0.00"/><numFmt numFmtId="165" formatCode="'+(S().hourFmt==='stdmin'?'[h]&quot; Std. &quot;mm&quot; Min&quot;':'[h]:mm')+'"/></numFmts><fonts count="4"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="14"/><name val="Calibri"/></font><font><sz val="11"/><color rgb="FF808080"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDCE6F1"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left/><right/><top/><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="9"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/><xf numFmtId="164" fontId="1" fillId="2" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="165" fontId="1" fillId="2" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Standard" xfId="0" builtinId="0"/></cellStyles></styleSheet>'});
+ return zipStore(files,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');}
+function hoursCell(min,sum){const hmF=S().hourFmt!=='dec';return hmF?{v:Math.round(min)/1440,s:sum?6:5}:{v:Math.round(min/60*100)/100,s:sum?4:2};}
+function periodSheet(e,P,title,range){const st=S();
+ const pairs=Math.max(2,...P.weeks.flatMap(w=>w.days.map(d=>d.shifts.length)));
+ const H=[{v:'Datum',s:3}];for(let i=0;i<pairs;i++)H.push({v:'Beginn',s:3},{v:'Ende',s:3});const showN=notesOn(e),hc=1+2*pairs;H.push({v:'Stunden',s:3});if(showN)H.push({v:'Bemerkungen',s:3});
+ const ncol=H.length,blank=s=>Array.from({length:ncol},()=>({v:'',s}));
+ const rows=[[{v:st.company+(st.boss?' · GF '+st.boss:''),s:7}],[{v:title+' '+fullName(e)+(e.nr?' (Pers.-Nr. '+e.nr+')':''),s:1}],[{v:'Zeitraum:',s:1},{v:range}],[],H];
+ for(const w of P.weeks){for(const d of w.days){const we=d.date.getDay()%6===0;const r=[{v:fmtDate(d.date),s:we?8:0}];
+   for(let i=0;i<pairs;i++){const sh=d.shifts[i];r.push({v:sh?hm(sh.i):''},{v:sh?(sh.o==null?'offen':hmx(sh.o)):''});}
+   r.push(d.shifts.length?hoursCell(d.net):{v:''});
+   const notes=d.shifts.map(sh=>sh.n).filter(Boolean);if(d.pause>0)notes.push('Pause −'+d.pause+' Min');if(d.shifts.some(sh=>sh.e))notes.push('korrigiert');
+   if(showN)r.push({v:notes.join(' · ')});rows.push(r);}
+  const wr=blank(3);wr[0]={v:'Woche KW '+w.kw+' ('+dm(w.from)+'–'+dm(w.to)+')',s:3};wr[hc]=hoursCell(w.net,true);rows.push(wr);}
+ rows.push([]);const tr=blank(3);tr[0]={v:'Summe Arbeitsstunden',s:3};tr[hc]=hoursCell(P.total.net,true);rows.push(tr);
+ rows.push([],[{v:'Erstellt am '+dmy(new Date())+' mit '+APP+' V'+VERSION+' · Zeiten gerundet auf '+st.round+' Min',s:8}]);
+ const cols=[18];for(let i=0;i<pairs;i++)cols.push(9,9);cols.push(14);if(showN)cols.push(60);return{cols,rows};}
+function exportXlsx(secs,ref){const sheets=[];const multi=secs.length>1;
+ for(const s of secs){const e=s.emp,pre=multi?e.first+' ':'';
+  if(ref.kind==='year'){const rows=[[{v:S().company,s:7}],[{v:'Jahresübersicht '+ref.y+' – '+fullName(e)+(e.nr?' (Pers.-Nr. '+e.nr+')':''),s:1}],[],[{v:'Monat',s:3},{v:'Stunden',s:3}]];let t=0,dd=0;
+   s.periods.forEach(P=>{t+=P.total.net;dd+=P.total.days;rows.push([{v:P.label},hoursCell(P.total.net)]);});
+   rows.push([{v:'Gesamt '+ref.y,s:3},hoursCell(t,true)]);sheets.push({name:pre+'Übersicht '+ref.y,cols:[18,20],rows});
+   s.periods.filter(hasData).forEach(P=>sheets.push({name:pre+P.label,...periodSheet(e,P,'Arbeitsstunden',P.label)}));}
+  else{const P=s.periods[0];sheets.push({name:pre+(ref.kind==='week'?'KW '+isoWeek(P.from)+' '+addDays(P.from,3).getFullYear():P.label),...periodSheet(e,P,'Arbeitsstunden',refLabel(ref))});}}
+ download(xlsxBlob(sheets),fileBase(secs,ref)+'.xlsx');}
+
+/* ---------- Admin ---------- */
+function openAdmin(){if(isPersonal()){const e=DB.emps[0];const go=()=>{scr='admin';if(!['daten','start'].includes(adminTab))adminTab='daten';render();};
+  if(!e||!needPin(e)){go();return;}pinDialog({title:'Einstellungen',sub:'Ihre PIN eingeben',av:avatar(e),len:S().pinLen,check:p=>p===String(e.pin),ok:go});return;}
+ pinDialog({title:'Administration',sub:'Admin-PIN eingeben',len:0,check:p=>p===String(S().adminPin),ok:()=>{scr='admin';adminTab=S().adminPin==='0000'?'param':adminTab;render();}});}
+function renderAdmin(){const tabs=isPersonal()?[['daten','Sichern & Daten'],['start','Startseite']]:[['firma','Firma'],['start','Startseite'],['ma','Mitarbeiter'],['zeit','Zeitlisten'],['abschl','Monatsabschluss'],['param','Parameter'],['daten','Sichern & Daten']];
+ if(!tabs.some(t=>t[0]===adminTab))adminTab=tabs[0][0];
+ const A={firma:[aFirma,bFirma],start:[aStart,bStart],ma:[aMA,bMA],zeit:[aZeit,bZeit],abschl:[aAbschl,bAbschl],param:[aParam,bParam],daten:[aDaten,bDaten]}[adminTab];
+ main.innerHTML=`<div class="adm"><div class="atop"><h1>${isPersonal()?'⚙ Einstellungen <span class="small mut">· persönliches Gerät</span>':'⚙ Administration'}</h1><span class="sp"></span><button class="btn p" id="aout">Abmelden</button></div><div class="tabs">${tabs.map(t=>`<button data-t="${t[0]}" class="${adminTab===t[0]?'on':''}">${t[1]}</button>`).join('')}</div><div>${A[0]()}</div></div>`;
+ main.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{adminTab=b.dataset.t;render();});$('#aout').onclick=goHome;A[1]();}
+function bindSettings(){main.querySelectorAll('[data-s]').forEach(el=>el.onchange=()=>{let v=el.type==='checkbox'?el.checked:el.value;if(el.dataset.t==='n')v=Number(String(v).replace(',','.'))||0;DB.settings[el.dataset.s]=v;save();toast('Gespeichert');if(['pinLen','requirePin','accent','company','subtitle','boss','hourFmt'].includes(el.dataset.s))render();});}
+function aFirma(){const st=S();return`<div class="card"><h3>Firmendaten (Kopfzeile & Ausdrucke)</h3>
+ <label class="fld">Firmenname<input data-s="company" value="${esc(st.company)}"></label>
+ <label class="fld">Zusatzzeile (Adresse, Slogan …)<input data-s="subtitle" value="${esc(st.subtitle)}"></label>
+ <label class="fld">Geschäftsführer (für Ausdrucke & Unterschrift)<input data-s="boss" value="${esc(st.boss||'')}"></label>
+ <div class="fld">Firmenlogo<div class="imgrow"><span class="logoprev">${st.logo?`<img src="${st.logo}" alt="">`:'kein Logo'}</span><label class="btn">🖼 Logo wählen<input type="file" accept="image/*" id="sLogo" hidden></label>${st.logo?'<button class="btn d" id="sLogoX">Entfernen</button>':''}${st.logo!==JET_LOGO?'<button class="btn" id="sLogoJ">JET-Logo verwenden</button>':''}</div></div>
+ <div class="fld">Farbe Kopfzeile${swatches('sAcc',st.accent)}</div>
+ <div class="fld">Schriftfarbe Kopfzeile${swatches('sAccT',st.accentText||txtOn(st.accent))}</div></div>`;}
+function bFirma(){bindSettings();const sw=main.querySelectorAll('.sw');bindSwatches(sw[0],'sAcc',c=>{DB.settings.accent=c;save();applyTheme();});bindSwatches(sw[1],'sAccT',c=>{DB.settings.accentText=c;save();applyTheme();});$('#sAcc').onchange=$('#sAccT').onchange=()=>render();
+ const lj=$('#sLogoJ');if(lj)lj.onclick=()=>{DB.settings.logo=JET_LOGO;save();render();};
+ $('#sLogo').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{DB.settings.logo=await loadImg(f,400,'image/png',false);save();render();toast('Logo gespeichert');}catch(x){toast('Logo konnte nicht geladen werden',true);}};
+ const x=$('#sLogoX');if(x)x.onclick=()=>{DB.settings.logo='';save();render();};}
+function aMA(){return`<div class="card"><div class="acts" style="margin-top:0"><h3 style="margin:0">Mitarbeiter (${DB.emps.length}/${MAX_EMP})</h3><span class="sp"></span><button class="btn p" id="mAdd" ${DB.emps.length>=MAX_EMP?'disabled':''}>＋ Neuer Mitarbeiter</button></div>
+ ${DB.emps.length?DB.emps.map((e,i)=>`<div class="mrow">${avatar(e,'sm')}<div class="mn"><b>${esc(fullName(e))}</b>${e.nr?`<span class="tag">Nr. ${esc(e.nr)}</span>`:'<span class="tag" style="background:#fde0d9;color:var(--go)">⚠ Pers.-Nr. fehlt</span>'}${e.multi?'<span class="tag">Mehrfachschicht</span>':''}${e.active?'':'<span class="tag">inaktiv</span>'}<span class="tag">PIN ${'•'.repeat(String(e.pin||'').length)}</span></div><button class="btn" data-up="${i}" ${i?'':'disabled'}>▲</button><button class="btn" data-dn="${i}" ${i<DB.emps.length-1?'':'disabled'}>▼</button>${''}<button class="btn" data-ed="${e.id}">✎ Bearbeiten</button></div>`).join(''):'<p class="mut">Noch keine Mitarbeiter.</p>'}</div>${''}`;}
+function bMA(){$('#mAdd').onclick=()=>empForm(null,true);
+  main.querySelectorAll('[data-ed]').forEach(b=>b.onclick=()=>empForm(DB.emps.find(e=>e.id===b.dataset.ed),true));
+ const mv=(i,j)=>{const a=DB.emps;[a[i],a[j]]=[a[j],a[i]];save();render();};
+ main.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>mv(+b.dataset.up,+b.dataset.up-1));
+ main.querySelectorAll('[data-dn]').forEach(b=>b.onclick=()=>mv(+b.dataset.dn,+b.dataset.dn+1));}
+function aZeit(){if(!DB.emps.length)return'<div class="card mut">Noch keine Mitarbeiter.</div>';
+ if(!DB.emps.find(e=>e.id===adminEmpId))adminEmpId=DB.emps[0].id;const e=DB.emps.find(x=>x.id===adminEmpId);
+ return`<div class="chips">${DB.emps.map(x=>`<button data-ce="${x.id}" class="${x.id===adminEmpId?'on':''}">${avatar(x,'xs')}${esc(fullName(x))}</button>`).join('')}</div>${listPanel(e,true)}`;}
+function bZeit(){if(!DB.emps.length)return;main.querySelectorAll('[data-ce]').forEach(b=>b.onclick=()=>{adminEmpId=b.dataset.ce;render();});bindList(DB.emps.find(x=>x.id===adminEmpId),true);}
+function aParam(){const st=S();return`${st.adminPin==='0000'?'<p class="warn">⚠ Die Admin-PIN ist noch auf <b>0000</b> – bitte unten ändern!</p>':''}
+ <div class="card"><h3>Zeiterfassung</h3>
+ <label class="fld">Rundung der Stempelzeit (auf die nächstgelegene Zeit, ±)<select data-s="round" data-t="n">${[[1,'keine Rundung (minutengenau)'],[5,'5 Minuten'],[10,'10 Minuten'],[15,'15 Minuten']].map(o=>opt(o,st.round)).join('')}</select></label>
+ <label class="fld">Stundenanzeige<select data-s="hourFmt">${[['stdmin','Stunden und Minuten (2 Std. 12 Min)'],['dec','Dezimal (2,20 Std)'],['hm','Stunden:Minuten (2:12)']].map(o=>opt(o,st.hourFmt)).join('')}</select></label>
+ <label class="chk"><input type="checkbox" data-s="empEdit" ${st.empEdit?'checked':''}> Mitarbeiter dürfen eigene Einträge korrigieren (Korrekturen werden markiert)</label>
+ <label class="chk"><input type="checkbox" data-s="notesOn" ${st.notesOn?'checked':''}> Bemerkungen / Tätigkeiten verwenden (für alle Mitarbeiter)</label>
+ <p class="mut small" style="margin-top:-4px">Aus: keine Eingabe möglich, die Spalte „Bemerkung“ entfällt in Liste, Ausdruck und Export. Bereits erfasste Bemerkungen bleiben gespeichert.</p>
+ <h3>Automatischer Pausenabzug</h3>
+ <label class="chk"><input type="checkbox" data-s="pauseOn" ${st.pauseOn?'checked':''}> Pause automatisch abziehen</label>
+ <div class="row2"><label class="fld">wenn eine durchgehende Arbeitszeit länger ist als (Std)<input type="number" min="0" max="24" step="0.5" data-s="pauseAfter" data-t="n" value="${st.pauseAfter}"></label><label class="fld">Pausendauer (Min)<input type="number" min="0" max="240" step="5" data-s="pauseMin" data-t="n" value="${st.pauseMin}"></label></div>
+ <p class="mut small">Gilt je durchgehendem Arbeitsblock (Kommen bis Gehen ohne Unterbrechung). Wer zwischendurch geht und wieder kommt, hat bereits Pause gemacht – dann zählt jeder Block einzeln.</p></div>
+ <div class="card"><h3>Anmeldung & Bedienung</h3>
+ <label class="chk"><input type="checkbox" data-s="requirePin" ${st.requirePin?'checked':''}> PIN-Abfrage für Mitarbeiter</label>
+ <label class="fld">PIN-Länge Mitarbeiter<select data-s="pinLen" data-t="n">${[[4,'4-stellig'],[6,'6-stellig']].map(o=>opt(o,st.pinLen)).join('')}</select></label>
+ ${pinWarn()}
+ <div class="row2"><label class="fld">Automatisch abmelden nach Inaktivität (Sek., 0 = nie)<input type="number" min="0" step="5" data-s="idleSec" data-t="n" value="${st.idleSec}"></label><label class="fld">Nach Buchung zur Startseite (Sek., 0 = in Ansicht bleiben)<input type="number" min="0" step="1" data-s="afterBookSec" data-t="n" value="${st.afterBookSec}"></label></div></div>${''}
+ <div class="card"><h3>Admin-PIN ändern</h3><div class="row2"><input id="ap1" type="password" inputmode="numeric" maxlength="8" placeholder="neue Admin-PIN (4–8 Ziffern)"><input id="ap2" type="password" inputmode="numeric" maxlength="8" placeholder="wiederholen"></div><div class="acts"><button class="btn p" id="apSet">Admin-PIN speichern</button></div></div>`;}
+function pinWarn(){const st=S();const bad=DB.emps.filter(e=>e.pinReq!==false&&!new RegExp('^\\d{'+st.pinLen+'}$').test(String(e.pin||'')));return bad.length&&st.requirePin?`<p class="warn">⚠ Diese Mitarbeiter haben keine gültige ${st.pinLen}-stellige PIN und können sich nicht anmelden: ${bad.map(e=>esc(fullName(e))).join(', ')} – bitte unter „Mitarbeiter“ anpassen.</p>`:'';}
+function bParam(){bindSettings();$('#apSet').onclick=()=>{const a=$('#ap1').value.trim(),b=$('#ap2').value.trim();if(!/^\d{4,8}$/.test(a)){toast('Admin-PIN: 4–8 Ziffern',true);return;}if(a!==b){toast('Die PINs stimmen nicht überein',true);return;}DB.settings.adminPin=a;save();render();toast('Admin-PIN geändert');};}
+function aStart(){const st=S();const n=DB.emps.filter(e=>e.active).length;
+ const num=(k,lbl,min,max,step)=>`<label class="fld">${lbl}<input type="number" min="${min}" max="${max}" step="${step}" data-s="${k}" data-t="n" value="${st[k]}"></label>`;
+ const sel=(k,lbl,opts)=>`<label class="fld">${lbl}<select data-s="${k}" data-t="n">${opts.map(o=>opt(o,st[k])).join('')}</select></label>`;
+ const auto=[[0,'Automatisch'],[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5'],[6,'6'],[8,'8']];
+ return`<div class="card"><h3>Mitarbeiter-Kacheln</h3><p class="mut small">Aktive Mitarbeiter: ${n}. Reichen die Plätze nicht aus, kommen weitere Reihen dazu. Die Kacheln werden höchstens so groß wie angegeben und auf kleineren Bildschirmen automatisch verkleinert.</p>
+ <div class="row2">${sel('tileCols','Anzahl Spalten',auto)}${sel('tileRows','Anzahl Reihen',auto)}</div>
+ <div class="row2">${num('tileW','Max. Breite einer Kachel (Pixel)',120,600,10)}${num('tileH','Max. Höhe einer Kachel (Pixel)',100,600,10)}</div>
+ <label class="fld">Kachel-Stil<select data-s="tileStyle">${[['color','Farbig mit weißem Rand und Schatten'],['light','Weiß mit farbigem Rand und Schatten']].map(o=>opt(o,st.tileStyle)).join('')}</select></label>
+ <div class="acts"><button class="btn p" id="stPrev">Startseite ansehen</button></div></div>
+ <div class="card"><h3>Hintergrundbild</h3><div class="imgrow"><span class="logoprev" style="background:#f3f5f8">${st.bgImage?`<img src="${st.bgImage}" alt="">`:'kein Bild'}</span><label class="btn">🖼 Bild wählen<input type="file" accept="image/*" id="stBg" hidden></label>${st.bgImage?'<button class="btn d" id="stBgX">Entfernen</button>':''}</div>
+ <div style="margin-top:14px">${num('bgDim','Bild abdunkeln (%) – damit die Kacheln gut lesbar bleiben',0,80,5)}</div></div>`;}
+function bStart(){bindSettings();$('#stPrev').onclick=goHome;
+ $('#stBg').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{DB.settings.bgImage=await loadImg(f,1920,'image/jpeg',false);save();render();toast('Hintergrundbild gespeichert');}catch(x){toast('Bild konnte nicht geladen werden (evtl. zu groß)',true);}};
+ const x=$('#stBgX');if(x)x.onclick=()=>{DB.settings.bgImage='';save();render();};}
+function aDaten(){const c=countBk(DB),kb=Math.round(JSON.stringify(DB).length/1024),st=S(),due=bakDue(),sh=canShareFiles();
+ const lb=st.lastBackup?new Date(st.lastBackup):null;
+ const how=`<details class="small" style="margin-top:6px"><summary style="cursor:pointer;color:var(--mut)">So wählen Sie den Ordner richtig</summary><ol style="margin:6px 0 0 18px;line-height:1.6"><li>Auf „📁 … Ordner wählen“ klicken – es öffnet sich ein Auswahlfenster.</li><li>Dort oben auf <b>„Neuer Ordner“</b> klicken und z. B. <b>Jet-Zeit</b> nennen (oder auf dem Netzlaufwerk einen vorhandenen Unterordner öffnen).</li><li>Diesen Ordner markieren → <b>„Ordner auswählen“</b> → <b>„Dateien bearbeiten“/„Zulassen“</b>.</li></ol><p style="margin:6px 0 0">Nicht möglich (sperrt der Browser): Hauptordner wie <b>Downloads, Dokumente, Desktop</b> oder ein <b>ganzes Laufwerk</b> (z. B. K:\\). Immer einen Unterordner darin wählen – und nicht den Unterordner „Sicherungen“, den legt Jet-Office selbst an.</p></details>`;
+ const where=dirH?'📁 '+esc(labelFits()&&dirLabel?dirLabel:dirH.name):'';
+ const fsCard=`<div class="card"><h3 style="display:flex;align-items:center;gap:8px">📁 Automatische Speicherung in einen Ordner ${FS_OK?ib('folder'):''}</h3>${!FS_OK?'<p class="warn">'+fsWhy()+'</p>':
+ !dirH?`<p>Noch kein Ordner gewählt. Mit Ordner schreibt Jet-Office bei jeder Eingabe die Datei <b>${DATA_FILE}</b> dorthin und legt jeden Tag eine Sicherung im Unterordner <b>${BAK_DIR}</b> an.</p><div class="acts" style="align-items:center"><button class="btn p" id="fsCh">📁 Datenordner wählen</button><span class="small mut">Den Ordner wählen, in dem <b>jetzeit-daten.json</b> liegen soll – z. B. P:\\Jet-Zeit\\Daten</span></div>${how}`:
+ fileSt==='ok'?`<p style="font-size:15px">✅ Speichert automatisch in den Ordner <b>${where}</b></p><p class="mut small">${lastFile?'Zuletzt gespeichert um '+hm(lastFile.getHours()*60+lastFile.getMinutes())+' Uhr · ':''}Datei <b>${DATA_FILE}</b> + Unterordner <b>${BAK_DIR}</b> (eine Sicherung pro Tag, ${FILE_KEEP} Tage).</p><div class="acts"><button class="btn" id="fsNow">Jetzt speichern</button><button class="btn" id="fsCh">Anderen Ordner wählen</button><button class="btn d" id="fsOff">Ordner trennen</button></div>`:
+ fileSt==='prompt'?`<p style="font-size:15px">⚠ Der Browser fragt erneut nach dem Zugriff auf den Ordner <b>${where}</b>.</p><div class="acts"><button class="btn p" id="fsGr">Zugriff erlauben</button><button class="btn" id="fsCh">Anderen Ordner wählen</button><button class="btn d" id="fsOff">Ordner trennen</button></div><p class="small mut">Tipp: Im Browser-Fenster „Bei jedem Besuch zulassen“ wählen.</p>`:
+ `<p style="font-size:15px;color:var(--go)">❌ Der Ordner <b>${where==='\\'?'(ganzes Laufwerk)':where}</b> ist nicht erreichbar – es wird gerade <b>nicht</b> in eine Datei gespeichert.</p><p class="small">Mögliche Gründe: Netzlaufwerk/NAS nicht verbunden, Ordner umbenannt oder gelöscht${where==='\\'?', oder es wurde ein ganzes Laufwerk gewählt (nicht erlaubt)':''}. Die Daten sind trotzdem sicher im Browser gespeichert; sobald der Ordner wieder erreichbar ist, schreibt Jet-Office automatisch nach (jede Minute geprüft).</p><div class="acts"><button class="btn p" id="fsCh">📁 Neuen Ordner wählen</button><button class="btn" id="fsGr">Erneut versuchen</button><button class="btn d" id="fsOff">Ordner trennen</button></div>${how}${fsErr?'<p class="small mut" style="margin-top:4px">Technisch: '+esc(fsErr)+'</p>':''}`}</div>`;
+ return fsCard+`<div class="card"><h3 style="display:flex;align-items:center;gap:8px">💾 Sichern & Wiederherstellen ${ib('bak')}</h3>
+ <p class="mut">Alle Daten – Mitarbeiter, Fotos, PINs, Einstellungen und Buchungen – stecken in <b>einer Sicherungsdatei</b>. Diese Datei z. B. per Mail oder AirDrop verschicken, auf einen USB-Stick oder ins Netzlaufwerk legen.</p>
+ <p>Letzte Sicherung: <b>${lb?dmy(lb)+' '+hm(lb.getHours()*60+lb.getMinutes())+' Uhr':'noch keine'}</b>${due?' · <span class="warn" style="padding:3px 8px">'+esc(due)+'</span>':''}</p>
+ <div class="bigacts">${sh?'<button class="btn p" id="dShare">📤 Sicherung teilen<br><span class="small">Mail, AirDrop, WhatsApp, Dateien …</span></button>':''}<button class="btn ${sh?'':'p'}${IOS&&sh?' ioshide':''}" id="dBak" title="${esc(saveTip())}">💾 Sicherung ${SAVE_OK?'speichern unter …':'in Downloads speichern'}<br><span class="small">${SAVE_OK?'Ordner und Dateinamen selbst wählen':'Datei landet im Download-Ordner'} ⓘ</span></button><label class="btn">♻ Sicherung einspielen<br><span class="small">Datei auswählen, Vorschau, bestätigen</span><input type="file" accept=".json,application/json,text/plain" id="dRes" hidden></label></div>
+ <p class="small mut" style="margin-top:12px">Vor jedem Einspielen wird der aktuelle Stand automatisch gesichert – es kann also nichts verloren gehen.</p>
+ <label class="small">Erinnerung auf der Startseite, wenn die letzte Sicherung älter ist als <select data-s="bakRemind" data-t="n">${[[0,'aus'],[1,'1 Tag'],[3,'3 Tage'],[7,'7 Tage'],[14,'14 Tage'],[30,'30 Tage']].map(o=>opt(o,st.bakRemind)).join('')}</select></label></div>
+ <div class="card"><h3>🕘 Automatische Sicherungen auf diesem Gerät</h3><p class="mut">Jet-Office hebt den Stand der letzten 14 Tage sowie die letzten 10 Sicherheitskopien (vor dem Einspielen) automatisch auf.</p><div id="snapList" class="mut">wird geladen …</div></div>
+ ${''}
+ <div class="card"><h3>Speicherstatus</h3><p>Gespeicherte Buchungen: <b>${c.n}</b> · Mitarbeiter: <b>${c.emps}</b> · Datenmenge ca. <b>${kb} KB</b></p><div class="acts" style="margin-top:0"><button class="btn" id="dInfo">Details zum Speicher</button></div></div>
+ ${IMPORTS.length?`<div class="card"><h3>Übernahme aus Excel</h3><p class="mut">Einträge vom November 2026 aus der Excel-Liste. Fehlende Einträge werden ergänzt, vorhandene bleiben unverändert – es entstehen keine Doppelungen.</p><div class="acts"><button class="btn" id="dImp">Excel-Einträge November erneut übernehmen</button></div></div>`:''}
+ <div class="card"><h3>Auswertung aller Mitarbeiter</h3><p class="mut">Unter „Zeitlisten“ → „Drucken / Export“ → „Alle Mitarbeiter“ lassen sich Woche, Monat oder Jahr für alle gemeinsam drucken oder exportieren.</p></div>
+ ${isPersonal()?'':`<div class="card"><h3>Zurücksetzen</h3><p class="small mut">Auch hier wird vorher automatisch eine Sicherheitskopie angelegt.</p><div class="acts"><button class="btn d" id="dClr">Alle Zeitbuchungen löschen</button><button class="btn d" id="dAll">Alles zurücksetzen (Werkseinstellung)</button></div></div>`}`;}
+const MOBILE=IOS||/Android/i.test(navigator.userAgent);
+const SAVE_LBL=()=>SAVE_OK?'💾 Speichern unter …':'💾 In Downloads speichern';
+function canShareFiles(){if(!MOBILE)return false;try{return !!(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File(['{}'],'t.json',{type:'application/json'})]}));}catch(e){return false;}}
+async function shareFile(blob,name,title){try{await navigator.share({files:[new File([blob],name,{type:blob.type})]});return true;}
+ catch(e){if(e&&e.name==='AbortError')return false;toast('Teilen nicht möglich – Datei wird gespeichert',true);download(blob,name,true);return true;}}
+function backupFile(){const n=new Date();return{blob:new Blob([JSON.stringify({app:'Jet-Zeit',version:VERSION,created:n.toISOString(),counts:countBk(DB),db:DB},null,1)],{type:'application/json'}),name:isPersonal()&&DB.emps[0]?empFile(DB.emps[0],'sicherung',n):APP+'-Sicherung_'+ymd(n)+'_'+pad(n.getHours())+pad(n.getMinutes())+'.json'};}
+function markBackup(){DB.settings.lastBackup=new Date().toISOString();save();if(scr==='admin')render();}
+function fmtTs(iso){const d=new Date(iso);return isNaN(d)?'?':dmy(d)+' '+hm(d.getHours()*60+d.getMinutes())+' Uhr';}
+/* Wiederherstellen mit Vorschau – vorher immer Sicherheitskopie */
+function restoreFrom(j,src,after){const d=j&&(j.db||j);if(!d||!Array.isArray(d.emps)||!d.data){toast('Keine gültige Jet-Zeit-Sicherung',true);return;}
+ if(isPersonal()&&!(d.mode==='personal'&&d.personalId===DB.personalId)){
+  if(d.mode!=='personal'&&d.settings&&d.settings.adminPin){pinDialog({title:'Administrator-Sicherung',sub:'Admin-PIN aus dieser Sicherung eingeben – danach ist dieses Gerät wieder ein Administrations-Gerät',len:0,check:p=>p===String(d.settings.adminPin),ok:()=>restoreFrom0(j,src,after)});return;}
+  toast('Auf diesem Gerät können nur eigene Sicherungen eingespielt werden',true);return;}
+ restoreFrom0(j,src,after);}
+function restoreFrom0(j,src,after){const d=j&&(j.db||j);
+ if(OFFICE&&d.mode==='personal'){toast('Das ist die Sicherung eines Mitarbeiter-Handys – in Jet-Office nicht verwendbar',true);return;}
+  const c=countBk(d),cur=countBk(DB);
+ confirmDlg(`<b>${esc(src)}</b><br>Stand: <b>${j.created?fmtTs(j.created):(d.meta&&d.meta.savedAt?fmtTs(d.meta.savedAt):'unbekannt')}</b><br>Mitarbeiter: <b>${c.emps}</b> (${esc(d.emps.map(e=>e.first).join(', ')||'–')})<br>Buchungen: <b>${c.n}</b>${c.min?' · Zeitraum '+dmy(pd(c.min))+' – '+dmy(pd(c.max)):''}${d.mode==='personal'&&!isPersonal()?'<br><span class="warn" style="display:block;margin-top:6px">Achtung: Diese Sicherung stammt von einem <b>persönlichen Gerät</b>. Nach dem Einspielen läuft auch dieses Gerät im Einzelmodus. Zum Zusammenführen der Stunden kommt in V1.11 die Monatsmeldung.</span>':''}<br><br><span class="mut">Derzeit auf diesem Gerät: ${cur.emps} Mitarbeiter, ${cur.n} Buchungen. Dieser Stand wird vorher automatisch gesichert.</span><br><b>Die aktuellen Daten werden durch die Sicherung ersetzt.</b>`,'Wiederherstellen',async()=>{
+  await safetyCopy('Sicherheitskopie vor dem Einspielen');const rev=Math.max((DB.meta&&DB.meta.rev)||0,(d.meta&&d.meta.rev)||0);
+  DB=norm(JSON.parse(JSON.stringify(d)));DB.meta.rev=rev;if(after)after();save();render();toast('Sicherung wiederhergestellt');},true);}
+async function loadSnapList(){const el=$('#snapList');if(!el)return;if(!window.indexedDB||idbOk===false){el.innerHTML='<span class="warn">Zweitspeicher auf diesem Gerät nicht verfügbar.</span>';return;}
+ try{const m=(await idbGet('snaps'))||{};const ks=Object.keys(m).sort((a,b)=>(m[b].time||'').localeCompare(m[a].time||''));
+  if(!$('#snapList'))return;
+  el.innerHTML=ks.length?ks.map(k=>`<div class="snap"><span style="flex:1;min-width:220px"><b>${fmtTs(m[k].time)}</b><br><span class="small mut">${esc(m[k].label)} · ${m[k].emps} Mitarbeiter · ${m[k].n} Buchungen</span></span><button class="btn" data-sr="${esc(k)}">Wiederherstellen</button><button class="btn" data-sd="${esc(k)}" title="${esc(saveTip())}">${IOS&&canShareFiles()?'📤 Teilen':SAVE_LBL()}</button></div>`).join(''):'Noch keine automatischen Sicherungen vorhanden.';
+  el.querySelectorAll('[data-sr]').forEach(b=>b.onclick=async()=>{const k=b.dataset.sr,v=await idbGet(k);if(v)restoreFrom({created:m[k].time,db:v},m[k].label);});
+  el.querySelectorAll('[data-sd]').forEach(b=>b.onclick=async()=>{const k=b.dataset.sd,v=await idbGet(k);if(!v)return;const t=new Date(m[k].time);
+   saveAs(new Blob([JSON.stringify({app:'Jet-Zeit',version:VERSION,created:m[k].time,counts:countBk(v),db:v},null,1)],{type:'application/json'}),APP+'-Sicherung_'+ymd(t)+'_'+pad(t.getHours())+pad(t.getMinutes())+'.json','bak');});}
+ catch(e){el.innerHTML='<span class="warn">Automatische Sicherungen konnten nicht gelesen werden.</span>';}}
+function bDaten(){bindSettings();
+ const fc=$('#fsCh');if(fc)fc.onclick=fsChoose;const fgr=$('#fsGr');if(fgr)fgr.onclick=fsGrant;const fo=$('#fsOff');if(fo)fo.onclick=fsDisconnect;
+ 
+ const fn=$('#fsNow');if(fn)fn.onclick=async()=>{await flushFile();toast(fileSt==='ok'?'In Datei gespeichert':'Datei konnte nicht geschrieben werden',fileSt!=='ok');render();};
+ const sh=$('#dShare');if(sh)sh.onclick=async()=>{const f=backupFile();if(await shareFile(f.blob,f.name,'Jet-Office Sicherung'))markBackup();};
+ $('#dBak').onclick=async()=>{const f=backupFile();if(await saveAs(f.blob,f.name,'bak'))markBackup();};
+ $('#dRes').onchange=ev=>{const f=ev.target.files[0];ev.target.value='';if(!f)return;const fr=new FileReader();fr.onload=()=>{let j;try{j=JSON.parse(fr.result);}catch(x){toast('Datei ist keine Jet-Zeit-Sicherung',true);return;}if(j&&(j.type==='setup'||j.type==='report')){toast('Diese Datei (Einrichtung bzw. Monatsmeldung) gehört zur Vollversion Jet-Zeit – in Jet-Office nicht verwendbar',true);return;}restoreFrom(j,'Sicherung „'+f.name+'“');};fr.readAsText(f);};
+ $('#dInfo').onclick=storageInfo; loadSnapList();bindInfo();
+ if($('#dImp'))$('#dImp').onclick=()=>{const before=JSON.stringify(DB.data);IMPORTS.forEach(im=>delete DB.imports[im.id]);delete DB.imports.done;migrate();render();toast(JSON.stringify(DB.data)===before?'Alle Einträge waren bereits vorhanden':'Fehlende Einträge übernommen');};
+ if($('#dClr'))$('#dClr').onclick=()=>confirmDlg('Wirklich <b>alle Zeitbuchungen aller Mitarbeiter</b> löschen? Mitarbeiter und Einstellungen bleiben erhalten.<br><span class="mut">Vorher wird automatisch eine Sicherheitskopie angelegt.</span>','Alle Buchungen löschen',async()=>{await safetyCopy('Sicherheitskopie vor „Buchungen löschen“');DB.data={};save();render();toast('Buchungen gelöscht');},true);
+ if($('#dAll'))$('#dAll').onclick=()=>confirmDlg('Wirklich <b>alles</b> löschen (Mitarbeiter, Buchungen, Einstellungen, Admin-PIN wird 0000)?<br><span class="mut">Vorher wird automatisch eine Sicherheitskopie angelegt.</span>','Alles zurücksetzen',async()=>{await safetyCopy('Sicherheitskopie vor „Alles zurücksetzen“');const rev=(DB.meta&&DB.meta.rev)||0;DB=norm(seed());DB.emps=[];DB.imports={done:true};DB.meta.rev=rev;save();scr='home';render();toast('Zurückgesetzt');},true);}
+/* ---------- Timer: Uhr, Auto-Abmeldung, Aktualisierung ---------- */
+['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now();},{passive:true}));
+let lastMin=-1;
+setInterval(()=>{tick();const idle=Date.now()-lastAct,st=S();
+ const lim=scr==='admin'?Math.max(300,+st.idleSec||0):(+st.idleSec||0);
+ if(lim>0&&idle>lim*1000&&(scr!=='home'||modalOpen())&&!$('#ov').classList.contains('on'))goHome();
+ const m=new Date().getMinutes();if(m!==lastMin){lastMin=m;if(scr==='home'&&!modalOpen())renderHome();}},1000);
+addEventListener('resize',()=>{if(scr==='home')setCols(DB.emps.filter(e=>e.active).length);});
+window.addEventListener('storage',ev=>{if(ev.key===LS&&ev.newValue){DB=load();if(scr==='home')render();}});
+render();
+bootStore();
+</script>
+</body>
+</html>
