@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Jet-Office V1.25</title>
+<title>Jet-Office V1.26</title>
 <style>
 :root{--acc:#1f4e79;--accT:#fff;--bg:#eef1f5;--card:#fff;--ink:#1d2530;--mut:#6b7684;--line:#dde2e9;--ok:#23955a;--go:#d6492f;--dis:#c5cbd3;--we:#f5f6f8}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -275,6 +275,35 @@ input[type=file]{display:none!important}
 #toast.on{transform:translateX(-50%) translateY(0)}
 #toast.err{background:#a8321e}
 #print{display:none}
+/* V1.26: virtuelle Pause */
+.tz tr.vrow td{color:#4a5563;font-size:13.5px;height:28px}
+.tz tr.vrow td.vpl{font-style:italic;padding-left:18px}
+.tz .vps{font-size:11.5px;font-weight:600;color:#b26a00;background:#fff3cd;border-radius:6px;padding:1px 6px}
+.tz tr.ws.wsa td{border-bottom:1px solid #c9d3df}
+.tz tr.ws.wsp td{font-weight:500;font-size:14px;height:28px}
+.vpg .vph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.vpg .vph b{font-size:15px}
+.vpr{display:grid;grid-template-columns:160px 1fr 210px;align-items:center;gap:10px;min-height:36px;border-top:1px solid #eef1f5}
+.vpr.vpax{min-height:18px;border-top:0}
+.vpn{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vpt{position:relative;height:28px;border-radius:6px;background-color:#f6f8fb;background-image:linear-gradient(90deg,#d9dfe7 1px,transparent 1px);background-size:calc(100% / var(--h)) 100%}
+.vpax .vpt{height:16px;background:none}
+.vpax .vpt span{position:absolute;top:0;transform:translateX(-50%);font-size:10.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+.vpb{position:absolute;top:4px;bottom:4px;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.vpp{position:absolute;top:-1px;bottom:-1px;border-radius:6px;background:#fff;border:2.5px dashed #1d2530;cursor:grab;touch-action:none;z-index:2;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.vpp.ok{border:2.5px solid var(--ok);background:#e6f7ec}
+.vpp.cf{border-color:var(--go);background:#fde0d9}
+.vpp.lk{cursor:default}
+.vpp.drag{cursor:grabbing;box-shadow:0 0 0 3px rgba(31,78,121,.35),0 4px 12px rgba(0,0,0,.3)}
+.vpi{display:flex;align-items:center;gap:4px;font-size:13px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.vpi b{min-width:92px}
+.vpi .btn{min-height:28px!important;padding:2px 9px!important;font-size:13px!important}
+.vpi .btn.okb{background:#e3f4ea;color:var(--ok)}
+.vpw{font-size:11.5px;color:#b26a00;flex-basis:100%}
+.vpleg{display:inline-flex;align-items:center;gap:5px;margin-right:12px}
+.vpleg i{display:inline-block;width:22px;height:13px;border-radius:4px;background:#fff;border:2px dashed #1d2530}
+.vpleg i.ok{border:2px solid var(--ok);background:#e6f7ec}.vpleg i.cf{border:2px solid var(--go);background:#fde0d9}
+@media (max-width:760px){.vpr{grid-template-columns:96px 1fr}.vpi{grid-column:1/-1;padding-bottom:4px}.vpr.vpax .vpi{display:none}.vpax .vpt span.odd{display:none}}
 @media (max-width:760px){
  .bb{height:130px;font-size:34px}
  .kpis b{font-size:20px}
@@ -334,6 +363,10 @@ input[type=file]{display:none!important}
  .tz tr.td.b1 td{background:none!important}
  .tz tr.td.b2 td{background:#eeeeee!important}
  .tz tr.ws td{background:#e6e6e6!important;border-bottom:2px solid #000}
+ .tz tr.ws.wsa td{border-bottom:1px solid #999}
+ .tz tr.ws.wsp td{font-size:9pt;height:auto}
+ .tz tr.vrow td{color:#333;font-size:8.5pt;height:auto}
+ .tz .vps{background:none;color:#555;font-weight:400}
  .tz tfoot td{background:#ccc!important;color:#000!important;font-size:11pt}
  .tz .nt{display:table-cell;color:#333;font-size:8.5pt}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -355,11 +388,11 @@ input[type=file]{display:none!important}
 /* =========================================================
    Jet-Office – Zeiterfassung für das Büro-Terminal (Office-Version von Jet-Zeit,
    ohne Import/Export, Monatsmeldung, eigenes Gerät und Komplettpaket)
-   Version 1.25 · Vollversion Jet-Zeit und Office-Version Jet-Office aus einer Quelle · Version 1.24 · neues JET-Logo, sprechende Dateinamen (Druck/PDF, Meldung), Hinweise bei Import/Export, Android-Ausgaben über Teilen · Version 1.23 · ohne Startmitarbeiter und ohne Übernahmedaten (PC und Web identisch) · Version 1.22 · Monatsmeldung mit Gesamtstunden, Daten importieren/exportieren · Copyright-Würfel, Std./Min ausgerichtet · bis 12 Mitarbeiter · Abschluss pro Mitarbeiter · Datenordner verständlicher · Admin-Gerät geschützt · Personalnummer als Schlüssel · Einzelmodus eingeschränkt · PIN pro Mitarbeiter · PDF-Ausgabe · iPhone/iPad · Monatsmeldung & Monatsabschluss · Terminal- und Einzelmodus (eigenes Gerät) · installierbare Web-App (Android/PC) · Daten bei jeder Eingabe gespeichert:
+   Version 1.26 · virtuelle Pause (Admin-Seite „Pause“, bezahlt, in allen Ausgaben) · Version 1.25 · Vollversion Jet-Zeit und Office-Version Jet-Office aus einer Quelle · Version 1.24 · neues JET-Logo, sprechende Dateinamen (Druck/PDF, Meldung), Hinweise bei Import/Export, Android-Ausgaben über Teilen · Version 1.23 · ohne Startmitarbeiter und ohne Übernahmedaten (PC und Web identisch) · Version 1.22 · Monatsmeldung mit Gesamtstunden, Daten importieren/exportieren · Copyright-Würfel, Std./Min ausgerichtet · bis 12 Mitarbeiter · Abschluss pro Mitarbeiter · Datenordner verständlicher · Admin-Gerät geschützt · Personalnummer als Schlüssel · Einzelmodus eingeschränkt · PIN pro Mitarbeiter · PDF-Ausgabe · iPhone/iPad · Monatsmeldung & Monatsabschluss · Terminal- und Einzelmodus (eigenes Gerät) · installierbare Web-App (Android/PC) · Daten bei jeder Eingabe gespeichert:
    localStorage (sofort) + IndexedDB (Zweitkopie + Tagessicherungen)
    + optional Datei jetzeit-daten.json in einem Datenordner (PC/Android, File System Access API)
    ========================================================= */
-const VERSION='1.25';
+const VERSION='1.26';
 /* V1.25: OFFICE=true erzeugt „Jet-Office“ (nur Büro-Terminal). Beim Erzeugen der Office-Version wird dieser Schalter gesetzt
    und alle Bereiche zwischen den Marken FULL … /FULL werden aus der Datei entfernt (Import/Export, Monatsmeldung, eigenes Gerät, Komplettpaket). */
 const OFFICE=true;
@@ -368,7 +401,7 @@ const JET_LOGO='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOUAAACMCAYAAACDMm
 const JET_LOGO_OLD_PRE='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhcAAACMCAYAAADP54vhAACEvElEQVR42uy9eZhcV3Xu/Vt7n1PVLUu2JSwZCzC2CRBaQAgy2B'; /* V1.24: altes Logo erkennen und ersetzen */
 const LS='jetzeit_db_v1';
 const MAX_EMP=12;
-const DEF_S={company:'JET Tankstelle Mäder',subtitle:'Neue Landstraße 84 · 6841 Mäder',boss:'Gökhan Ünlü',logo:JET_LOGO,accent:'#ffb701',accentText:'#024794',round:5,pinLen:4,requirePin:true,adminPin:'0000',idleSec:60,afterBookSec:5,empEdit:true,hourFmt:'stdmin',tileCols:0,tileRows:0,tileW:240,tileH:210,tileStyle:'color',bgImage:'',bgDim:25,pauseOn:false,pauseAfter:6,pauseMin:30,bakRemind:7,lastBackup:'',notesOn:false};
+const DEF_S={company:'JET Tankstelle Mäder',subtitle:'Neue Landstraße 84 · 6841 Mäder',boss:'Gökhan Ünlü',logo:JET_LOGO,accent:'#ffb701',accentText:'#024794',round:5,pinLen:4,requirePin:true,adminPin:'0000',idleSec:60,afterBookSec:5,empEdit:true,hourFmt:'stdmin',tileCols:0,tileRows:0,tileW:240,tileH:210,tileStyle:'color',bgImage:'',bgDim:25,pauseOn:false,pauseAfter:6,pauseMin:30,bakRemind:7,lastBackup:'',notesOn:false,vpOn:true,vpAfter:6,vpMin:30};
 const COLORS=['#024794','#ffb701','#1f77b4','#2e9e5b','#e07b00','#8e44ad','#c0392b','#16a085','#d4a017','#34495e','#e84393','#6d4c41'];
 const WD=['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'];
 const WDL=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
@@ -561,11 +594,11 @@ const closedAt=(mk,id)=>((DB.closed||{})[mk]||{}).at||((DB.closedEmp||{})[mk]||{
 const selIds=()=>abSel?DB.emps.filter(e=>abSel.has(e.id)).map(e=>e.id):DB.emps.map(e=>e.id);
 function monthStats(e,mk){const o=DB.data[e.id]||{},src=new Set();let tot=0,cf=0,open=0;
  for(const [k,a] of Object.entries(o)){if(!k.startsWith(mk))continue;tot+=dayCalc(a).net;cf+=dayConflicts(a).size;a.forEach(s=>{src.add(s.src&&s.src!==DEV.id?s.src:'_');if(s.o==null)open++;});}
- return{tot,cf,open,src:[...src]};}
+ return{tot,cf,open,src:[...src],vpo:vpOpen(e,mk)};}
 function aAbschl(){const mk=abMonth||(abMonth=defMonth()),sel=new Set(selIds());
  const ncl=DB.emps.filter(e=>isClosed(mk,e.id)).length,cl=DB.emps.length&&ncl===DB.emps.length,part=ncl&&!cl;
  const selCl=DB.emps.filter(e=>sel.has(e.id)&&isClosed(mk,e.id)).length,selOp=sel.size-selCl;
- const rows=DB.emps.map(e=>{const st=monthStats(e,mk);  return`<tr><td><input type="checkbox" data-sel="${e.id}" ${sel.has(e.id)?'checked':''} style="width:18px;height:18px"></td><td>${esc(e.nr||'–')}</td><td><span style="display:inline-flex;align-items:center;gap:8px">${avatar(e,'xs')}<span>${esc(fullName(e))}${e.active?'':' <span class="small mut">(inaktiv)</span>'}</span></span></td>${''}<td class="n"><b>${fmtH(st.tot)}</b></td><td>${st.cf?`<span class="bad" data-cf="${e.id}">⚠ ${st.cf} Überschn.</span>`:''}${st.open?` <span class="small" style="color:#b26a00">${st.open} offen</span>`:''}</td><td>${isClosed(mk,e.id)?'<span class="badge cl">🔒 '+fmtTs(closedAt(mk,e.id)).replace(' Uhr','')+'</span>':'<span class="badge op">offen</span>'}</td></tr>`;}).join('');
+ const rows=DB.emps.map(e=>{const st=monthStats(e,mk);  return`<tr><td><input type="checkbox" data-sel="${e.id}" ${sel.has(e.id)?'checked':''} style="width:18px;height:18px"></td><td>${esc(e.nr||'–')}</td><td><span style="display:inline-flex;align-items:center;gap:8px">${avatar(e,'xs')}<span>${esc(fullName(e))}${e.active?'':' <span class="small mut">(inaktiv)</span>'}</span></span></td>${''}<td class="n"><b>${fmtH(st.tot)}</b></td><td>${st.cf?`<span class="bad" data-cf="${e.id}">⚠ ${st.cf} Überschn.</span>`:''}${st.open?` <span class="small" style="color:#b26a00">${st.open} offen</span>`:''}${st.vpo?` <span class="bad" data-vpg="1" style="color:#b26a00" title="Virtuelle Pausen noch nicht bestätigt – zur Seite „Pause“">⏸ ${st.vpo} Pause${st.vpo>1?'n':''} offen</span>`:''}</td><td>${isClosed(mk,e.id)?'<span class="badge cl">🔒 '+fmtTs(closedAt(mk,e.id)).replace(' Uhr','')+'</span>':'<span class="badge op">offen</span>'}</td></tr>`;}).join('');
  const tot=DB.emps.reduce((s,e)=>s+monthStats(e,mk).tot,0);
  return`<div class="card"><div class="mnav"><button class="btn" id="abP">‹</button><b>${monLabel(mk)}</b><button class="btn" id="abN">›</button><span class="badge ${cl?'cl':'op'}">${cl?'🔒 alle abgeschlossen':part?'🔒 '+ncl+' von '+DB.emps.length+' abgeschlossen':'offen'}</span></div>
  <div class="acts">${''}<button class="btn" id="abOut" ${sel.size?'':'disabled'}>🖨 Drucken / Export (${sel.size} ausgewählt)</button><span class="sp"></span>${selCl?`<button class="btn" id="abOpen">🔓 Wieder öffnen (${selCl})</button>`:''}<button class="btn d" id="abLock" ${selOp?'':'disabled'}>🔒 Abschließen (${selOp} ausgewählt)</button></div>
@@ -581,9 +614,55 @@ function bAbschl(){const mk=abMonth;
    if(DB.closed&&DB.closed[mk]){const at=DB.closed[mk].at;delete DB.closed[mk];DB.closedEmp=DB.closedEmp||{};DB.closedEmp[mk]={};DB.emps.forEach(e=>DB.closedEmp[mk][e.id]=at);}
    ids.forEach(id=>{if(DB.closedEmp&&DB.closedEmp[mk])delete DB.closedEmp[mk][id];});save();render();});};
  $('#abLock').onclick=()=>{const ids=selIds().filter(id=>!isClosed(mk,id));if(!ids.length)return;
+  const vo=DB.emps.filter(e=>ids.includes(e.id)).map(e=>[e,vpOpen(e,mk)]).filter(x=>x[1]);
+  if(vo.length){const b=openModal(`<h2>⏸ Pausen noch nicht bestätigt</h2><p>Vor dem Abschluss müssen alle virtuellen Pausen von ${monLabel(mk)} bestätigt sein:</p><ul style="line-height:1.6;margin:4px 0 8px 18px">${vo.map(([e,n])=>`<li><b>${esc(fullName(e))}</b>: ${n} Tag${n>1?'e':''} offen</li>`).join('')}</ul><div class="acts"><button class="btn" id="voC">Schließen</button><span class="sp"></span><button class="btn p" id="voG">⏸ Zur Seite „Pause“</button></div>`);
+   b.querySelector('#voC').onclick=closeModal;b.querySelector('#voG').onclick=()=>{closeModal();vpMonth=mk;adminTab='pause';render();};return;}
   const cf=DB.emps.filter(e=>ids.includes(e.id)).reduce((s,e)=>s+monthStats(e,mk).cf,0);
   confirmDlg(`${monLabel(mk)} für <b>${ids.length} Mitarbeiter</b> abschließen?${cf?`<br><span style="color:var(--go)">⚠ Es gibt noch ${cf} Buchungen mit Überschneidungen.</span>`:''}<br><span class="mut">Danach sind für diesen Monat keine Korrekturen${OFFICE?'':' und kein Einlesen'} mehr möglich (wieder öffnen jederzeit möglich).</span>`,'Abschließen',()=>{DB.closedEmp=DB.closedEmp||{};DB.closedEmp[mk]=DB.closedEmp[mk]||{};const at=new Date().toISOString();ids.forEach(id=>DB.closedEmp[mk][id]=at);save();render();toast(monLabel(mk)+': '+ids.length+' Mitarbeiter abgeschlossen');});};
+ main.querySelectorAll('[data-vpg]').forEach(x=>x.onclick=()=>{vpMonth=mk;adminTab='pause';main.dataset.tab='';render();});
  main.querySelectorAll('[data-cf]').forEach(x=>x.onclick=()=>{const [y,m]=mk.split('-').map(Number);adminEmpId=x.dataset.cf;adminTab='zeit';view={mode:'month',a:new Date(y,m-1,1)};render();});}
+/* ---------- V1.26: Admin-Seite „Pause“ ---------- */
+let vpMonth=null,VPAX={s:300,e:1380};
+const vpPct=m=>((m-VPAX.s)/(VPAX.e-VPAX.s)*100).toFixed(3)+'%';
+function aPause(){const mk=vpMonth||(vpMonth=abMonth||defMonth()),dur=vpDur();
+ const keys=[...new Set(DB.emps.flatMap(e=>Object.keys(DB.data[e.id]||{}).filter(k=>k.startsWith(mk))))].sort();
+ const days=keys.map(k=>({k,rows:vpDay(k)})).filter(x=>x.rows.length);
+ let lo=300,hi=1380;days.forEach(x=>x.rows.forEach(r=>{lo=Math.min(lo,Math.floor(r.b[0][0]/60)*60);hi=Math.max(hi,Math.ceil(r.b[r.b.length-1][1]/60)*60);}));VPAX={s:lo,e:hi};
+ const hrs=(hi-lo)/60;let need=0,done=0;
+ const axis=`<div class="vpr vpax"><div class="vpn"></div><div class="vpt" style="--h:${hrs}">${Array.from({length:hrs+1},(_,i)=>`<span class="${i%2?'odd':''}" style="left:${(i/hrs*100).toFixed(3)}%">${pad((lo/60+i)%24)}</span>`).join('')}</div><div class="vpi"></div></div>`;
+ const groups=days.map(({k,rows})=>{const d=pd(k);let gN=0,gD=0;
+  const body=rows.map(r=>{const lk=isClosed(mk,r.e.id),c=r.e.color;if(r.need){gN++;if(vpDone(r))gD++;}
+   const bars=r.b.map(([a,z])=>`<div class="vpb" style="left:${vpPct(a)};width:calc(${vpPct(z)} - ${vpPct(a)});background:${c}" title="${esc(r.e.first)}: ${hm(a)}–${hm(z,true)}"></div>`).join('');
+   const pp=r.need&&r.s!=null?`<div class="vpp${vpDone(r)?' ok':''}${r.cf?' cf':''}${lk?' lk':''}" data-e="${r.e.id}" data-k="${k}" style="left:${vpPct(r.s)};width:calc(${vpPct(r.s+dur)} - ${vpPct(r.s)})" title="${lk?'Monat abgeschlossen':'Ziehen zum Verschieben (15-Minuten-Raster)'}">${vpDone(r)?'✓':''}</div>`:'';
+   const info=!r.need?`<span class="mut small">keine Pause (${fmtH(r.work)} – nicht über ${fmtH((+S().vpAfter||0)*60)})</span>`
+    :r.s==null?`<span class="vpw">⚠ ${esc(r.warn)}</span>`
+    :`<b data-lbl="${r.e.id}|${k}">${hm(r.s)}–${hm(r.s+dur)}</b>${lk?'<span class="small mut">🔒</span>':`<button class="btn" data-vm="-1" data-e="${r.e.id}" data-k="${k}" title="15 Min früher">‹</button><button class="btn" data-vm="1" data-e="${r.e.id}" data-k="${k}" title="15 Min später">›</button><button class="btn${vpDone(r)?' okb':''}" data-vok="${r.e.id}" data-k="${k}" title="${vpDone(r)?'bestätigt – antippen zum Zurücknehmen':'Pause bestätigen'}">${vpDone(r)?'✓ bestätigt':'✓'}</button>${r.fix?`<button class="btn" data-vre="${r.e.id}" data-k="${k}" title="Gespeicherte Pause verwerfen und neu vorschlagen">↺</button>`:''}`}${r.cf?'<span class="vpw" style="color:var(--go)">⚠ überschneidet sich mit einer anderen Pause</span>':r.warn?`<span class="vpw">ⓘ ${esc(r.warn)}</span>`:''}`;
+   return`<div class="vpr"><div class="vpn">${avatar(r.e,'xs')}<span>${esc(r.e.first)}<br><span class="small mut" style="font-weight:400">${r.b.map(([a,z])=>hm(a)+'–'+hm(z,true)).join(', ')}</span></span></div><div class="vpt" style="--h:${hrs}">${bars}${pp}</div><div class="vpi">${info}</div></div>`;}).join('');
+  need+=gN;done+=gD;const anyLk=rows.some(r=>isClosed(mk,r.e.id));
+  return`<div class="card vpg"><div class="vph"><b style="${d.getDay()%6===0?'color:#6a4c9c':''}">${WDL[d.getDay()]}, ${dmy(d)}</b><span class="small mut">${rows.length} Mitarbeiter · ${gN?gD+' von '+gN+' Pausen bestätigt':'keine Pause nötig'}</span><span class="sp"></span>${gN&&gD<gN&&!anyLk?`<button class="btn" data-vday="${k}">✓ Tag bestätigen</button>`:gN&&gD===gN?'<span class="badge op">✓ bestätigt</span>':''}</div>${axis}${body}</div>`;}).join('');
+ return`<div class="card"><div class="mnav"><button class="btn" id="vpP">‹</button><b>${monLabel(mk)}</b><button class="btn" id="vpN">›</button><span class="badge ${need&&done===need?'op':'cl'}">${need?done+' von '+need+' Pausen bestätigt':'keine Pausen'}</span><span class="sp"></span>${need&&done<need?'<button class="btn p" id="vpAll">✓ Alle Vorschläge des Monats bestätigen</button>':''}</div>
+ <p class="small mut" style="margin:8px 0 4px">Pro Tag stehen alle Mitarbeiter mit Arbeitszeit untereinander (05:00–23:00). Für jeden mit mehr als <b>${fmtH((+S().vpAfter||0)*60)}</b> wird eine bezahlte Pause von <b>${dur} Min</b> vorgeschlagen – frühestens nach der Hälfte, möglichst kurz nach 2/3 der Arbeitszeit, ohne Überschneidung mit anderen Pausen. Pause <b>ziehen</b> oder mit <b>‹ ›</b> im 15-Minuten-Raster verschieben, dann <b>✓ bestätigen</b>. Die Stunden ändern sich dadurch nicht. Vor dem Monatsabschluss müssen alle Pausen bestätigt sein.</p>
+ <p class="small" style="margin:4px 0 0"><span class="vpleg"><i></i>Vorschlag</span><span class="vpleg"><i class="ok"></i>bestätigt</span><span class="vpleg"><i class="cf"></i>Überschneidung</span></p></div>
+ ${groups||'<div class="card mut">In diesem Monat gibt es keine abgeschlossenen Buchungen.</div>'}`;}
+function bPause(){const mk=vpMonth;
+ const go=n=>{vpMonth=shiftMonth(mk,n);main.dataset.tab='';render();};$('#vpP').onclick=()=>go(-1);$('#vpN').onclick=()=>go(1);
+ const R=(id,k)=>{const e=DB.emps.find(x=>x.id===id);return e?vpRow(e,k):null;};
+ const all=$('#vpAll');if(all)all.onclick=()=>confirmDlg(`Alle angezeigten Pausen von <b>${monLabel(mk)}</b> so bestätigen, wie sie jetzt eingetragen sind?<br><span class="mut">Pausen mit Überschneidung und abgeschlossene Mitarbeiter werden übersprungen.</span>`,'Alle bestätigen',()=>{let n=0;
+  for(const k of new Set(DB.emps.flatMap(e=>Object.keys(DB.data[e.id]||{}).filter(x=>x.startsWith(mk)))))for(const r of vpDay(k))if(r.need&&r.s!=null&&!r.cf&&!vpDone(r)&&!isClosed(mk,r.e.id)){vpSet(r.e,k,r.s,true);n++;}
+  save();render();toast(n+' Pausen bestätigt');});
+ main.querySelectorAll('[data-vday]').forEach(b=>b.onclick=()=>{const k=b.dataset.vday;let n=0,skip=0;for(const r of vpDay(k)){if(!r.need||r.s==null||vpDone(r)||isClosed(mk,r.e.id))continue;if(r.cf){skip++;continue;}vpSet(r.e,k,r.s,true);n++;}save();render();toast(n+' Pausen bestätigt'+(skip?' · '+skip+' mit Überschneidung übersprungen':''),!!skip);});
+ main.querySelectorAll('[data-vok]').forEach(b=>b.onclick=()=>{const r=R(b.dataset.vok,b.dataset.k);if(!r||r.s==null)return;if(r.cf&&!vpDone(r)){toast('Diese Pause überschneidet sich mit einer anderen – bitte zuerst verschieben',true);return;}vpSet(r.e,r.key,r.s,!vpDone(r));save();render();});
+ main.querySelectorAll('[data-vre]').forEach(b=>b.onclick=()=>{const e=DB.emps.find(x=>x.id===b.dataset.vre),k=b.dataset.k;if(DB.vp&&DB.vp[e.id])delete DB.vp[e.id][k];save();render();toast('Neu vorgeschlagen');});
+ main.querySelectorAll('[data-vm]').forEach(b=>b.onclick=()=>{const r=R(b.dataset.e,b.dataset.k);if(!r||r.s==null)return;const dir=+b.dataset.vm,al=vpAllow(r).filter(s=>dir<0?s<r.s:s>r.s);
+  if(!al.length){toast(dir<0?'Früher nicht möglich (Arbeitsbeginn oder andere Pause)':'Später nicht möglich (Arbeitsende oder andere Pause)',true);return;}
+  vpSet(r.e,r.key,dir<0?Math.max(...al):Math.min(...al),false);save();render();});
+ main.querySelectorAll('.vpp[data-e]').forEach(p=>{if(p.classList.contains('lk'))return;
+  p.onpointerdown=ev=>{ev.preventDefault();const r=R(p.dataset.e,p.dataset.k);if(!r)return;const tl=p.parentNode.getBoundingClientRect(),span=VPAX.e-VPAX.s,dur=vpDur();
+   const al=vpAllow(r);if(!al.includes(r.s))al.push(r.s);const m0=r.s,x0=ev.clientX,lbl=main.querySelector(`[data-lbl="${r.e.id}|${r.key}"]`);let cur=m0;
+   try{p.setPointerCapture(ev.pointerId);}catch(x){}p.classList.add('drag');
+   p.onpointermove=mv=>{const want=m0+(mv.clientX-x0)/tl.width*span;const best=al.reduce((b,s)=>Math.abs(s-want)<Math.abs(b-want)?s:b,m0);
+    if(best!==cur){cur=best;p.style.left=vpPct(cur);if(lbl)lbl.textContent=hm(cur)+'–'+hm(cur+dur);}};
+   p.onpointerup=p.onpointercancel=()=>{p.onpointermove=p.onpointerup=p.onpointercancel=null;p.classList.remove('drag');if(cur!==m0){vpSet(r.e,r.key,cur,false);save();render();toast('Pause '+hm(cur)+'–'+hm(cur+dur)+' – bitte bestätigen');}};};});}
 /* ---------- V1.21: Copyright-Würfel ---------- */
 function cubeCard(){return`<div class="cpc" role="dialog" aria-label="Über Jet-Zeit"><div class="cw-stage"><div class="cw-glow"></div><div class="cw-tilt"><div class="cw-cube">
  <div class="cw-f cw-fr"></div>
@@ -629,11 +708,50 @@ function dayCalc(sh){let gross=0,gaps=0,open=false,prevO=null;
  if(st.pauseOn){let bs=null,be=null;const blocks=[];for(const s of sh){if(s.o==null)continue;if(be!=null&&s.i<=be){be=Math.max(be,s.o);}else{if(bs!=null)blocks.push(be-bs);bs=s.i;be=s.o;}}if(bs!=null)blocks.push(be-bs);
   for(const b of blocks)if(b>st.pauseAfter*60)pause+=Math.min(st.pauseMin,b);}
  return{gross,pause,net:gross-pause,open};}
-function buildPeriod(e,from,to,label){const weeks=[];let cur=null;const total={net:0,pause:0,days:0};
+/* ---------- V1.26: virtuelle Pause ----------
+   Bezahlte, rein „virtuelle“ Pause je Mitarbeiter und Tag (ändert keine Stunden). Vorschlag: frühestens nach der Hälfte,
+   möglichst kurz nach 2/3 der Arbeitszeit, im 15-Min-Raster, ohne Überschneidung mit Pausen anderer Mitarbeiter am selben Tag.
+   Gespeichert in DB.vp[empId][JJJJ-MM-TT] = {s: Beginn (Min. ab Mitternacht), ok: bestätigt, at}. */
+const VP_G=15;
+const vpOn=()=>!!S().vpOn&&!isPersonal();
+const vpDur=()=>Math.max(15,+S().vpMin||30);
+const vpOv=(a,b,dur)=>a<b+dur&&b<a+dur;
+function vpBlocks(sh){const b=[];for(const s of sh.filter(x=>x.o!=null).sort((a,c)=>a.i-c.i)){const l=b[b.length-1];if(l&&s.i<=l[1])l[1]=Math.max(l[1],s.o);else b.push([s.i,s.o]);}return b;}
+const vpWork=b=>b.reduce((t,x)=>t+x[1]-x[0],0);
+function vpCands(b,dur){const c=[];for(const [a,z] of b)for(let s=Math.ceil(a/VP_G)*VP_G;s+dur<=z;s+=VP_G)c.push(s);return c;}
+function vpAt(b,frac){let need=vpWork(b)*frac;for(const [a,z] of b){if(need<=z-a)return a+need;need-=z-a;}return b.length?b[b.length-1][1]:0;}
+function vpCum(b,m){let c=0;for(const [a,z] of b){if(m<=a)break;c+=Math.min(m,z)-a;}return c;}
+let VPC={db:null,rev:-1,m:{}};
+function vpDay(key){const rev=(DB.meta&&DB.meta.rev)||0;if(VPC.db!==DB||VPC.rev!==rev)VPC={db:DB,rev,m:{}};if(VPC.m[key])return VPC.m[key];
+ const dur=vpDur(),lim=(+S().vpAfter||0)*60,rows=[];
+ for(const e of DB.emps){const sh=getShifts(e,key).filter(s=>s.o!=null);if(!sh.length)continue;const b=vpBlocks(sh),w=vpWork(b);
+  const r={e,key,b,work:w,first:b[0][0],need:w>lim,cands:vpCands(b,dur),st:((DB.vp||{})[e.id]||{})[key]||null,s:null,ok:false,fix:false,warn:''};
+  if(r.need&&r.st&&r.cands.includes(r.st.s)){r.s=r.st.s;r.ok=!!r.st.ok;r.fix=true;}
+  else if(r.need&&r.st)r.warn='Buchungen geändert – neuer Vorschlag';
+  if(r.need&&!r.cands.length)r.warn='kein Arbeitsblock lang genug für '+dur+' Min';
+  rows.push(r);}
+ rows.sort((a,c)=>a.first-c.first||a.e.first.localeCompare(c.e.first));
+ const taken=rows.filter(r=>r.fix).map(r=>r.s);
+ for(const r of rows){if(!r.need||r.fix||!r.cands.length)continue;
+  const tgt=Math.ceil(vpAt(r.b,2/3)/VP_G)*VP_G,half=r.work/2,score=s=>s>=tgt?s-tgt:(tgt-s)*1.5+1;
+  const free=r.cands.filter(s=>!taken.some(t=>vpOv(s,t,dur)));
+  let pool=free.filter(s=>vpCum(r.b,s)>=half);
+  if(!pool.length&&free.length){pool=free;r.warn='erst nach der Hälfte nicht möglich';}
+  if(!pool.length){pool=r.cands;r.warn='Überschneidung nicht vermeidbar';}
+  r.s=pool.reduce((best,s)=>score(s)<score(best)?s:best,pool[0]);taken.push(r.s);}
+ for(const r of rows)r.cf=r.s!=null&&rows.some(o=>o!==r&&o.s!=null&&vpOv(r.s,o.s,dur));
+ VPC.m[key]=rows;return rows;}
+const vpRow=(e,key)=>vpDay(key).find(x=>x.e.id===e.id)||null;
+const vpDone=r=>!!(r&&r.s!=null&&r.ok&&!r.cf);
+function vpGet(e,key){if(!vpOn())return null;const r=vpRow(e,key);return r&&r.need&&r.s!=null?{s:r.s,dur:vpDur(),ok:vpDone(r),cf:r.cf}:null;}
+function vpOpen(e,mk){if(!vpOn())return 0;let n=0;for(const k of Object.keys(DB.data[e.id]||{})){if(!k.startsWith(mk))continue;const r=vpRow(e,k);if(r&&r.need&&!vpDone(r))n++;}return n;}
+function vpSet(e,key,s,ok){DB.vp=DB.vp||{};DB.vp[e.id]=DB.vp[e.id]||{};DB.vp[e.id][key]={s,ok:!!ok,at:new Date().toISOString()};}
+function vpAllow(r){const dur=vpDur(),oth=vpDay(r.key).filter(o=>o!==r&&o.need&&o.s!=null);return r.cands.filter(s=>!oth.some(o=>vpOv(s,o.s,dur)));}
+function buildPeriod(e,from,to,label){const weeks=[];let cur=null;const total={net:0,pause:0,days:0,vp:0};
  for(let d=new Date(from);d<=to;d=addDays(d,1)){
-  if(!cur||d.getDay()===1){cur={kw:isoWeek(d),days:[],net:0};weeks.push(cur);}
-  const key=ymd(d),sh=getShifts(e,key),c=dayCalc(sh);
-  cur.days.push({date:new Date(d),key,shifts:sh,...c});cur.net+=c.net;total.net+=c.net;total.pause+=c.pause;if(c.gross>0)total.days++;}
+  if(!cur||d.getDay()===1){cur={kw:isoWeek(d),days:[],net:0,vp:0};weeks.push(cur);}
+  const key=ymd(d),sh=getShifts(e,key),c=dayCalc(sh),vp=sh.length?vpGet(e,key):null;
+  cur.days.push({date:new Date(d),key,shifts:sh,...c,vp});cur.net+=c.net;total.net+=c.net;total.pause+=c.pause;if(c.gross>0)total.days++;if(vp){cur.vp+=vp.dur;total.vp+=vp.dur;}}
  weeks.forEach(w=>{w.from=w.days[0].date;w.to=w.days[w.days.length-1].date;});
  return{from,to,label,weeks,total};}
 const monthPeriod=(e,y,m)=>buildPeriod(e,new Date(y,m,1),new Date(y,m+1,0),MON[m]+' '+y);
@@ -678,7 +796,7 @@ function renderHeader(){const st=S();$('#hdr').innerHTML=(st.logo?`<img class="l
 function tick(){const d=new Date(),t=$('#clkT'),dd=$('#clkD');if(t)t.textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());if(dd)dd.textContent=WDL[d.getDay()]+', '+d.getDate()+'. '+MON[d.getMonth()]+' '+d.getFullYear();}
 function applyBg(){const st=S();if(scr==='home'&&st.bgImage){const d=Math.min(80,Math.max(0,+st.bgDim||0))/100;main.style.backgroundImage=`linear-gradient(rgba(0,0,0,${d}),rgba(0,0,0,${d})),url(${st.bgImage})`;main.classList.add('bgimg');}else{main.style.backgroundImage='';main.classList.remove('bgimg');}}
 function render(){applyTheme();renderHeader();applyBg();if(scr==='home')renderHome();else if(scr==='emp')renderEmp();else renderAdmin();}
-function goHome(){clearTimeout(ovT);$('#ov').className='';closeModal();curEmp=null;scr='home';render();}
+function goHome(){clearTimeout(ovT);main.dataset.tab='';$('#ov').className='';closeModal();curEmp=null;scr='home';render();}
 
 /* ---------- Home ---------- */
 function setCols(n){const g=$('#grid');if(!g)return;const st=S(),land=innerWidth>=innerHeight;let c=+st.tileCols||0,r=+st.tileRows||0;
@@ -738,9 +856,12 @@ function tableHTML(P,edit,showN){const tk=ymd(new Date()),ec=edit?1:0;showN=show
   for(const d of w.days){const cls=(d.date.getDay()%6===0?'we ':'')+(d.key===tk?'td ':'')+(di++%2?'b2 ':'b1 ')+'df ';
    if(!d.shifts.length){h+=`<tr class="${cls}"><td>${fmtDateT(d.date)}</td><td></td><td></td><td></td><td></td>${showN?'<td class="nt"></td>':''}${ec?`<td class="nw"><button class="ed" data-ek="${d.key}" data-ei="-1" title="Eintrag hinzufügen">＋</button></td>`:''}</tr>`;continue;}
    const cfs=dayConflicts(d.shifts);d.shifts.forEach((s,k)=>{const last=k===d.shifts.length-1;
-    h+=`<tr class="${k?cls.replace('df ',''):cls}${k?'ct ':''}${last?'':'nl '}${cfs.has(k)?'cf':''}"${cfs.has(k)?' title="Überschneidung mit einer anderen Buchung an diesem Tag"':''}><td>${k?'':fmtDateT(d.date)}</td><td>${hm(s.i)}${''}</td><td>${s.o==null?'<span class="open">offen</span>':hm(s.o,true)}</td><td class="n">${nbx(s.o==null?'':fmtH(s.o-s.i))}</td><td class="n"><b>${nbx(last?fmtH(d.net):'')}</b></td>${showN?`<td class="nt">${esc(noteText(d,s,k))}</td>`:''}${ec?`<td class="nw"><button class="ed" data-ek="${d.key}" data-ei="${k}" title="Korrigieren">✎</button>${last?`<button class="ed" data-ek="${d.key}" data-ei="-1" title="Weitere Buchung">＋</button>`:''}</td>`:''}</tr>`;});}
-  h+=`<tr class="ws"><td colspan="4">Woche KW ${w.kw} · ${dm(w.from)}–${dm(w.to)}</td><td class="n">${nbx(fmtH(w.net))}</td>${restTd()}</tr>`;}
- h+=`</tbody><tfoot><tr><td colspan="4">Gesamt ${esc(P.label||'')}</td><td class="n">${nbx(fmtH(P.total.net))}</td>${restTd(unitTxt())}</tr></tfoot></table>`;return h;}
+    h+=`<tr class="${k?cls.replace('df ',''):cls}${k?'ct ':''}${last&&!d.vp?'':'nl '}${cfs.has(k)?'cf':''}"${cfs.has(k)?' title="Überschneidung mit einer anderen Buchung an diesem Tag"':''}><td>${k?'':fmtDateT(d.date)}</td><td>${hm(s.i)}${''}</td><td>${s.o==null?'<span class="open">offen</span>':hm(s.o,true)}</td><td class="n">${nbx(s.o==null?'':fmtH(s.o-s.i))}</td><td class="n"><b>${nbx(last?fmtH(d.net):'')}</b></td>${showN?`<td class="nt">${esc(noteText(d,s,k))}</td>`:''}${ec?`<td class="nw"><button class="ed" data-ek="${d.key}" data-ei="${k}" title="Korrigieren">✎</button>${last?`<button class="ed" data-ek="${d.key}" data-ei="-1" title="Weitere Buchung">＋</button>`:''}</td>`:''}</tr>`;});
+   if(d.vp)h+=`<tr class="${cls.replace('df ','')}ct vrow"${d.vp.ok?'':' title="Vorschlag – vom Administrator noch nicht bestätigt (Administration → Pause)"'}><td class="vpl">Pause von/bis</td><td>${hm(d.vp.s)}</td><td>${hm(d.vp.s+d.vp.dur)}</td><td class="n">${nbx(fmtH(d.vp.dur))}</td><td class="n">${d.vp.ok?'':'<span class="vps">Vorschlag</span>'}</td>${restTd()}</tr>`;}
+  h+=`<tr class="ws${w.vp?' wsa':''}"><td colspan="4">Woche KW ${w.kw} · ${dm(w.from)}–${dm(w.to)}</td><td class="n">${nbx(fmtH(w.net))}</td>${restTd()}</tr>`;
+  if(w.vp)h+=`<tr class="ws wsp"><td colspan="4">Pause (bezahlt)</td><td class="n">${nbx(fmtH(w.vp))}</td>${restTd()}</tr>`;}
+ if(P.total.vp&&P.weeks.length>1)h+=`<tr class="ws wsp"><td colspan="4">Pause (bezahlt) gesamt</td><td class="n">${nbx(fmtH(P.total.vp))}</td>${restTd()}</tr>`;
+ h+=`</tbody><tfoot><tr><td colspan="4">${P.total.vp?'Summe inkl. Pausen':'Gesamt'} ${esc(P.label||'')}</td><td class="n">${nbx(fmtH(P.total.net))}</td>${restTd(unitTxt())}</tr></tfoot></table>`;return h;}
 
 /* ---------- Booking ---------- */
 function book(type){const e=curEmp,st=status(e),now=new Date(),key=ymd(now);
@@ -914,9 +1035,12 @@ function makePdf(secs,ref){const d=new PdfDoc(),st=S(),M=40,R=d.W-M,TW=R-M,RH=15
     const ds=WD[dd.date.getDay()]+' '+dmy(dd.date);
     if(!dd.shifts.length){need();row(C,[ds,'','','','',''],{fill,dateBold:we,lineTop:true});continue;}
     dd.shifts.forEach((s,k)=>{need();const last=k===dd.shifts.length-1;
-     row(C,[k?'':ds,hm(s.i),s.o==null?'offen':hm(s.o,true),s.o==null?'':fmtH(s.o-s.i),last?fmtH(dd.net):'',showN?noteText(dd,s,k):''],{fill:cf.has(k)?'0.99 0.85 0.82':fill,sumBold:true,dateBold:we,lineTop:k===0});});}
-   need();row(C,['Woche KW '+w.kw+' · '+dm(w.from)+'–'+dm(w.to),'','','',fmtH(w.net)],{fill:'0.80 0.80 0.80',bold:true,lineTop:true,span:1});}
-  need();row(C,['Gesamt '+(P.label||''),'','','',fmtH(P.total.net),showN?unitTxt():''],{fill:'0.70 0.70 0.70',bold:true,size:9.5,span:1});
+     row(C,[k?'':ds,hm(s.i),s.o==null?'offen':hm(s.o,true),s.o==null?'':fmtH(s.o-s.i),last?fmtH(dd.net):'',showN?noteText(dd,s,k):''],{fill:cf.has(k)?'0.99 0.85 0.82':fill,sumBold:true,dateBold:we,lineTop:k===0});});
+    if(dd.vp){need();row(C,['   Pause von/bis',hm(dd.vp.s),hm(dd.vp.s+dd.vp.dur),fmtH(dd.vp.dur),dd.vp.ok?'':'Vorschlag',''],{fill,gray:.3,size:8});}}
+   need();row(C,['Woche KW '+w.kw+' · '+dm(w.from)+'–'+dm(w.to),'','','',fmtH(w.net)],{fill:'0.80 0.80 0.80',bold:true,lineTop:true,span:1});
+   if(w.vp){need();row(C,['Pause (bezahlt)','','','',fmtH(w.vp)],{fill:'0.88 0.88 0.88',span:1});}}
+  if(P.total.vp&&P.weeks.length>1){need();row(C,['Pause (bezahlt) gesamt – in den Stunden enthalten','','','',fmtH(P.total.vp)],{fill:'0.85 0.85 0.85',span:1,lineTop:true});}
+  need();row(C,[(P.total.vp?'Summe Arbeitsstunden inkl. Pausen ':'Gesamt ')+(P.label||''),'','','',fmtH(P.total.net),showN?unitTxt():''],{fill:'0.70 0.70 0.70',bold:true,size:9.5,span:1});
   foot();};
  for(const s of secs){const e=s.emp;if(d.c.length)d.add();
   if(ref.kind==='year'){head(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y);const C=[{t:'Monat',w:TW-150},{t:'Arbeitszeit',w:150,r:1}];thead(C);let tot=0;
@@ -946,10 +1070,10 @@ function printSections(secs,ref){let h='';
 
 /* CSV (flach, eine Zeile pro Buchung) */
 function exportCsv(secs,ref){const q=v=>{v=String(v??'');return/[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
- const L=[['Mitarbeiter','Pers.-Nr.','Datum','Wochentag','KW','Kommen','Gehen','Dauer (Std)','Pause (Min)','Tagessumme (Std dezimal)','Tagessumme','Bemerkung','Korrigiert','Original Kommen','Original Gehen'].join(';')];
- for(const s of secs){let tot=0;for(const P of s.periods)for(const w of P.weeks)for(const d of w.days){tot+=d.net;d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;
-  L.push([fullName(s.emp),s.emp.nr||'',dmy(d.date),WD[d.date.getDay()],isoWeek(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':dec(sh.o-sh.i),last?d.pause:'',last?dec(d.net):'',last?fmtH(d.net):'',sh.n||'',sh.e?'ja':'',sh.ri||'',sh.ro||''].map(q).join(';'));});}
-  L.push([fullName(s.emp),s.emp.nr||'','Summe '+refLabel(ref),'','','','','','','',dec(tot),fmtH(tot),'','',''].map(q).join(';'));}
+ const L=[['Mitarbeiter','Pers.-Nr.','Datum','Wochentag','KW','Kommen','Gehen','Dauer (Std)','Pause (Min)','Tagessumme (Std dezimal)','Tagessumme','Bemerkung','Korrigiert','Original Kommen','Original Gehen','Pause von','Pause bis','Pause bezahlt (Min)','Pause bestätigt'].join(';')];
+ for(const s of secs){let tot=0,vpt=0;for(const P of s.periods)for(const w of P.weeks)for(const d of w.days){tot+=d.net;if(d.vp)vpt+=d.vp.dur;d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;
+  L.push([fullName(s.emp),s.emp.nr||'',dmy(d.date),WD[d.date.getDay()],isoWeek(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':dec(sh.o-sh.i),last?d.pause:'',last?dec(d.net):'',last?fmtH(d.net):'',sh.n||'',sh.e?'ja':'',sh.ri||'',sh.ro||'',last&&d.vp?hm(d.vp.s):'',last&&d.vp?hm(d.vp.s+d.vp.dur):'',last&&d.vp?d.vp.dur:'',last&&d.vp?(d.vp.ok?'ja':'Vorschlag'):''].map(q).join(';'));});}
+  L.push([fullName(s.emp),s.emp.nr||'','Summe '+refLabel(ref),'','','','','','','',dec(tot),fmtH(tot),'','','','','',vpt||'',''].map(q).join(';'));}
  download(new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8'}),fileBase(secs,ref)+'.csv');}
 
 /* Text */
@@ -960,9 +1084,12 @@ function exportTxt(secs,ref){const st=S(),W=92,line=c=>c.repeat(W);const out=[];
   for(const P of s.periods){if(ref.kind==='year'&&!hasData(P))continue;
    out.push(line('='),st.company,(st.subtitle||'')+(st.boss?' · Geschäftsführer: '+st.boss:''),'Arbeitszeitnachweis – '+fullName(s.emp)+(s.emp.nr?' (Pers.-Nr. '+s.emp.nr+')':''),'Zeitraum: '+(ref.kind==='year'?P.label:refLabel(ref)),line('-'),row('Datum','Kommen','Gehen','Dauer','Tag','Bemerkung'),line('-'));
    for(const w of P.weeks){for(const d of w.days){if(!d.shifts.length){out.push(row(fmtDate(d.date),'','','','',''));continue;}
-     d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;out.push(row(k?'':fmtDate(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':fmtH(sh.o-sh.i),last?fmtH(d.net):'',notesOn(s.emp)?noteText(d,sh,k).replace('✎ ',''):''));});}
-    out.push(('  Woche KW '+w.kw+' ('+dm(w.from)+'–'+dm(w.to)+')').padEnd(50)+al(fmtH(w.net)).padStart(17),line('-'));}
-   out.push(('GESAMT '+P.label).padEnd(50)+al(fmtH(P.total.net)).padStart(17)+'  '+unitTxt(),'');}
+     d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;out.push(row(k?'':fmtDate(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':fmtH(sh.o-sh.i),last?fmtH(d.net):'',notesOn(s.emp)?noteText(d,sh,k).replace('✎ ',''):''));});
+     if(d.vp)out.push(row('  Pause von/bis',hm(d.vp.s),hm(d.vp.s+d.vp.dur),fmtH(d.vp.dur),'',d.vp.ok?'':'(Vorschlag)'));}
+    out.push(('  Woche KW '+w.kw+' ('+dm(w.from)+'–'+dm(w.to)+')').padEnd(50)+al(fmtH(w.net)).padStart(17));
+    if(w.vp)out.push('  Pause (bezahlt)'.padEnd(50)+al(fmtH(w.vp)).padStart(17));out.push(line('-'));}
+   if(P.total.vp&&P.weeks.length>1)out.push('Pause (bezahlt) gesamt – in den Stunden enthalten'.padEnd(50)+al(fmtH(P.total.vp)).padStart(17));
+   out.push(((P.total.vp?'SUMME INKL. PAUSEN ':'GESAMT ')+P.label).padEnd(50)+al(fmtH(P.total.net)).padStart(17)+'  '+unitTxt(),'');}
   if(ref.kind==='year'){let t=0;s.periods.forEach(P=>t+=P.total.net);out.push(line('='),('JAHRESSUMME '+ref.y+' – '+fullName(s.emp)).padEnd(50)+al(fmtH(t)).padStart(17)+'  '+unitTxt(),'');}}
  out.push('Erstellt am '+dmy(new Date())+' mit '+APP+' V'+VERSION);
  download(new Blob(['﻿'+out.join('\r\n')],{type:'text/plain;charset=utf-8'}),fileBase(secs,ref)+'.txt');}
@@ -1007,9 +1134,12 @@ function periodSheet(e,P,title,range){const st=S();
    for(let i=0;i<pairs;i++){const sh=d.shifts[i];r.push({v:sh?hm(sh.i):''},{v:sh?(sh.o==null?'offen':hmx(sh.o)):''});}
    r.push(d.shifts.length?hoursCell(d.net):{v:''});
    const notes=d.shifts.map(sh=>sh.n).filter(Boolean);if(d.pause>0)notes.push('Pause −'+d.pause+' Min');if(d.shifts.some(sh=>sh.e))notes.push('korrigiert');
-   if(showN)r.push({v:notes.join(' · ')});rows.push(r);}
-  const wr=blank(3);wr[0]={v:'Woche KW '+w.kw+' ('+dm(w.from)+'–'+dm(w.to)+')',s:3};wr[hc]=hoursCell(w.net,true);rows.push(wr);}
- rows.push([]);const tr=blank(3);tr[0]={v:'Summe Arbeitsstunden',s:3};tr[hc]=hoursCell(P.total.net,true);rows.push(tr);
+   if(showN)r.push({v:notes.join(' · ')});rows.push(r);
+   if(d.vp){const pr=blank(0);pr[0]={v:'Pause von/bis',s:8};pr[1]={v:hm(d.vp.s),s:8};pr[2]={v:hm(d.vp.s+d.vp.dur),s:8};pr[hc]={v:fmtH(d.vp.dur)+(d.vp.ok?'':' (Vorschlag)'),s:8};if(showN)pr[hc+1]={v:''};rows.push(pr);}}
+  const wr=blank(3);wr[0]={v:'Woche KW '+w.kw+' ('+dm(w.from)+'–'+dm(w.to)+')',s:3};wr[hc]=hoursCell(w.net,true);rows.push(wr);
+  if(w.vp){const pr=blank(0);pr[0]={v:'Pause (bezahlt)'};pr[hc]=hoursCell(w.vp);rows.push(pr);}}
+ rows.push([]);if(P.total.vp&&P.weeks.length>1){const pr=blank(0);pr[0]={v:'Pause (bezahlt) gesamt'};pr[hc]=hoursCell(P.total.vp);rows.push(pr);}
+ const tr=blank(3);tr[0]={v:P.total.vp?'Summe Arbeitsstunden inkl. Pausen':'Summe Arbeitsstunden',s:3};tr[hc]=hoursCell(P.total.net,true);rows.push(tr);
  rows.push([],[{v:'Erstellt am '+dmy(new Date())+' mit '+APP+' V'+VERSION+' · Zeiten gerundet auf '+st.round+' Min',s:8}]);
  const cols=[18];for(let i=0;i<pairs;i++)cols.push(9,9);cols.push(14);if(showN)cols.push(60);return{cols,rows};}
 function exportXlsx(secs,ref){const sheets=[];const multi=secs.length>1;
@@ -1025,12 +1155,13 @@ function exportXlsx(secs,ref){const sheets=[];const multi=secs.length>1;
 function openAdmin(){if(isPersonal()){const e=DB.emps[0];const go=()=>{scr='admin';if(!['daten','start'].includes(adminTab))adminTab='daten';render();};
   if(!e||!needPin(e)){go();return;}pinDialog({title:'Einstellungen',sub:'Ihre PIN eingeben',av:avatar(e),len:S().pinLen,check:p=>p===String(e.pin),ok:go});return;}
  pinDialog({title:'Administration',sub:'Admin-PIN eingeben',len:0,check:p=>p===String(S().adminPin),ok:()=>{scr='admin';adminTab=S().adminPin==='0000'?'param':adminTab;render();}});}
-function renderAdmin(){const tabs=isPersonal()?[['daten','Sichern & Daten'],['start','Startseite']]:[['firma','Firma'],['start','Startseite'],['ma','Mitarbeiter'],['zeit','Zeitlisten'],['abschl','Monatsabschluss'],['param','Parameter'],['daten','Sichern & Daten']];
+function renderAdmin(){const keepY=main.dataset.tab===adminTab?main.scrollTop:0;const tabs=isPersonal()?[['daten','Sichern & Daten'],['start','Startseite']]:[['firma','Firma'],['start','Startseite'],['ma','Mitarbeiter'],['zeit','Zeitlisten'],...(S().vpOn?[['pause','Pause']]:[]),['abschl','Monatsabschluss'],['param','Parameter'],['daten','Sichern & Daten']];
  if(!tabs.some(t=>t[0]===adminTab))adminTab=tabs[0][0];
- const A={firma:[aFirma,bFirma],start:[aStart,bStart],ma:[aMA,bMA],zeit:[aZeit,bZeit],abschl:[aAbschl,bAbschl],param:[aParam,bParam],daten:[aDaten,bDaten]}[adminTab];
+ const A={firma:[aFirma,bFirma],start:[aStart,bStart],ma:[aMA,bMA],zeit:[aZeit,bZeit],pause:[aPause,bPause],abschl:[aAbschl,bAbschl],param:[aParam,bParam],daten:[aDaten,bDaten]}[adminTab];
  main.innerHTML=`<div class="adm"><div class="atop"><h1>${isPersonal()?'⚙ Einstellungen <span class="small mut">· persönliches Gerät</span>':'⚙ Administration'}</h1><span class="sp"></span><button class="btn p" id="aout">Abmelden</button></div><div class="tabs">${tabs.map(t=>`<button data-t="${t[0]}" class="${adminTab===t[0]?'on':''}">${t[1]}</button>`).join('')}</div><div>${A[0]()}</div></div>`;
+ main.scrollTop=keepY;main.dataset.tab=adminTab;
  main.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{adminTab=b.dataset.t;render();});$('#aout').onclick=goHome;A[1]();}
-function bindSettings(){main.querySelectorAll('[data-s]').forEach(el=>el.onchange=()=>{let v=el.type==='checkbox'?el.checked:el.value;if(el.dataset.t==='n')v=Number(String(v).replace(',','.'))||0;DB.settings[el.dataset.s]=v;save();toast('Gespeichert');if(['pinLen','requirePin','accent','company','subtitle','boss','hourFmt'].includes(el.dataset.s))render();});}
+function bindSettings(){main.querySelectorAll('[data-s]').forEach(el=>el.onchange=()=>{let v=el.type==='checkbox'?el.checked:el.value;if(el.dataset.t==='n')v=Number(String(v).replace(',','.'))||0;DB.settings[el.dataset.s]=v;save();toast('Gespeichert');if(['pinLen','requirePin','accent','company','subtitle','boss','hourFmt','vpOn','vpAfter','vpMin'].includes(el.dataset.s))render();});}
 function aFirma(){const st=S();return`<div class="card"><h3>Firmendaten (Kopfzeile & Ausdrucke)</h3>
  <label class="fld">Firmenname<input data-s="company" value="${esc(st.company)}"></label>
  <label class="fld">Zusatzzeile (Adresse, Slogan …)<input data-s="subtitle" value="${esc(st.subtitle)}"></label>
@@ -1063,7 +1194,11 @@ function aParam(){const st=S();return`${st.adminPin==='0000'?'<p class="warn">�
  <h3>Automatischer Pausenabzug</h3>
  <label class="chk"><input type="checkbox" data-s="pauseOn" ${st.pauseOn?'checked':''}> Pause automatisch abziehen</label>
  <div class="row2"><label class="fld">wenn eine durchgehende Arbeitszeit länger ist als (Std)<input type="number" min="0" max="24" step="0.5" data-s="pauseAfter" data-t="n" value="${st.pauseAfter}"></label><label class="fld">Pausendauer (Min)<input type="number" min="0" max="240" step="5" data-s="pauseMin" data-t="n" value="${st.pauseMin}"></label></div>
- <p class="mut small">Gilt je durchgehendem Arbeitsblock (Kommen bis Gehen ohne Unterbrechung). Wer zwischendurch geht und wieder kommt, hat bereits Pause gemacht – dann zählt jeder Block einzeln.</p></div>
+ <p class="mut small">Gilt je durchgehendem Arbeitsblock (Kommen bis Gehen ohne Unterbrechung). Wer zwischendurch geht und wieder kommt, hat bereits Pause gemacht – dann zählt jeder Block einzeln.</p>
+ <h3>Virtuelle Pause (Seite „Pause“)</h3>
+ <label class="chk"><input type="checkbox" data-s="vpOn" ${st.vpOn?'checked':''}> Virtuelle Pause verwenden (Vorschlag und Bestätigung durch den Administrator, Anzeige in Liste, Ausdruck und Export)</label>
+ <div class="row2"><label class="fld">Pause vorschlagen, wenn die Arbeitszeit am Tag länger ist als (Std)<input type="number" min="0" max="24" step="0.5" data-s="vpAfter" data-t="n" value="${st.vpAfter}"></label><label class="fld">Dauer der virtuellen Pause<select data-s="vpMin" data-t="n">${[[15,'15 Minuten'],[30,'30 Minuten'],[45,'45 Minuten'],[60,'60 Minuten']].map(o=>opt(o,st.vpMin)).join('')}</select></label></div>
+ <p class="mut small">Die virtuelle Pause ist <b>bezahlt</b> und ändert keine Stunden – sie wird nur eingeplant und ausgewiesen. Vor dem Monatsabschluss müssen alle Pausen unter „Pause“ bestätigt sein.</p></div>
  <div class="card"><h3>Anmeldung & Bedienung</h3>
  <label class="chk"><input type="checkbox" data-s="requirePin" ${st.requirePin?'checked':''}> PIN-Abfrage für Mitarbeiter</label>
  <label class="fld">PIN-Länge Mitarbeiter<select data-s="pinLen" data-t="n">${[[4,'4-stellig'],[6,'6-stellig']].map(o=>opt(o,st.pinLen)).join('')}</select></label>
