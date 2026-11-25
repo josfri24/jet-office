@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Jet-Office V1.28</title>
+<title>Jet-Office V1.29</title>
 <style>
 :root{--acc:#1f4e79;--accT:#fff;--bg:#eef1f5;--card:#fff;--ink:#1d2530;--mut:#6b7684;--line:#dde2e9;--ok:#23955a;--go:#d6492f;--dis:#c5cbd3;--we:#f5f6f8}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -388,11 +388,11 @@ input[type=file]{display:none!important}
 /* =========================================================
    Jet-Office – Zeiterfassung für das Büro-Terminal (Office-Version von Jet-Zeit,
    ohne Import/Export, Monatsmeldung, eigenes Gerät und Komplettpaket)
-   Version 1.28 · iPad/iPhone: eigene Sicherungs-Karte statt Datenordner (In Dateien sichern), Hinweise erkennen iPad zuerst · Version 1.27 · Jet-Office mit eigenem Speicher (eigene Datei jetoffice-daten.json, eigener Datenordner), Pausenplanung, automatischer Pausenabzug ausgeblendet, Hinweise für Einzelgerät/offline · Version 1.26 · virtuelle Pause (Admin-Seite „Pause“, bezahlt, in allen Ausgaben) · Version 1.25 · Vollversion Jet-Zeit und Office-Version Jet-Office aus einer Quelle · Version 1.24 · neues JET-Logo, sprechende Dateinamen (Druck/PDF, Meldung), Hinweise bei Import/Export, Android-Ausgaben über Teilen · Version 1.23 · ohne Startmitarbeiter und ohne Übernahmedaten (PC und Web identisch) · Version 1.22 · Monatsmeldung mit Gesamtstunden, Daten importieren/exportieren · Copyright-Würfel, Std./Min ausgerichtet · bis 12 Mitarbeiter · Abschluss pro Mitarbeiter · Datenordner verständlicher · Admin-Gerät geschützt · Personalnummer als Schlüssel · Einzelmodus eingeschränkt · PIN pro Mitarbeiter · PDF-Ausgabe · iPhone/iPad · Monatsmeldung & Monatsabschluss · Terminal- und Einzelmodus (eigenes Gerät) · installierbare Web-App (Android/PC) · Daten bei jeder Eingabe gespeichert:
+   Version 1.29 · Pausenplanung nur bei zusammenhängender Arbeitszeit über der Grenze (Pause liegt in diesem Block) · Version 1.28 · iPad/iPhone: eigene Sicherungs-Karte statt Datenordner (In Dateien sichern), Hinweise erkennen iPad zuerst · Version 1.27 · Jet-Office mit eigenem Speicher (eigene Datei jetoffice-daten.json, eigener Datenordner), Pausenplanung, automatischer Pausenabzug ausgeblendet, Hinweise für Einzelgerät/offline · Version 1.26 · virtuelle Pause (Admin-Seite „Pause“, bezahlt, in allen Ausgaben) · Version 1.25 · Vollversion Jet-Zeit und Office-Version Jet-Office aus einer Quelle · Version 1.24 · neues JET-Logo, sprechende Dateinamen (Druck/PDF, Meldung), Hinweise bei Import/Export, Android-Ausgaben über Teilen · Version 1.23 · ohne Startmitarbeiter und ohne Übernahmedaten (PC und Web identisch) · Version 1.22 · Monatsmeldung mit Gesamtstunden, Daten importieren/exportieren · Copyright-Würfel, Std./Min ausgerichtet · bis 12 Mitarbeiter · Abschluss pro Mitarbeiter · Datenordner verständlicher · Admin-Gerät geschützt · Personalnummer als Schlüssel · Einzelmodus eingeschränkt · PIN pro Mitarbeiter · PDF-Ausgabe · iPhone/iPad · Monatsmeldung & Monatsabschluss · Terminal- und Einzelmodus (eigenes Gerät) · installierbare Web-App (Android/PC) · Daten bei jeder Eingabe gespeichert:
    localStorage (sofort) + IndexedDB (Zweitkopie + Tagessicherungen)
    + optional Datei jetzeit-daten.json (Jet-Office: jetoffice-daten.json) in einem Datenordner (PC/Android, File System Access API)
    ========================================================= */
-const VERSION='1.28';
+const VERSION='1.29';
 /* V1.25: OFFICE=true erzeugt „Jet-Office“ (nur Büro-Terminal). Beim Erzeugen der Office-Version wird dieser Schalter gesetzt
    und alle Bereiche zwischen den Marken FULL … /FULL werden aus der Datei entfernt (Import/Export, Monatsmeldung, eigenes Gerät, Komplettpaket). */
 const OFFICE=true;
@@ -642,14 +642,14 @@ function aPause(){const mk=vpMonth||(vpMonth=abMonth||defMonth()),dur=vpDur();
   const body=rows.map(r=>{const lk=isClosed(mk,r.e.id),c=r.e.color;if(r.need){gN++;if(vpDone(r))gD++;}
    const bars=r.b.map(([a,z])=>`<div class="vpb" style="left:${vpPct(a)};width:calc(${vpPct(z)} - ${vpPct(a)});background:${c}" title="${esc(r.e.first)}: ${hm(a)}–${hm(z,true)}"></div>`).join('');
    const pp=r.need&&r.s!=null?`<div class="vpp${vpDone(r)?' ok':''}${r.cf?' cf':''}${lk?' lk':''}" data-e="${r.e.id}" data-k="${k}" style="left:${vpPct(r.s)};width:calc(${vpPct(r.s+dur)} - ${vpPct(r.s)})" title="${lk?'Monat abgeschlossen':'Ziehen zum Verschieben (15-Minuten-Raster)'}">${vpDone(r)?'✓':''}</div>`:'';
-   const info=!r.need?`<span class="mut small">keine Pause (${fmtH(r.work)} – nicht über ${fmtH((+S().vpAfter||0)*60)})</span>`
+   const info=!r.need?`<span class="mut small">keine Pause (${r.b.length>1?'längste zusammenhängende Arbeitszeit '+fmtH(r.lb):fmtH(r.work)} – nicht über ${fmtH((+S().vpAfter||0)*60)})</span>`
     :r.s==null?`<span class="vpw">⚠ ${esc(r.warn)}</span>`
     :`<b data-lbl="${r.e.id}|${k}">${hm(r.s)}–${hm(r.s+dur)}</b>${lk?'<span class="small mut">🔒</span>':`<button class="btn" data-vm="-1" data-e="${r.e.id}" data-k="${k}" title="15 Min früher">‹</button><button class="btn" data-vm="1" data-e="${r.e.id}" data-k="${k}" title="15 Min später">›</button><button class="btn${vpDone(r)?' okb':''}" data-vok="${r.e.id}" data-k="${k}" title="${vpDone(r)?'bestätigt – antippen zum Zurücknehmen':'Pause bestätigen'}">${vpDone(r)?'✓ bestätigt':'✓'}</button>${r.fix?`<button class="btn" data-vre="${r.e.id}" data-k="${k}" title="Gespeicherte Pause verwerfen und neu vorschlagen">↺</button>`:''}`}${r.cf?'<span class="vpw" style="color:var(--go)">⚠ überschneidet sich mit einer anderen Pause</span>':r.warn?`<span class="vpw">ⓘ ${esc(r.warn)}</span>`:''}`;
    return`<div class="vpr"><div class="vpn">${avatar(r.e,'xs')}<span>${esc(r.e.first)}<br><span class="small mut" style="font-weight:400">${r.b.map(([a,z])=>hm(a)+'–'+hm(z,true)).join(', ')}</span></span></div><div class="vpt" style="--h:${hrs}">${bars}${pp}</div><div class="vpi">${info}</div></div>`;}).join('');
   need+=gN;done+=gD;const anyLk=rows.some(r=>isClosed(mk,r.e.id));
   return`<div class="card vpg"><div class="vph"><b style="${d.getDay()%6===0?'color:#6a4c9c':''}">${WDL[d.getDay()]}, ${dmy(d)}</b><span class="small mut">${rows.length} Mitarbeiter · ${gN?gD+' von '+gN+' Pausen bestätigt':'keine Pause nötig'}</span><span class="sp"></span>${gN&&gD<gN&&!anyLk?`<button class="btn" data-vday="${k}">✓ Tag bestätigen</button>`:gN&&gD===gN?'<span class="badge op">✓ bestätigt</span>':''}</div>${axis}${body}</div>`;}).join('');
  return`<div class="card"><div class="mnav"><button class="btn" id="vpP">‹</button><b>${monLabel(mk)}</b><button class="btn" id="vpN">›</button><span class="badge ${need&&done===need?'op':'cl'}">${need?done+' von '+need+' Pausen bestätigt':'keine Pausen'}</span><span class="sp"></span>${need&&done<need?'<button class="btn p" id="vpAll">✓ Alle Vorschläge des Monats bestätigen</button>':''}</div>
- <p class="small mut" style="margin:8px 0 4px">Pro Tag stehen alle Mitarbeiter mit Arbeitszeit untereinander (05:00–23:00). Für jeden mit mehr als <b>${fmtH((+S().vpAfter||0)*60)}</b> wird eine bezahlte Pause von <b>${dur} Min</b> vorgeschlagen – frühestens nach der Hälfte, möglichst kurz nach 2/3 der Arbeitszeit, ohne Überschneidung mit anderen Pausen. Pause <b>ziehen</b> oder mit <b>‹ ›</b> im 15-Minuten-Raster verschieben, dann <b>✓ bestätigen</b>. Die Stunden ändern sich dadurch nicht. Vor dem Monatsabschluss müssen alle Pausen bestätigt sein.</p>
+ <p class="small mut" style="margin:8px 0 4px">Pro Tag stehen alle Mitarbeiter mit Arbeitszeit untereinander (05:00–23:00). Für jeden mit einer <b>zusammenhängenden</b> Arbeitszeit (Kommen bis Gehen ohne Unterbrechung) von mehr als <b>${fmtH((+S().vpAfter||0)*60)}</b> wird darin eine bezahlte Pause von <b>${dur} Min</b> vorgeschlagen – frühestens nach der Hälfte, möglichst kurz nach 2/3 dieser Arbeitszeit, ohne Überschneidung mit anderen Pausen. Pause <b>ziehen</b> oder mit <b>‹ ›</b> im 15-Minuten-Raster verschieben, dann <b>✓ bestätigen</b>. Die Stunden ändern sich dadurch nicht. Vor dem Monatsabschluss müssen alle Pausen bestätigt sein.</p>
  <p class="small" style="margin:4px 0 0"><span class="vpleg"><i></i>Vorschlag</span><span class="vpleg"><i class="ok"></i>bestätigt</span><span class="vpleg"><i class="cf"></i>Überschneidung</span></p></div>
  ${groups||'<div class="card mut">In diesem Monat gibt es keine abgeschlossenen Buchungen.</div>'}`;}
 function bPause(){const mk=vpMonth;
@@ -734,17 +734,19 @@ let VPC={db:null,rev:-1,m:{}};
 function vpDay(key){const rev=(DB.meta&&DB.meta.rev)||0;if(VPC.db!==DB||VPC.rev!==rev)VPC={db:DB,rev,m:{}};if(VPC.m[key])return VPC.m[key];
  const dur=vpDur(),lim=(+S().vpAfter||0)*60,rows=[];
  for(const e of DB.emps){const sh=getShifts(e,key).filter(s=>s.o!=null);if(!sh.length)continue;const b=vpBlocks(sh),w=vpWork(b);
-  const r={e,key,b,work:w,first:b[0][0],need:w>lim,cands:vpCands(b,dur),st:((DB.vp||{})[e.id]||{})[key]||null,s:null,ok:false,fix:false,warn:''};
+  /* V1.29: maßgeblich ist der längste ZUSAMMENHÄNGENDE Arbeitsblock (Kommen bis Gehen ohne Unterbrechung) – nur er muss die Grenze überschreiten, und nur in ihm wird die Pause eingeplant */
+  const pb=[b.reduce((m,x)=>x[1]-x[0]>m[1]-m[0]?x:m,b[0])],lb=pb[0][1]-pb[0][0];
+  const r={e,key,b,pb,lb,work:w,first:b[0][0],need:lb>lim,cands:vpCands(pb,dur),st:((DB.vp||{})[e.id]||{})[key]||null,s:null,ok:false,fix:false,warn:''};
   if(r.need&&r.st&&r.cands.includes(r.st.s)){r.s=r.st.s;r.ok=!!r.st.ok;r.fix=true;}
   else if(r.need&&r.st)r.warn='Buchungen geändert – neuer Vorschlag';
-  if(r.need&&!r.cands.length)r.warn='kein Arbeitsblock lang genug für '+dur+' Min';
+  if(r.need&&!r.cands.length)r.warn='Arbeitsblock zu kurz für '+dur+' Min';
   rows.push(r);}
  rows.sort((a,c)=>a.first-c.first||a.e.first.localeCompare(c.e.first));
  const taken=rows.filter(r=>r.fix).map(r=>r.s);
  for(const r of rows){if(!r.need||r.fix||!r.cands.length)continue;
-  const tgt=Math.ceil(vpAt(r.b,2/3)/VP_G)*VP_G,half=r.work/2,score=s=>s>=tgt?s-tgt:(tgt-s)*1.5+1;
+  const tgt=Math.ceil(vpAt(r.pb,2/3)/VP_G)*VP_G,half=r.lb/2,score=s=>s>=tgt?s-tgt:(tgt-s)*1.5+1;
   const free=r.cands.filter(s=>!taken.some(t=>vpOv(s,t,dur)));
-  let pool=free.filter(s=>vpCum(r.b,s)>=half);
+  let pool=free.filter(s=>vpCum(r.pb,s)>=half);
   if(!pool.length&&free.length){pool=free;r.warn='erst nach der Hälfte nicht möglich';}
   if(!pool.length){pool=r.cands;r.warn='Überschneidung nicht vermeidbar';}
   r.s=pool.reduce((best,s)=>score(s)<score(best)?s:best,pool[0]);taken.push(r.s);}
@@ -1206,8 +1208,8 @@ function aParam(){const st=S();return`${st.adminPin==='0000'?'<p class="warn">�
  <p class="mut small">Gilt je durchgehendem Arbeitsblock (Kommen bis Gehen ohne Unterbrechung). Wer zwischendurch geht und wieder kommt, hat bereits Pause gemacht – dann zählt jeder Block einzeln.</p>`:''}
  <h3>Pausenplanung</h3>
  <label class="chk"><input type="checkbox" data-s="vpOn" ${st.vpOn?'checked':''}> Pausenplanung verwenden (Vorschlag und Bestätigung durch den Administrator, Anzeige in Liste, Ausdruck und Export)</label>
- <div class="row2"><label class="fld">Pause vorschlagen, wenn die Arbeitszeit am Tag länger ist als (Std)<input type="number" min="0" max="24" step="0.5" data-s="vpAfter" data-t="n" value="${st.vpAfter}"></label><label class="fld">Dauer der Pause<select data-s="vpMin" data-t="n">${[[15,'15 Minuten'],[30,'30 Minuten'],[45,'45 Minuten'],[60,'60 Minuten']].map(o=>opt(o,st.vpMin)).join('')}</select></label></div>
- <p class="mut small">Die geplante Pause ist <b>bezahlt</b> und ändert keine Stunden – sie wird nur eingeplant und ausgewiesen. Vor dem Monatsabschluss müssen alle Pausen unter „Pause“ bestätigt sein.</p></div>
+ <div class="row2"><label class="fld">Pause vorschlagen, wenn eine zusammenhängende Arbeitszeit länger ist als (Std)<input type="number" min="0" max="24" step="0.5" data-s="vpAfter" data-t="n" value="${st.vpAfter}"></label><label class="fld">Dauer der Pause<select data-s="vpMin" data-t="n">${[[15,'15 Minuten'],[30,'30 Minuten'],[45,'45 Minuten'],[60,'60 Minuten']].map(o=>opt(o,st.vpMin)).join('')}</select></label></div>
+ <p class="mut small">Zusammenhängend = Kommen bis Gehen ohne Unterbrechung; wer zwischendurch geht und wieder kommt, hat bereits Pause gemacht. Die geplante Pause ist <b>bezahlt</b> und ändert keine Stunden – sie wird nur eingeplant und ausgewiesen. Vor dem Monatsabschluss müssen alle Pausen unter „Pause“ bestätigt sein.</p></div>
  <div class="card"><h3>Anmeldung & Bedienung</h3>
  <label class="chk"><input type="checkbox" data-s="requirePin" ${st.requirePin?'checked':''}> PIN-Abfrage für Mitarbeiter</label>
  <label class="fld">PIN-Länge Mitarbeiter<select data-s="pinLen" data-t="n">${[[4,'4-stellig'],[6,'6-stellig']].map(o=>opt(o,st.pinLen)).join('')}</select></label>
