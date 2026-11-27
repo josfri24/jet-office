@@ -324,6 +324,10 @@ input[type=file]{display:none!important}
  .tabs button{padding:6px 10px}
  .lbar{flex-wrap:wrap;gap:6px}
  .tz .yr{display:none}
+ .tz.ty .kmd{display:none}
+ .tz.ty .nb{width:auto}
+ .tz.ty col{width:auto!important}
+ .tz.ty td,.tz.ty th{padding:6px 4px}
  .tz .nb{width:92px}
  table.tz{font-size:12.5px} .tz col{width:auto!important}
  .tz td,.tz th{padding:4px 5px;height:32px}
@@ -334,6 +338,16 @@ input[type=file]{display:none!important}
  .lbar .nav{flex-wrap:wrap;gap:4px} .lbar .nav b{font-size:14px}
  .lbar .nav .btn{min-height:36px;padding:6px 10px}
 }
+.tz.ty tr.ym{cursor:pointer}.tz.ty tr.ym:hover td{background:#fff3c4}.tz .ych{color:#9aa6b5;font-weight:700}
+.tz .kpos,.mtab .kpos{color:#1f7a3f}.tz .kneg,.mtab .kneg{color:#c0392b}.tz tfoot .kpos,.tz tfoot .kneg{color:inherit}
+.kof{font-size:12px;color:#8a6d1a;background:#fff3cd;border-radius:6px;padding:1px 6px}
+.kin{width:86px;height:32px;padding:2px 6px;border:1.5px solid var(--line);border-radius:8px;text-align:right;font-size:15px}
+.kin.kn{width:100%;min-width:140px;text-align:left}
+.kdef{display:block;font-size:11px;color:var(--mut)}
+.kst{font-size:12px;color:#b26a00;margin-top:2px}
+.ktab td{vertical-align:middle}.ktab tfoot td{border-top:2px solid var(--acc);padding:8px}
+.mtab tr.kcur td{background:#fff6d6}.mtab tr.kclk{cursor:pointer}.mtab tr.kclk:hover td{background:#fff3c4}
+.kcar{display:inline-flex;align-items:center;gap:6px}
 @media print{
  @page{size:A4 portrait;margin:12mm}
  html,body{height:auto;overflow:visible;background:#fff;display:block;font-size:10pt}
@@ -393,7 +407,8 @@ const SRC0=('<!DOCTYPE html>\n'+document.documentElement.outerHTML).replace(new 
    localStorage (sofort) + IndexedDB (Zweitkopie + Tagessicherungen)
    + optional Datei jetzeit-daten.json (bis V1.29 Jet-Office: jetoffice-daten.json) in einem Datenordner (PC/Android, File System Access API)
    ========================================================= */
-const VERSION='1.30';
+const VERSION='1.31';
+/* V1.31: Stundenkonto (Vertragsstunden je Mitarbeiter, verrechnete Stunden je Monat, laufender Saldo, Admin-Reiter „Stundenkonto“) und Ansicht „Jahr“ in der Mitarbeiter-Liste */
 /* V1.30: nur noch EINE Version. Die frühere Office-Version „Jet-Office“ entfällt; stattdessen schaltet der Administrator unter
    Parameter → „Mitarbeiter-Handys & Datenaustausch“ (settings.mobileOn) Eigenes Gerät, Monatsmeldung, Daten importieren/exportieren,
    Herkunft der Buchungen, Gerätename und Komplettpaket ein oder aus (Vorgabe bei neuen Installationen: aus = Büro-Terminal).
@@ -460,7 +475,7 @@ let memOnly=false,lsOk=true,idbOk=null,fresh=false,persisted=false,saveT=null,la
 function seed(){return{ver:1,settings:{...DEF_S},emps:[],data:{}};} /* ab V1.23: startet ohne Mitarbeiter (PC und Web) */
 /* V1.30: Daten ohne Schalter (bis V1.29): eingeschaltet, wenn Handy-Funktionen genutzt wurden, sonst aus (Büro-Terminal) */
 function usedMobile(d){return d.mode==='personal'||Object.keys(d.reportsIn||{}).length>0||Object.keys(d.sent||{}).length>0||Object.values(d.devKind||{}).includes('p')||(d.emps||[]).some(e=>e&&e.pinOwn);}
-function norm(d){const had=!!(d.settings&&'mobileOn' in d.settings);d.settings={...DEF_S,...(d.settings||{})};if(!had)d.settings.mobileOn=usedMobile(d);d.emps=Array.isArray(d.emps)?d.emps:[];d.data=d.data||{};d.meta=d.meta||{rev:0,savedAt:''};return d;}
+function norm(d){const had=!!(d.settings&&'mobileOn' in d.settings);d.settings={...DEF_S,...(d.settings||{})};if(!had)d.settings.mobileOn=usedMobile(d);d.emps=Array.isArray(d.emps)?d.emps:[];d.data=d.data||{};d.acct=d.acct||{};d.meta=d.meta||{rev:0,savedAt:''};return d;}
 function load(){let d=null;try{const s=localStorage.getItem(LS);if(s)d=JSON.parse(s);}catch(e){lsOk=false;}
  if(!d||typeof d!=='object'){d=seed();fresh=true;}
  return norm(d);}
@@ -970,6 +985,48 @@ function selectEmp(id){const e=DB.emps.find(x=>x.id===id);if(!e)return;
  pinDialog({title:fullName(e),av:avatar(e),len:S().pinLen,check:p=>p===String(e.pin),ok:()=>openEmp(e)});}
 function openEmp(e){curEmp=e;scr='emp';view={mode:'week',a:new Date()};render();}
 
+/* ---------- V1.31: Stundenkonto ---------- */
+/* DB.acct[empId][Jahr] = {carry: Übertrag Vorjahr (Min), m: {'JJJJ-MM': {p: verrechnet (Min), n: Bemerkung, w: geleistet bei Eingabe, at}}}; e.contract = Vertragsstunden/Monat (Min) */
+function parseHrs(v){let t=String(v??'').trim().replace(/\s*(std\.?|h)\s*$/i,'');if(!t)return null;let neg=false;if(/^[-−–]/.test(t)){neg=true;t=t.slice(1).trim();}else if(t[0]==='+')t=t.slice(1).trim();let m;
+ if(/^\d+:\d{1,2}$/.test(t)){const p=t.split(':');if(+p[1]>59)return NaN;m=+p[0]*60+ +p[1];}else if(/^\d+([.,]\d+)?$/.test(t))m=Math.round(parseFloat(t.replace(',','.'))*60);else return NaN;return neg?-m:m;}
+const hIn=m=>m==null?'':(m<0?'-':'')+Math.floor(Math.abs(m)/60)+':'+pad(Math.abs(m)%60);
+const fmtS=m=>m==null?'':(m>0?'+ ':m<0?'− ':'± ')+fmtH(Math.abs(m));
+const sCls=m=>m>0?'kpos':m<0?'kneg':'';
+function acctRec(id,y){DB.acct=DB.acct||{};const a=DB.acct[id]=DB.acct[id]||{};return a[y]=a[y]||{carry:0,m:{}};}
+function acctYear(e,y){const r=((DB.acct||{})[e.id]||{})[y]||{carry:0,m:{}},con=+e.contract||0,nd=new Date(),nowK=monKey(nd.getFullYear(),nd.getMonth());let saldo=+r.carry||0,tw=0,tp=0,used=!!(+r.carry);
+ const rows=MON.map((_,m)=>{const mk=monKey(y,m),w=monthStats(e,mk).tot,cl=isClosed(mk,e.id),st=(r.m||{})[mk]||null;tw+=w;if(st&&(st.p!=null||st.n))used=true;
+  let p=null,def=false;if(cl){if(st&&st.p!=null)p=st.p;else if(con){p=con;def=true;}}
+  const diff=p==null?null:w-p;if(diff!=null){saldo+=diff;tp+=p;}
+  return{mk,m,w,cl,p,def,diff,saldo,note:st&&st.n||'',reopened:!cl&&!!(st&&st.p!=null),stale:!!(cl&&st&&st.p!=null&&st.w!=null&&st.w!==w),fut:mk>nowK,cur:mk===nowK};});
+ return{carry:+r.carry||0,con,rows,tw,tp,saldo,used:used||!!con};}
+function yearHTML(e,y){const A=acctYear(e,y),K=A.used;
+ const rows=A.rows.map((r,i)=>`<tr class="ym ${i%2?'b2':'b1'}${r.cur?' td':''}" data-ym="${r.m}" title="Monat ${MON[r.m]} ${y} öffnen"><td>${MON[r.m]} <span class="ych">›</span></td><td class="n">${r.w?nbx(fmtH(r.w)):''}</td>${K?`<td class="n">${r.p!=null?nbx(fmtH(r.p)):(r.w&&!r.fut?'<span class="kof">offen</span>':'')}</td><td class="n kmd ${sCls(r.diff)}">${fmtS(r.diff)}</td><td class="n ${sCls(r.saldo)}"><b>${r.diff!=null?fmtS(r.saldo):''}</b></td>`:''}</tr>`).join('');
+ return`<table class="tz ty"><colgroup><col style="width:150px"><col style="width:150px">${K?'<col style="width:150px"><col style="width:140px"><col style="width:150px">':''}</colgroup><thead><tr><th>Monat</th><th class="n">Stunden</th>${K?'<th class="n">Verrechnet</th><th class="n kmd">Monat ±</th><th class="n">Saldo</th>':''}</tr></thead><tbody>
+ ${K&&A.carry?`<tr class="b2"><td>Übertrag ${y-1}</td><td></td><td></td><td class="kmd"></td><td class="n ${sCls(A.carry)}"><b>${fmtS(A.carry)}</b></td></tr>`:''}${rows}</tbody>
+ <tfoot><tr><td>Gesamt ${y}</td><td class="n">${nbx(fmtH(A.tw))}</td>${K?`<td class="n">${nbx(fmtH(A.tp))}</td><td class="kmd"></td><td class="n">${fmtS(A.saldo)}</td>`:''}</tr></tfoot></table>${K?'<p class="small mut" style="margin:6px 4px 0">Verrechnet = vom Buchhalter abgerechnete Stunden (nach dem Monatsabschluss). Saldo = Reststunden (+) bzw. Minusstunden (−), fortlaufend ab Jahresbeginn.</p>':''}`;}
+let kontoY=new Date().getFullYear();
+function aKonto(){if(!DB.emps.length)return'<div class="card mut">Noch keine Mitarbeiter.</div>';
+ if(!DB.emps.find(e=>e.id===adminEmpId))adminEmpId=DB.emps[0].id;const e=DB.emps.find(x=>x.id===adminEmpId),y=kontoY,A=acctYear(e,y);
+ const rows=A.rows.map(r=>`<tr class="${r.cur?'kcur':''}"><td>${MON[r.m]}</td><td class="n">${r.w||r.cl?fmtH(r.w):''}</td><td class="n">${r.cl?`<input class="kin" data-kp="${r.mk}" value="${r.def?'':hIn(r.p)}" placeholder="${r.def?hIn(r.p):'Std:Min'}" title="Verrechnete Stunden (Std:Min, z. B. 80:00 oder 80,5). Leer = Vorgabe aus den Vertragsstunden.">${r.def?'<span class="kdef" title="Vorgabe aus den Vertragsstunden – zum Ändern eine Zahl eintragen">Vorgabe</span>':''}`:(r.reopened?'<span class="kof" title="Der Monat wurde wieder geöffnet – verrechnete Stunden zählen erst nach dem erneuten Abschluss">wieder geöffnet</span>':r.w&&!r.fut?'<span class="kof" title="Verrechnete Stunden können erst nach dem Monatsabschluss eingetragen werden">Monat offen</span>':'')}</td><td class="n ${sCls(r.diff)}">${fmtS(r.diff)}</td><td class="n ${sCls(r.saldo)}"><b>${r.diff!=null?fmtS(r.saldo):''}</b></td><td>${r.cl?`<input class="kin kn" data-kn="${r.mk}" value="${esc(r.note)}" placeholder="Bemerkung">`:esc(r.note)}${r.stale?`<div class="kst">⚠ Stunden nach der Eingabe geändert (damals ${fmtH(((acctRec(e.id,y).m||{})[r.mk]||{}).w)}) – bitte prüfen</div>`:''}</td></tr>`).join('');
+ const all=DB.emps.map(x=>{const B=acctYear(x,y);return`<tr data-kemp="${x.id}" class="kclk${x.id===e.id?' kcur':''}"><td>${esc(x.nr||'–')}</td><td><span style="display:inline-flex;align-items:center;gap:8px">${avatar(x,'xs')}${esc(fullName(x))}</span></td><td class="n">${x.contract?fmtH(x.contract):'<span class="mut">–</span>'}</td><td class="n">${fmtH(B.tw)}</td><td class="n">${fmtH(B.tp)}</td><td class="n ${sCls(B.saldo)}"><b>${fmtS(B.saldo)}</b></td></tr>`;}).join('');
+ return`<div class="chips">${DB.emps.map(x=>`<button data-ce="${x.id}" class="${x.id===adminEmpId?'on':''}">${avatar(x,'xs')}${esc(fullName(x))}</button>`).join('')}</div>
+ <div class="card"><div class="mnav"><button class="btn" id="kP">‹</button><b>${y}</b><button class="btn" id="kN">›</button><span class="sp"></span><span class="small">Vertragsstunden: <b>${A.con?fmtH(A.con)+' / Monat':'nicht eingetragen'}</b></span><button class="btn" id="kEd" title="Vertragsstunden unter Mitarbeiter bearbeiten">✎</button><label class="small kcar">Übertrag ${y-1}<input class="kin" id="kCar" value="${A.carry?hIn(A.carry):''}" placeholder="0:00" title="Saldo aus dem Vorjahr (Std:Min, Minusstunden mit „-“). Vorgabe 0 – jedes Jahr beginnt mit 0."></label><button class="btn p" id="kOut">🖨 Drucken / Export</button></div>
+ <table class="mtab ktab"><thead><tr><th>Monat</th><th class="n">Geleistet</th><th class="n">Verrechnet</th><th class="n">Monat ±</th><th class="n">Saldo</th><th>Bemerkung</th></tr></thead><tbody>${A.carry?`<tr><td>Übertrag ${y-1}</td><td></td><td></td><td></td><td class="n ${sCls(A.carry)}"><b>${fmtS(A.carry)}</b></td><td></td></tr>`:''}${rows}</tbody>
+ <tfoot><tr><td><b>Gesamt ${y}</b></td><td class="n"><b>${fmtH(A.tw)}</b></td><td class="n"><b>${fmtH(A.tp)}</b></td><td></td><td class="n ${sCls(A.saldo)}"><b>${fmtS(A.saldo)}</b></td><td></td></tr></tfoot></table>
+ <p class="small mut">Geleistet = Stunden laut Zeitliste. <b>Verrechnet</b> = vom Buchhalter abgerechnete Stunden – eintragbar, sobald der Monat für den Mitarbeiter unter „Monatsabschluss“ 🔒 abgeschlossen ist; leer = Vorgabe aus den Vertragsstunden. <b>Saldo</b> = Reststunden (+) bzw. Minusstunden (−), fortlaufend; jedes Jahr beginnt mit 0 (Übertrag bei Bedarf oben eintragen). Eingaben: Std:Min (80:00) oder Dezimal (80,5).</p></div>
+ <div class="card"><h3>Übersicht alle Mitarbeiter ${y}</h3><table class="mtab"><thead><tr><th>Pers.-Nr.</th><th>Mitarbeiter</th><th class="n">Vertrag/Monat</th><th class="n">Geleistet</th><th class="n">Verrechnet</th><th class="n">Saldo</th></tr></thead><tbody>${all}</tbody></table><p class="small mut">Zeile antippen = Stundenkonto dieses Mitarbeiters.</p></div>`;}
+function bKonto(){if(!DB.emps.length)return;const e=DB.emps.find(x=>x.id===adminEmpId),y=kontoY;
+ main.querySelectorAll('[data-ce],[data-kemp]').forEach(b=>b.onclick=()=>{adminEmpId=b.dataset.ce||b.dataset.kemp;render();});
+ $('#kP').onclick=()=>{kontoY--;render();};$('#kN').onclick=()=>{kontoY++;render();};
+ $('#kEd').onclick=()=>empForm(e,true);
+ $('#kOut').onclick=()=>{view={mode:'year',a:new Date(y,0,1)};OUT_SUM=true;outputDialog(e,true);};
+ const later=()=>setTimeout(()=>{const f=document.activeElement,ds=f&&f.dataset||{},k=ds.kp?'[data-kp="'+ds.kp+'"]':ds.kn?'[data-kn="'+ds.kn+'"]':f&&f.id==='kCar'?'#kCar':null;render();if(k){const x=main.querySelector(k);if(x){x.focus();if(x.select)x.select();}}},0);
+ $('#kCar').onchange=ev=>{const v=parseHrs(ev.target.value);if(Number.isNaN(v)){toast('Übertrag: bitte Std:Min (z. B. 5:30 oder -2:15) eingeben',true);return;}acctRec(e.id,y).carry=v||0;save();toast('Gespeichert');later();};
+ main.querySelectorAll('[data-kp]').forEach(i=>i.onchange=()=>{const mk=i.dataset.kp,v=parseHrs(i.value);if(Number.isNaN(v)||(v!=null&&v<0)){toast('Verrechnet: bitte Std:Min (z. B. 80:00) oder Dezimal (80,5) eingeben',true);return;}
+  const R=acctRec(e.id,y),o=R.m[mk]||{};if(v==null){delete o.p;delete o.w;}else{o.p=v;o.w=monthStats(e,mk).tot;}o.at=new Date().toISOString();if(o.p==null&&!o.n)delete R.m[mk];else R.m[mk]=o;save();toast('Gespeichert');later();});
+ main.querySelectorAll('[data-kn]').forEach(i=>i.onchange=()=>{const mk=i.dataset.kn,R=acctRec(e.id,y),o=R.m[mk]||{};o.n=i.value.trim();o.at=new Date().toISOString();if(o.p==null&&!o.n)delete R.m[mk];else R.m[mk]=o;save();toast('Gespeichert');later();});
+ main.querySelectorAll('.kin').forEach(i=>i.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();i.blur();}});}
+
 /* ---------- Employee screen ---------- */
 function renderEmp(){const e=curEmp,st=status(e),now=new Date();
  const today=dayCalc(getShifts(e,ymd(now))).net,wk=weekPeriod(e,now).total.net,mo=monthPeriod(e,now.getFullYear(),now.getMonth()).total.net;
@@ -980,13 +1037,14 @@ function renderEmp(){const e=curEmp,st=status(e),now=new Date();
  $('#back').onclick=goHome;$('#uset').onclick=()=>empForm(e,false);/*@FULL*/const ur=$('#urep');if(ur)ur.onclick=()=>reportDialog(defMonth());/*@/FULL*/
  $('#bIn').onclick=()=>book('in');$('#bOut').onclick=()=>book('out');
  bindList(e,false);}
-function viewPeriod(e){return view.mode==='week'?weekPeriod(e,view.a):monthPeriod(e,view.a.getFullYear(),view.a.getMonth());}
+function viewPeriod(e){if(view.mode==='year')return null;return view.mode==='week'?weekPeriod(e,view.a):monthPeriod(e,view.a.getFullYear(),view.a.getMonth());}
 function listPanel(e,admin){const P=viewPeriod(e),canEd=admin||S().empEdit;SHOWSRC=!!admin;
- const title=view.mode==='week'?`KW ${isoWeek(P.from)} · ${dm(P.from)}–${dmy(P.to)}`:P.label;
- const slim=!notesOn(e);return`<div class="lp${slim?' slim':''}"><div class="lbar"><div class="seg"><button data-m="week" class="${view.mode==='week'?'on':''}">Woche</button><button data-m="month" class="${view.mode==='month'?'on':''}">Monat</button></div><div class="nav"><button class="btn" data-nav="-1">‹</button><b>${title}</b><button class="btn" data-nav="1">›</button><button class="btn" data-nav="0">Heute</button></div><button class="btn p" id="outp">🖨 Drucken / Export</button></div><div class="tw">${tableHTML(P,canEd,notesOn(e))}</div></div>`;}
+ const title=view.mode==='year'?'Jahr '+view.a.getFullYear():view.mode==='week'?`KW ${isoWeek(P.from)} · ${dm(P.from)}–${dmy(P.to)}`:P.label;
+ const slim=!notesOn(e);return`<div class="lp${slim?' slim':''}"><div class="lbar"><div class="seg"><button data-m="week" class="${view.mode==='week'?'on':''}">Woche</button><button data-m="month" class="${view.mode==='month'?'on':''}">Monat</button><button data-m="year" class="${view.mode==='year'?'on':''}">Jahr</button></div><div class="nav"><button class="btn" data-nav="-1">‹</button><b>${title}</b><button class="btn" data-nav="1">›</button><button class="btn" data-nav="0">Heute</button></div><button class="btn p" id="outp">🖨 Drucken / Export</button></div><div class="tw">${P?tableHTML(P,canEd,notesOn(e)):yearHTML(e,view.a.getFullYear())}</div></div>`;}
 function bindList(e,admin){
  main.querySelectorAll('.seg [data-m]').forEach(b=>b.onclick=()=>{view.mode=b.dataset.m;render();});
- main.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const n=+b.dataset.nav;if(!n)view.a=new Date();else if(view.mode==='week')view.a=addDays(view.a,7*n);else view.a=new Date(view.a.getFullYear(),view.a.getMonth()+n,1);render();});
+ main.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{const n=+b.dataset.nav;if(!n)view.a=new Date();else if(view.mode==='week')view.a=addDays(view.a,7*n);else if(view.mode==='year')view.a=new Date(view.a.getFullYear()+n,0,1);else view.a=new Date(view.a.getFullYear(),view.a.getMonth()+n,1);render();});
+ main.querySelectorAll('[data-ym]').forEach(r=>r.onclick=()=>{view={mode:'month',a:new Date(view.a.getFullYear(),+r.dataset.ym,1)};render();});
  $('#outp').onclick=()=>outputDialog(e,admin);
  main.querySelectorAll('.ed').forEach(b=>b.onclick=()=>editEntry(e,b.dataset.ek,+b.dataset.ei,admin));}
 let SHOWSRC=false;
@@ -1054,6 +1112,7 @@ function empForm(e,admin){const isNew=!e;const st=S();
  const b=openModal(`<h2>${isNew?'Neuer Mitarbeiter':admin?'Mitarbeiter bearbeiten':'Meine Einstellungen'}</h2>
  ${admin?`<div class="row2"><label class="fld">Vorname (Button-Titel) *<input id="mf" value="${esc(f.first)}"></label><label class="fld">Nachname<input id="ml" value="${esc(f.last)}"></label></div>
  <div class="row2"><label class="fld">Personalnummer *<input id="mnr" value="${esc(f.nr||'')}"></label><label class="fld">PIN (${st.pinLen} Ziffern)<input id="mpin" inputmode="numeric" maxlength="${st.pinLen}" value="${esc(f.pin||'')}"></label></div>
+ <div class="row2"><label class="fld">Vertragsstunden pro Monat<input id="mcon" inputmode="decimal" placeholder="z. B. 80 oder 80:30" value="${f.contract?hIn(f.contract):''}" title="Vorgabe für die verrechneten Stunden im Stundenkonto"></label><span class="small mut" style="align-self:end;padding-bottom:10px">Vorgabe für „Verrechnet“ im Stundenkonto (auch bei Geringfügigen = vereinbarte Monatsstunden)</span></div>
  <label class="chk"><input type="checkbox" id="mpr" ${f.pinReq!==false?'checked':''}> Anmeldung mit PIN am Terminal${st.requirePin?'':' <span class="small mut">(PIN-Abfrage ist unter Parameter allgemein aus)</span>'}</label>${(MOB()?`
  <label class="chk"><input type="checkbox" id="mpo" ${f.pinOwn?'checked':''}> Anmeldung mit PIN am eigenen Gerät (Handy)</label>`:'')+''}`:
  `<p class="mut">${esc(fullName(f))}</p><h3>PIN ändern</h3><div class="row2"><input id="np1" type="password" inputmode="numeric" maxlength="${st.pinLen}" placeholder="neue PIN (${st.pinLen} Ziffern)"><input id="np2" type="password" inputmode="numeric" maxlength="${st.pinLen}" placeholder="neue PIN wiederholen"></div><p class="mut small">Leer lassen, wenn die PIN gleich bleiben soll.</p>`}
@@ -1068,9 +1127,9 @@ function empForm(e,admin){const isNew=!e;const st=S();
  b.querySelector('#mimgx').onclick=()=>{f.photo='';upd();};
  b.querySelector('#mico').oninput=ev=>{f.icon=ev.target.value.trim();upd();};
  b.querySelector('#mcan').onclick=closeModal;
- const del=b.querySelector('#mdel');if(del)del.onclick=()=>confirmDlg(`Mitarbeiter <b>${esc(fullName(f))}</b> und <b>alle seine Zeitbuchungen</b> endgültig löschen?`,'Endgültig löschen',()=>{DB.emps=DB.emps.filter(x=>x.id!==f.id);delete DB.data[f.id];save();render();toast('Mitarbeiter gelöscht');},true);
+ const del=b.querySelector('#mdel');if(del)del.onclick=()=>confirmDlg(`Mitarbeiter <b>${esc(fullName(f))}</b> und <b>alle seine Zeitbuchungen</b> endgültig löschen?`,'Endgültig löschen',()=>{DB.emps=DB.emps.filter(x=>x.id!==f.id);delete DB.data[f.id];if(DB.acct)delete DB.acct[f.id];save();render();toast('Mitarbeiter gelöscht');},true);
  b.querySelector('#msav').onclick=()=>{
-  if(admin){f.first=$('#mf').value.trim();f.last=$('#ml').value.trim();f.nr=$('#mnr').value.trim();f.pin=$('#mpin').value.trim();f.pinReq=$('#mpr').checked;if($('#mpo'))f.pinOwn=$('#mpo').checked;f.multi=$('#mmul').checked;f.active=$('#mact').checked;
+  if(admin){f.first=$('#mf').value.trim();f.last=$('#ml').value.trim();f.nr=$('#mnr').value.trim();f.pin=$('#mpin').value.trim();f.pinReq=$('#mpr').checked;if($('#mpo'))f.pinOwn=$('#mpo').checked;f.multi=$('#mmul').checked;f.active=$('#mact').checked;const cv=parseHrs($('#mcon').value);if(Number.isNaN(cv)||(cv!=null&&cv<0)){toast('Vertragsstunden: bitte z. B. 80 oder 80:30 eingeben',true);return;}f.contract=cv||0;
    if(!f.first){toast('Bitte einen Vornamen eingeben',true);return;}
    if(!f.nr){toast(!MOB()?'Bitte eine Personalnummer eingeben':'Bitte eine Personalnummer eingeben – sie ordnet Meldungen eindeutig zu',true);return;}
    const pinUsed=(st.requirePin&&f.pinReq)||(MOB()&&f.pinOwn);
@@ -1083,27 +1142,28 @@ function empForm(e,admin){const isNew=!e;const st=S();
   if(curEmp&&curEmp.id===f.id)curEmp=f;save();closeModal();render();toast('Gespeichert');};}
 
 /* ---------- Output: print / export ---------- */
-var OUT_ONLY=null,OUT_SHARE=false; /* V1.24: Android-Ausgaben über Teilen */
-function outputDialog(e,admin){prepPdfLogo();const ONLY=OUT_ONLY;OUT_ONLY=null;let kind=view.mode==='week'?'week':'month';const a=view.a;
- const years=[];const y0=new Date().getFullYear();for(let y=y0-3;y<=y0+1;y++)years.push(y);
+var OUT_ONLY=null,OUT_SHARE=false,OUT_SUM=false; /* V1.24: Android-Ausgaben über Teilen */
+function outputDialog(e,admin){prepPdfLogo();const ONLY=OUT_ONLY;OUT_ONLY=null;const SUM0=OUT_SUM;OUT_SUM=false;let kind=view.mode==='week'?'week':view.mode==='year'?'year':'month';const a=view.a;
+ const years=[];const y0=new Date().getFullYear();for(let y=Math.min(y0-3,a.getFullYear());y<=Math.max(y0+1,a.getFullYear());y++)years.push(y);
  const b=openModal(`<h2>Drucken / Export</h2><p class="mut">${admin?'':esc(fullName(e))}</p>
  <div class="seg" id="ok"><button data-k="week">Woche</button><button data-k="month">Monat</button><button data-k="year">Jahr</button></div>
  <div style="margin-top:14px">
   <label class="fld" id="oW">Woche mit diesem Tag<input type="date" id="oDate" value="${ymd(a)}"></label>
   <div class="row2" id="oM"><label class="fld">Monat<select id="oMon">${MON.map((n,i)=>opt([i,n],a.getMonth())).join('')}</select></label><label class="fld">Jahr<select id="oYear">${years.map(y=>opt([y,y],a.getFullYear())).join('')}</select></label></div>
  </div>
+ <label class="chk" id="oSumL"><input type="checkbox" id="oSum" ${SUM0?'checked':''}> Nur Jahresübersicht mit Stundenkonto (ohne Monatsseiten)</label>
  ${admin?`<label class="chk"><input type="checkbox" id="oAll"> Alle Mitarbeiter (sonst nur ${esc(fullName(e))})</label>`:''}
  ${/*@FULL*/(isPersonal()?'<p class="small" style="background:#fff6dc;border-radius:8px;padding:6px 10px;margin:10px 0 0">Stunden an den Administrator schicken? → bitte <b>📤 Monat melden</b> verwenden (Excel/CSV/Text/PDF sind nur zum Ansehen und Drucken).</p>':'')+/*@/FULL*/''}
  ${IOS?'<p class="small mut" style="margin:8px 0 0">ⓘ Jede Ausgabe öffnet das Teilen-Menü (Drucken, Mail, WhatsApp, In Dateien sichern).</p>':''}
  ${MOBILE&&!IOS&&canShareFiles()?'<label class="chk"><input type="checkbox" id="oShare" checked> Excel/CSV/Text über das Teilen-Menü (Mail, WhatsApp …) – sonst in „Downloads“</label>':''}
  <div class="obtns"><button class="btn p" data-f="print">🖨 Drucken</button><button class="btn" data-f="pdf">📄 PDF</button><button class="btn" data-f="xlsx">📊 Excel (.xlsx)</button><button class="btn" data-f="csv">📄 CSV (.csv)</button><button class="btn" data-f="txt">📝 Text (.txt)</button></div>
  <div class="acts"><span class="sp"></span><button class="btn" id="ocan">Schließen</button></div>`);
- const sync=()=>{b.querySelectorAll('#ok button').forEach(x=>x.classList.toggle('on',x.dataset.k===kind));b.querySelector('#oW').style.display=kind==='week'?'':'none';b.querySelector('#oM').style.display=kind==='week'?'none':'';b.querySelector('#oMon').parentNode.style.visibility=kind==='year'?'hidden':'';};
+ const sync=()=>{b.querySelectorAll('#ok button').forEach(x=>x.classList.toggle('on',x.dataset.k===kind));b.querySelector('#oW').style.display=kind==='week'?'':'none';b.querySelector('#oM').style.display=kind==='week'?'none':'';b.querySelector('#oMon').parentNode.style.visibility=kind==='year'?'hidden':'';b.querySelector('#oSumL').style.display=kind==='year'?'':'none';};
  b.querySelectorAll('#ok button').forEach(x=>x.onclick=()=>{kind=x.dataset.k;sync();});sync();
  b.querySelector('#ocan').onclick=closeModal;
  b.querySelectorAll('[data-f]').forEach(x=>x.onclick=()=>{
   const emps=admin&&$('#oAll').checked?(ONLY?DB.emps.filter(x=>ONLY.includes(x.id)):DB.emps.slice()):[e];
-  const ref={kind,date:$('#oDate').value?pd($('#oDate').value):new Date(),y:+$('#oYear').value,m:+$('#oMon').value};
+  const ref={kind,date:$('#oDate').value?pd($('#oDate').value):new Date(),y:+$('#oYear').value,m:+$('#oMon').value,sum:kind==='year'&&$('#oSum').checked};
   const secs=sections(emps,ref);const f=x.dataset.f;const osh=b.querySelector('#oShare');OUT_SHARE=!!(osh&&osh.checked);
   if(f==='pdf'){pdfOut(secs,ref,false);}else if(f==='print'&&IOS){pdfOut(secs,ref,true);}else if(f==='print'){closeModal();printSections(secs,ref);}else if(f==='xlsx')exportXlsx(secs,ref);else if(f==='csv')exportCsv(secs,ref);else exportTxt(secs,ref);});}
 /* sections: [{emp, periods:[P], kind}] */
@@ -1112,6 +1172,7 @@ function sections(emps,ref){return emps.map(e=>{let periods;
  else if(ref.kind==='month')periods=[monthPeriod(e,ref.y,ref.m)];
  else periods=MON.map((_,m)=>monthPeriod(e,ref.y,m));return{emp:e,periods};});}
 function refLabel(ref){if(ref.kind==='week'){const mo=mondayOf(ref.date);return'KW '+isoWeek(mo)+' ('+dmy(mo)+' – '+dmy(addDays(mo,6))+')';}if(ref.kind==='month')return MON[ref.m]+' '+ref.y;return'Jahr '+ref.y;}
+const ovRows=(e,y)=>{const A=acctYear(e,y);return{A,K:A.used};};
 function refFile(ref){if(ref.kind==='week'){const mo=mondayOf(ref.date);return addDays(mo,3).getFullYear()+'_KW'+pad(isoWeek(mo));}if(ref.kind==='month')return ref.y+'-'+pad(ref.m+1);return String(ref.y);}
 function fileBase(secs,ref){return APP+'_'+(secs.length===1?safeName(fullName(secs[0].emp)):'Alle')+'_'+refFile(ref);}
 function download(blob,name,noShare){const sh=OUT_SHARE;OUT_SHARE=false;if(!noShare&&(IOS||sh)&&canShareFiles()){shareFile(blob,name);return;}const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);toast('Datei erstellt: '+name);}
@@ -1119,7 +1180,7 @@ const hasData=P=>P.total.days>0||P.weeks.some(w=>w.days.some(d=>d.shifts.length)
 
 /* ---------- V1.13: PDF-Ausgabe (eigener PDF-Erzeuger, A4, Helvetica) ---------- */
 const PDFW={H:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,556,222,556,333,1000,556,556,333,1000,667,333,1000,556,611,556,556,222,222,333,333,350,556,1000,333,1000,500,333,944,556,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500],B:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,556,278,556,500,1000,556,556,333,1000,667,333,1000,556,611,556,556,278,278,500,500,350,556,1000,333,1000,556,333,944,556,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556]};
-const PDF_MAP={'€':128,'‚':130,'„':132,'…':133,'‰':137,'‹':139,'‘':145,'’':146,'“':147,'”':148,'•':149,'–':150,'—':151,'›':155};
+const PDF_MAP={'−':45,'€':128,'‚':130,'„':132,'…':133,'‰':137,'‹':139,'‘':145,'’':146,'“':147,'”':148,'•':149,'–':150,'—':151,'›':155};
 function pdfTxt(s){return String(s??'').replace(/ ⁺¹/g,' (+1)').replace(/⁺¹/g,'(+1)').replace(/✎/g,'*').replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu,'');}
 function pdfBytes(s){let o='';for(const ch of pdfTxt(s)){const c=ch.codePointAt(0);if(PDF_MAP[ch])o+=String.fromCharCode(PDF_MAP[ch]);else if(c<256)o+=ch;else o+='?';}return o;}
 function pdfW(s,bold,size){const b=pdfBytes(s),t=bold?PDFW.B:PDFW.H;let w=0;for(let i=0;i<b.length;i++)w+=t[b.charCodeAt(i)]||556;return w*size/1000;}
@@ -1186,10 +1247,12 @@ function makePdf(secs,ref){const d=new PdfDoc(),st=S(),M=40,R=d.W-M,TW=R-M,RH=15
   need();row(C,[(P.total.vp?'Summe Arbeitsstunden inkl. Pausen ':'Gesamt ')+(P.label||''),'','','',fmtH(P.total.net),showN?unitTxt():''],{fill:'0.70 0.70 0.70',bold:true,size:9.5,span:1});
   foot();};
  for(const s of secs){const e=s.emp;if(d.c.length)d.add();
-  if(ref.kind==='year'){head(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y);const C=[{t:'Monat',w:TW-150},{t:'Arbeitszeit',w:150,r:1}];thead(C);let tot=0;
-   s.periods.forEach((P,i)=>{tot+=P.total.net;row(C,[P.label,fmtH(P.total.net)],{fill:i%2?'0.94 0.94 0.94':null,lineTop:true});});
-   row(C,['Gesamt '+ref.y,fmtH(tot)],{fill:'0.70 0.70 0.70',bold:true,size:9.5});foot();
-   s.periods.filter(hasData).forEach(P=>{d.add();table(e,P,'Arbeitszeitnachweis',P.label);});}
+  if(ref.kind==='year'){head(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y);const {A,K}=ovRows(e,ref.y);
+   const C=K?[{t:'Monat',w:TW-440},{t:'Arbeitszeit',w:110,r:1},{t:'Verrechnet',w:110,r:1},{t:'Monat ±',w:110,r:1},{t:'Saldo',w:110,r:1}]:[{t:'Monat',w:TW-150},{t:'Arbeitszeit',w:150,r:1}];thead(C);
+   if(K&&A.carry)row(C,['Übertrag '+(ref.y-1),'','','',fmtS(A.carry)],{lineTop:true});
+   A.rows.forEach((r,i)=>{row(C,K?[MON[r.m]+' '+ref.y,r.w?fmtH(r.w):'',r.p!=null?fmtH(r.p):'',fmtS(r.diff),r.diff!=null?fmtS(r.saldo):'']:[MON[r.m]+' '+ref.y,r.w?fmtH(r.w):''],{fill:i%2?'0.94 0.94 0.94':null,lineTop:true});});
+   row(C,K?['Gesamt '+ref.y,fmtH(A.tw),fmtH(A.tp),'',fmtS(A.saldo)]:['Gesamt '+ref.y,fmtH(A.tw)],{fill:'0.70 0.70 0.70',bold:true,size:9.5});foot();
+   if(!ref.sum)s.periods.filter(hasData).forEach(P=>{d.add();table(e,P,'Arbeitszeitnachweis',P.label);});}
   else table(e,s.periods[0],'Arbeitszeitnachweis',refLabel(ref));}
  const n=d.pages.length,now=new Date(),info='Erstellt am '+dmy(now)+' '+hm(now.getHours()*60+now.getMinutes())+' mit '+APP+' V'+VERSION+' · Zeiten gerundet auf '+st.round+' Min';
  d.pages.forEach((c,i)=>{d.c=c;d.line(M,30,R,30,.75,.4);d.text(M,20,info,7,false,null,.4);d.text(R,20,'Seite '+(i+1)+' von '+n,7,false,'r',.4);});
@@ -1203,9 +1266,10 @@ function printHead(e,title,range){const st=S();return`<div class="ph">${st.logo?
 const printFoot=()=>`<div class="sig"><div>Datum, Unterschrift Mitarbeiter/in</div><div>Datum, Unterschrift Arbeitgeber${S().boss?' ('+esc(S().boss)+')':''}</div></div><div class="pf">Erstellt am ${dmy(new Date())} ${hm(new Date().getHours()*60+new Date().getMinutes())} mit ${APP} V${VERSION} · Zeiten gerundet auf ${S().round} Min${unitTxt()?' · Angaben in '+unitTxt():''}</div>`;
 function printSections(secs,ref){let h='';
  for(const s of secs){const e=s.emp;
-  if(ref.kind==='year'){let rows='',tot=0,days=0;s.periods.forEach(P=>{tot+=P.total.net;days+=P.total.days;rows+=`<tr><td>${esc(P.label)}</td><td class="n">${fmtH(P.total.net)}</td></tr>`;});
-   h+=`<div class="pg">${printHead(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y)}<table class="tz"><thead><tr><th>Monat</th><th class="n">Arbeitszeit</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Gesamt ${ref.y}</td><td class="n">${fmtH(tot)}</td></tr></tfoot></table>${printFoot()}</div>`;
-   s.periods.filter(hasData).forEach(P=>{h+=`<div class="pg">${printHead(e,'Arbeitszeitnachweis',P.label)}${tableHTML(P,false,notesOn(e))}${printFoot()}</div>`;});}
+  if(ref.kind==='year'){const {A,K}=ovRows(e,ref.y);let rows=K&&A.carry?`<tr><td>Übertrag ${ref.y-1}</td><td></td><td></td><td></td><td class="n">${fmtS(A.carry)}</td></tr>`:'';
+   A.rows.forEach(r=>{rows+=`<tr><td>${MON[r.m]} ${ref.y}</td><td class="n">${r.w?fmtH(r.w):''}</td>${K?`<td class="n">${r.p!=null?fmtH(r.p):''}</td><td class="n">${fmtS(r.diff)}</td><td class="n">${r.diff!=null?fmtS(r.saldo):''}</td>`:''}</tr>`;});
+   h+=`<div class="pg">${printHead(e,'Jahresübersicht '+ref.y,'01.01.'+ref.y+' – 31.12.'+ref.y)}<table class="tz"><thead><tr><th>Monat</th><th class="n">Arbeitszeit</th>${K?'<th class="n">Verrechnet</th><th class="n">Monat ±</th><th class="n">Saldo</th>':''}</tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Gesamt ${ref.y}</td><td class="n">${fmtH(A.tw)}</td>${K?`<td class="n">${fmtH(A.tp)}</td><td></td><td class="n">${fmtS(A.saldo)}</td>`:''}</tr></tfoot></table>${printFoot()}</div>`;
+   if(!ref.sum)s.periods.filter(hasData).forEach(P=>{h+=`<div class="pg">${printHead(e,'Arbeitszeitnachweis',P.label)}${tableHTML(P,false,notesOn(e))}${printFoot()}</div>`;});}
   else{const P=s.periods[0];h+=`<div class="pg">${printHead(e,'Arbeitszeitnachweis',refLabel(ref))}${tableHTML(P,false,notesOn(e))}${printFoot()}</div>`;}}
  $('#print').innerHTML=h;const t0=document.title;document.title=fileBase(secs,ref); /* V1.24: Dateiname beim Drucken als PDF */
  setTimeout(()=>{window.print();if(!MOBILE)document.title=t0;else setTimeout(()=>document.title=t0,60000);},80);}
@@ -1213,6 +1277,11 @@ function printSections(secs,ref){let h='';
 
 /* CSV (flach, eine Zeile pro Buchung) */
 function exportCsv(secs,ref){const q=v=>{v=String(v??'');return/[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+ if(ref.sum){const L=[['Mitarbeiter','Pers.-Nr.','Jahr','Monat','Geleistet (Std dezimal)','Geleistet','Verrechnet (Std dezimal)','Verrechnet','Monat ± (Std dezimal)','Saldo (Std dezimal)','Saldo','Bemerkung'].join(';')];
+  for(const s of secs){const A=acctYear(s.emp,ref.y);if(A.carry)L.push([fullName(s.emp),s.emp.nr||'',ref.y,'Übertrag '+(ref.y-1),'','','','','',dec(A.carry),fmtS(A.carry),''].map(q).join(';'));
+   A.rows.forEach(r=>L.push([fullName(s.emp),s.emp.nr||'',ref.y,MON[r.m],dec(r.w),fmtH(r.w),r.p!=null?dec(r.p):'',r.p!=null?fmtH(r.p):'',r.diff!=null?dec(r.diff):'',r.diff!=null?dec(r.saldo):'',r.diff!=null?fmtS(r.saldo):'',r.note].map(q).join(';')));
+   L.push([fullName(s.emp),s.emp.nr||'',ref.y,'Gesamt',dec(A.tw),fmtH(A.tw),dec(A.tp),fmtH(A.tp),'',dec(A.saldo),fmtS(A.saldo),''].map(q).join(';'));}
+  download(new Blob(['\ufeff'+L.join('\r\n')],{type:'text/csv;charset=utf-8'}),fileBase(secs,ref)+'_Stundenkonto.csv');return;}
  const L=[['Mitarbeiter','Pers.-Nr.','Datum','Wochentag','KW','Kommen','Gehen','Dauer (Std)','Pause (Min)','Tagessumme (Std dezimal)','Tagessumme','Bemerkung','Korrigiert','Original Kommen','Original Gehen','Pause von','Pause bis','Pause bezahlt (Min)','Pause bestätigt'].join(';')];
  for(const s of secs){let tot=0,vpt=0;for(const P of s.periods)for(const w of P.weeks)for(const d of w.days){tot+=d.net;if(d.vp)vpt+=d.vp.dur;d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;
   L.push([fullName(s.emp),s.emp.nr||'',dmy(d.date),WD[d.date.getDay()],isoWeek(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':dec(sh.o-sh.i),last?d.pause:'',last?dec(d.net):'',last?fmtH(d.net):'',sh.n||'',sh.e?'ja':'',sh.ri||'',sh.ro||'',last&&d.vp?hm(d.vp.s):'',last&&d.vp?hm(d.vp.s+d.vp.dur):'',last&&d.vp?d.vp.dur:'',last&&d.vp?(d.vp.ok?'ja':'Vorschlag'):''].map(q).join(';'));});}
@@ -1224,7 +1293,11 @@ function exportTxt(secs,ref){const st=S(),W=92,line=c=>c.repeat(W);const out=[];
  const al=v=>{const p=hmParts(v);return p?(p[0].padStart(8)+' '+p[1].padStart(6)):String(v||'')};
  const row=(a,b,c,d,e,f)=>a.padEnd(16)+b.padEnd(8)+c.padEnd(10)+al(d).padStart(16)+al(e).padStart(17)+'  '+f;
  for(const s of secs){
-  for(const P of s.periods){if(ref.kind==='year'&&!hasData(P))continue;
+  if(ref.kind==='year'){const {A,K}=ovRows(s.emp,ref.y),c=v=>al(v).padStart(17);out.push(line('='),st.company,'Jahresübersicht '+ref.y+' – '+fullName(s.emp)+(s.emp.nr?' (Pers.-Nr. '+s.emp.nr+')':''),line('-'),'Monat'.padEnd(18)+'Arbeitszeit'.padStart(17)+(K?'Verrechnet'.padStart(17)+'Monat ±'.padStart(18)+'Saldo'.padStart(18):''),line('-'));
+   if(K&&A.carry)out.push(('Übertrag '+(ref.y-1)).padEnd(18)+''.padStart(52)+fmtS(A.carry).padStart(18));
+   A.rows.forEach(r=>out.push((MON[r.m]+' '+ref.y).padEnd(18)+c(r.w?fmtH(r.w):'')+(K?c(r.p!=null?fmtH(r.p):'')+fmtS(r.diff).padStart(18)+(r.diff!=null?fmtS(r.saldo):'').padStart(18):'')));
+   out.push(line('-'),('Gesamt '+ref.y).padEnd(18)+c(fmtH(A.tw))+(K?c(fmtH(A.tp))+''.padStart(18)+fmtS(A.saldo).padStart(18):''),'');}
+  for(const P of s.periods){if(ref.kind==='year'&&(ref.sum||!hasData(P)))continue;
    out.push(line('='),st.company,(st.subtitle||'')+(st.boss?' · Geschäftsführer: '+st.boss:''),'Arbeitszeitnachweis – '+fullName(s.emp)+(s.emp.nr?' (Pers.-Nr. '+s.emp.nr+')':''),'Zeitraum: '+(ref.kind==='year'?P.label:refLabel(ref)),line('-'),row('Datum','Kommen','Gehen','Dauer','Tag','Bemerkung'),line('-'));
    for(const w of P.weeks){for(const d of w.days){if(!d.shifts.length){out.push(row(fmtDate(d.date),'','','','',''));continue;}
      d.shifts.forEach((sh,k)=>{const last=k===d.shifts.length-1;out.push(row(k?'':fmtDate(d.date),hm(sh.i),sh.o==null?'offen':hmx(sh.o),sh.o==null?'':fmtH(sh.o-sh.i),last?fmtH(d.net):'',notesOn(s.emp)?noteText(d,sh,k).replace('✎ ',''):''));});
@@ -1287,10 +1360,11 @@ function periodSheet(e,P,title,range){const st=S();
  const cols=[18];for(let i=0;i<pairs;i++)cols.push(9,9);cols.push(14);if(showN)cols.push(60);return{cols,rows};}
 function exportXlsx(secs,ref){const sheets=[];const multi=secs.length>1;
  for(const s of secs){const e=s.emp,pre=multi?e.first+' ':'';
-  if(ref.kind==='year'){const rows=[[{v:S().company,s:7}],[{v:'Jahresübersicht '+ref.y+' – '+fullName(e)+(e.nr?' (Pers.-Nr. '+e.nr+')':''),s:1}],[],[{v:'Monat',s:3},{v:'Stunden',s:3}]];let t=0,dd=0;
-   s.periods.forEach(P=>{t+=P.total.net;dd+=P.total.days;rows.push([{v:P.label},hoursCell(P.total.net)]);});
-   rows.push([{v:'Gesamt '+ref.y,s:3},hoursCell(t,true)]);sheets.push({name:pre+'Übersicht '+ref.y,cols:[18,20],rows});
-   s.periods.filter(hasData).forEach(P=>sheets.push({name:pre+P.label,...periodSheet(e,P,'Arbeitsstunden',P.label)}));}
+  if(ref.kind==='year'){const {A,K}=ovRows(e,ref.y);const rows=[[{v:S().company,s:7}],[{v:'Jahresübersicht '+ref.y+' – '+fullName(e)+(e.nr?' (Pers.-Nr. '+e.nr+')':''),s:1}],[],[{v:'Monat',s:3},{v:'Stunden',s:3},...(K?[{v:'Verrechnet',s:3},{v:'Monat ±',s:3},{v:'Saldo',s:3}]:[])]];
+   if(K&&A.carry)rows.push([{v:'Übertrag '+(ref.y-1)},{v:''},{v:''},{v:''},{v:fmtS(A.carry)}]);
+   A.rows.forEach(r=>rows.push([{v:MON[r.m]+' '+ref.y},hoursCell(r.w),...(K?[r.p!=null?hoursCell(r.p):{v:''},{v:fmtS(r.diff)},{v:r.diff!=null?fmtS(r.saldo):''}]:[])]));
+   rows.push([{v:'Gesamt '+ref.y,s:3},hoursCell(A.tw,true),...(K?[hoursCell(A.tp,true),{v:'',s:3},{v:fmtS(A.saldo),s:3}]:[])]);sheets.push({name:pre+'Übersicht '+ref.y,cols:K?[18,20,20,16,16]:[18,20],rows});
+   if(!ref.sum)s.periods.filter(hasData).forEach(P=>sheets.push({name:pre+P.label,...periodSheet(e,P,'Arbeitsstunden',P.label)}));}
   else{const P=s.periods[0];sheets.push({name:pre+(ref.kind==='week'?'KW '+isoWeek(P.from)+' '+addDays(P.from,3).getFullYear():P.label),...periodSheet(e,P,'Arbeitsstunden',refLabel(ref))});}}
  download(xlsxBlob(sheets),fileBase(secs,ref)+'.xlsx');}
 
@@ -1298,9 +1372,9 @@ function exportXlsx(secs,ref){const sheets=[];const multi=secs.length>1;
 function openAdmin(){if(isPersonal()){const e=DB.emps[0];const go=()=>{scr='admin';if(!['daten','start'].includes(adminTab))adminTab='daten';render();};
   if(!e||!needPin(e)){go();return;}pinDialog({title:'Einstellungen',sub:'Ihre PIN eingeben',av:avatar(e),len:S().pinLen,check:p=>p===String(e.pin),ok:go});return;}
  pinDialog({title:'Administration',sub:'Admin-PIN eingeben',len:0,check:p=>p===String(S().adminPin),ok:()=>{scr='admin';adminTab=S().adminPin==='0000'?'param':adminTab;render();}});}
-function renderAdmin(){const keepY=main.dataset.tab===adminTab?main.scrollTop:0;const tabs=isPersonal()?[['daten','Sichern & Daten'],['start','Startseite']]:[['firma','Firma'],['start','Startseite'],['ma','Mitarbeiter'],['zeit','Zeitlisten'],...(S().vpOn?[['pause','Pause']]:[]),['abschl','Monatsabschluss'],['param','Parameter'],['daten','Sichern & Daten']];
+function renderAdmin(){const keepY=main.dataset.tab===adminTab?main.scrollTop:0;const tabs=isPersonal()?[['daten','Sichern & Daten'],['start','Startseite']]:[['firma','Firma'],['start','Startseite'],['ma','Mitarbeiter'],['zeit','Zeitlisten'],...(S().vpOn?[['pause','Pause']]:[]),['abschl','Monatsabschluss'],['konto','Stundenkonto'],['param','Parameter'],['daten','Sichern & Daten']];
  if(!tabs.some(t=>t[0]===adminTab))adminTab=tabs[0][0];
- const A={firma:[aFirma,bFirma],start:[aStart,bStart],ma:[aMA,bMA],zeit:[aZeit,bZeit],pause:[aPause,bPause],abschl:[aAbschl,bAbschl],param:[aParam,bParam],daten:[aDaten,bDaten]}[adminTab];
+ const A={firma:[aFirma,bFirma],start:[aStart,bStart],ma:[aMA,bMA],zeit:[aZeit,bZeit],pause:[aPause,bPause],abschl:[aAbschl,bAbschl],konto:[aKonto,bKonto],param:[aParam,bParam],daten:[aDaten,bDaten]}[adminTab];
  main.innerHTML=`<div class="adm"><div class="atop"><h1>${isPersonal()?'⚙ Einstellungen <span class="small mut">· persönliches Gerät</span>':'⚙ Administration'}</h1><span class="sp"></span><button class="btn p" id="aout">Abmelden</button></div><div class="tabs">${tabs.map(t=>`<button data-t="${t[0]}" class="${adminTab===t[0]?'on':''}">${t[1]}</button>`).join('')}</div><div>${A[0]()}</div></div>`;
  main.scrollTop=keepY;main.dataset.tab=adminTab;
  main.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{adminTab=b.dataset.t;render();});$('#aout').onclick=goHome;A[1]();}
@@ -1317,7 +1391,7 @@ function bFirma(){bindSettings();const sw=main.querySelectorAll('.sw');bindSwatc
  $('#sLogo').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{DB.settings.logo=await loadImg(f,400,'image/png',false);save();render();toast('Logo gespeichert');}catch(x){toast('Logo konnte nicht geladen werden',true);}};
  const x=$('#sLogoX');if(x)x.onclick=()=>{DB.settings.logo='';save();render();};}
 function aMA(){return`<div class="card"><div class="acts" style="margin-top:0"><h3 style="margin:0">Mitarbeiter (${DB.emps.length}/${MAX_EMP})</h3><span class="sp"></span><button class="btn p" id="mAdd" ${DB.emps.length>=MAX_EMP?'disabled':''}>＋ Neuer Mitarbeiter</button></div>
- ${DB.emps.length?DB.emps.map((e,i)=>`<div class="mrow">${avatar(e,'sm')}<div class="mn"><b>${esc(fullName(e))}</b>${e.nr?`<span class="tag">Nr. ${esc(e.nr)}</span>`:'<span class="tag" style="background:#fde0d9;color:var(--go)">⚠ Pers.-Nr. fehlt</span>'}${e.multi?'<span class="tag">Mehrfachschicht</span>':''}${e.active?'':'<span class="tag">inaktiv</span>'}<span class="tag">PIN ${'•'.repeat(String(e.pin||'').length)}</span></div><button class="btn" data-up="${i}" ${i?'':'disabled'}>▲</button><button class="btn" data-dn="${i}" ${i<DB.emps.length-1?'':'disabled'}>▼</button>${(MOB()?`<button class="btn" data-setup="${e.id}" title="Einrichtungsdatei für das eigene Handy/Tablet dieses Mitarbeiters">📱 Eigenes Gerät</button>`:'')+''}<button class="btn" data-ed="${e.id}">✎ Bearbeiten</button></div>`).join(''):'<p class="mut">Noch keine Mitarbeiter.</p>'}</div>${(MOB()?`
+ ${DB.emps.length?DB.emps.map((e,i)=>`<div class="mrow">${avatar(e,'sm')}<div class="mn"><b>${esc(fullName(e))}</b>${e.nr?`<span class="tag">Nr. ${esc(e.nr)}</span>`:'<span class="tag" style="background:#fde0d9;color:var(--go)">⚠ Pers.-Nr. fehlt</span>'}${e.contract?`<span class="tag">${fmtH(e.contract)}/Monat</span>`:''}${e.multi?'<span class="tag">Mehrfachschicht</span>':''}${e.active?'':'<span class="tag">inaktiv</span>'}<span class="tag">PIN ${'•'.repeat(String(e.pin||'').length)}</span></div><button class="btn" data-up="${i}" ${i?'':'disabled'}>▲</button><button class="btn" data-dn="${i}" ${i<DB.emps.length-1?'':'disabled'}>▼</button>${(MOB()?`<button class="btn" data-setup="${e.id}" title="Einrichtungsdatei für das eigene Handy/Tablet dieses Mitarbeiters">📱 Eigenes Gerät</button>`:'')+''}<button class="btn" data-ed="${e.id}">✎ Bearbeiten</button></div>`).join(''):'<p class="mut">Noch keine Mitarbeiter.</p>'}</div>${(MOB()?`
  <p class="small mut">📱 Eigenes Gerät: erstellt eine Einrichtungsdatei, mit der ein Mitarbeiter Jet-Zeit auf seinem eigenen Handy nutzt (nur seine Person, keine anderen Mitarbeiter, keine Buchungen). Die <b>Personalnummer</b> ist Pflicht: Über sie werden Einrichtung und Monatsmeldungen eindeutig zugeordnet. Dateinamen: Kürzel_Personalnummer_Datum, z. B. <b>mmu_101_2026-11-30.json</b> (Max Muster, Nr. 101) (Kürzel = 1. Buchstabe Vorname + 2 Buchstaben Nachname).</p>`:'')+''}`;}
 function bMA(){$('#mAdd').onclick=()=>empForm(null,true);
  /*@FULL*/main.querySelectorAll('[data-setup]').forEach(b=>b.onclick=()=>setupDialog(DB.emps.find(e=>e.id===b.dataset.setup)));/*@/FULL*/
